@@ -17,4 +17,8 @@ describe('parcel checksum', () => {
       'ababab'
     ])).toEqual(12)
   })
+
+  it('should calculate the right checksum', () => {
+    expect(checksum(input)).toEqual(8892)
+  })
 })
