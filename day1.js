@@ -2,7 +2,7 @@
 
 const calibrate = changes => changes.reduce((frequencies, frequency) => frequencies + frequency, 0)
 
-const repeatedFrequency = (frequencyGenerator, limit) => {
+const repeatedFrequency = frequencyGenerator => {
   const seenFrequencies = { 0: true }
   const seenChanges = []
   do {
