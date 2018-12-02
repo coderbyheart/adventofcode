@@ -35,4 +35,8 @@ describe('matching ids', () => {
       'wvxyz'
     ])).toEqual('fgij')
   })
+
+  it('should calculate the solution', () => {
+    expect(findMatch(input)).toEqual('zihwtxagifpbsnwleydukjmqv')
+  })
 })

@@ -17,6 +17,35 @@ const checksum = ids => {
   return idsWithTwoLetters * idsWithThreeLetters
 }
 
+const compareIds = (id1, id2) => {
+  const id1l = id1.split('')
+  const id2l = id2.split('')
+  const matches = [...id1l]
+  let differences = 0
+  for (let i = 0; i < id1l.length; i++) {
+    const c1 = id1l[i]
+    const c2 = id2l[i]
+    if (c1 !== c2) {
+      differences++
+      delete matches[i]
+    }
+  }
+  if (differences === 1) return matches.join('')
+}
+
+const findMatch = ids => {
+  for (let i = 0; i < ids.length; i++) {
+    for (let j = 0; j < ids.length; j++) {
+      if (i === j) continue
+      const id1 = ids[i]
+      const id2 = ids[j]
+      const match = compareIds(id1, id2)
+      if (match) return match
+    }
+  }
+}
+
 module.exports = {
-  checksum
+  checksum,
+  findMatch
 }
