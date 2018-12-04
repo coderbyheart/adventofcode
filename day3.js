@@ -33,8 +33,27 @@ const overlappingPatches = (patches, size) => {
   return fabric.filter(f => f > 1).length
 }
 
+const findOverlapFreeClaim = (patches, size) => {
+  let fabric
+  patches.forEach(p => {
+    fabric = claimToPatch(p, fabric, size)
+  })
+
+  const overlapFree = patches.find(patch => {
+    const f = claimToPatch(patch, undefined, size)
+    for (let i = 0; i < f.length; i++) {
+      if (!f[i]) continue
+      if (fabric[i] !== 1) return false
+    }
+    return true
+  })
+  if (!overlapFree) return false
+  return overlapFree.match(/^#[0-9]+/)[0]
+}
+
 module.exports = {
   overlappingPatches,
   patch,
-  claimToPatch
+  claimToPatch,
+  findOverlapFreeClaim
 }

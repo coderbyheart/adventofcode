@@ -2,7 +2,7 @@
 
 /* global describe, it, expect */
 
-const { overlappingPatches, patch, claimToPatch } = require('./day3')
+const { overlappingPatches, patch, claimToPatch, findOverlapFreeClaim } = require('./day3')
 const input = require('./day3.json')
 
 describe('patch', () => {
@@ -157,5 +157,19 @@ describe('overlapping patches', () => {
 
   it('should calculate the solution', () => {
     expect(overlappingPatches(input, 1000)).toEqual(109716)
+  })
+})
+
+describe('overlapping patches', () => {
+  it('should find the claim with no overlap', () => {
+    expect(findOverlapFreeClaim([
+      '#1 @ 1,3: 4x4',
+      '#2 @ 3,1: 4x4',
+      '#3 @ 5,5: 2x2'
+    ])).toEqual('#3')
+  })
+
+  it('should calculate the solution', () => {
+    expect(findOverlapFreeClaim(input, 1000)).toEqual('#124')
   })
 })
