@@ -2,34 +2,43 @@
 
 /* global describe, it, expect */
 
+const { readFileSync } = require('fs')
+
+const polymer = readFileSync('./polymer.txt', 'utf-8')
+
 const reactUnits = (a, b) => {
   if (a === b) return false
   if (b === a.toUpperCase()) return true
-  if (a === b.toUpperCase()) return true
-  return false
+  return a === b.toUpperCase()
 }
 const reactions = input => {
   let output = input
-  for (let start = 0; start < input.length - 1; start++) {
-    const end = chainReaction(output, start)
-    if (end && start !== end) {
-      const o = output.slice(0, start) + output.slice(end + 1, output.length)
-      return reactions(o)
+  let reacted
+  do {
+    reacted = false
+    for (let start = 0; start < output.length - 1; start++) {
+      const react = reactUnits(output[start], output[start + 1])
+      if (react) {
+        output = output.slice(0, start) + output.slice(start + 2, output.length)
+        reacted = true
+        break
+      }
     }
-  }
+  } while (reacted)
   return output
 }
 
-const chainReaction = (input, start, end = start + 1) => {
-  if (input[end] === undefined) return start
-  if (reactUnits(input[start], input[end])) {
-    /*
-    let next = chainReaction(input, end, end + 1)
-    if (next) return next
-    */
-    return end
+const multipassReactions = input => {
+  let best = input
+  for (let i = 65; i < 91; i++) {
+    const c = String.fromCharCode(i)
+    console.log(c)
+    const r = reactions(input.replace(new RegExp(c, 'ig'), ''))
+    if (r.length < best.length) {
+      best = r
+    }
   }
-  return false
+  return best
 }
 
 describe('reactions', () => {
@@ -38,6 +47,18 @@ describe('reactions', () => {
   })
   it('should pass the example', () => {
     expect(reactions('dabAcCaCBAcCcaDA')).toEqual('dabCBAcaDA')
+  })
+  it('should calculate the solution', () => {
+    expect(reactions(polymer)).toHaveLength(11636)
+  })
+})
+
+describe('shortest', () => {
+  it('should pass the example', () => {
+    expect(multipassReactions('dabAcCaCBAcCcaDA')).toEqual('daDA')
+  })
+  it.only('should calculate the solution', () => {
+    expect(multipassReactions(polymer)).toHaveLength(11636)
   })
 })
 
