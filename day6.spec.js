@@ -1,72 +1,13 @@
 'use strict'
 
+const {
+  makeAreas,
+  maxArea,
+  makeMap,
+  distance
+} = require('./day6')
+
 /* global describe, it, expect */
-
-const distance = ([y1, x1], [y2, x2]) => Math.abs(x1 - x2) + Math.abs(y1 - y2)
-
-const makeMap = coordinates => {
-  const [maxX, maxY] = [
-    coordinates.reduce((max, [_, x]) => {
-      if (x > max) return x
-      return max
-    }, 0),
-    coordinates.reduce((max, [y]) => {
-      if (y > max) return y
-      return max
-    }, 0)
-  ]
-  const map = []
-  for (let y = 0; y <= maxY; y++) {
-    map[y] = []
-    for (let x = 0; x <= maxX; x++) {
-      map[y][x] = 0
-    }
-  }
-
-  coordinates.forEach(([y, x], idx) => {
-    map[y][x] = idx + 1
-  })
-  return map
-}
-
-const makeAreas = coordinates => {
-  const map = makeMap(coordinates)
-  for (let y = 0; y < map.length; y++) {
-    for (let x = 0; x < map[0].length; x++) {
-      const distances = coordinates.reduce((distances, [cy, cx], i) => {
-        const d = distance([y, x], [cy, cx])
-        if (!distances[d]) {
-          distances[d] = [i]
-        } else {
-          distances[d].push(i)
-        }
-        return distances
-      }, {})
-      const minDistance = Object.keys(distances).sort((d1, d2) => d1 - d2)[0]
-      if (distances[minDistance].length === 1) {
-        map[y][x] = distances[minDistance][0] + 1
-      }
-    }
-  }
-  return map
-}
-
-const maxArea = coordinates => {
-  const areas = makeAreas(coordinates)
-  const countPerCoordinate = {
-
-  }
-  for (let y = 0; y < areas.length; y++) {
-    for (let x = 0; x < areas[0].length; x++) {
-      if (!countPerCoordinate[areas[y][x]]) {
-        countPerCoordinate[areas[y][x]] = 1
-      } else {
-        countPerCoordinate[areas[y][x]]++
-      }
-    }
-  }
-  return countPerCoordinate[Object.keys(countPerCoordinate).sort((c1, c2) => countPerCoordinate[c2] - countPerCoordinate[c1])[0]]
-}
 
 describe('Manhattan Distance', () => {
   it('should calculate the manhatten distance', () => {
@@ -93,6 +34,15 @@ describe('map coordinats', () => {
       [0, 0, 2]
     ])
     expect(makeMap([
+      [0, 0],
+      [1, 3]
+    ])).toEqual([
+      [1, 0],
+      [0, 0],
+      [0, 0],
+      [0, 2]
+    ])
+    expect(makeMap([
       [1, 1],
       [1, 6],
       [8, 3],
@@ -100,35 +50,27 @@ describe('map coordinats', () => {
       [5, 5],
       [8, 9]
     ])).toEqual([
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 1, 0, 0, 0, 0, 2, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 4, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 5, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 3, 0, 0, 0, 0, 0, 6]
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 1, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 3],
+      [0, 0, 0, 4, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 5, 0, 0, 0],
+      [0, 2, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 6]
     ])
   })
 })
 
 describe('make areas', () => {
-  it('should measure distance', () => {
+  it('should make areas', () => {
     expect(makeAreas([
       [1, 1]
     ])).toEqual([
       [1, 1],
       [1, 1]
-    ])
-    expect(makeMap([
-      [0, 0],
-      [3, 3]
-    ])).toEqual([
-      [1, 0, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 2]
     ])
     expect(makeAreas([
       [0, 0],
@@ -139,6 +81,80 @@ describe('make areas', () => {
       [1, 0, 2, 2],
       [0, 2, 2, 2]
     ])
+    expect(makeAreas([
+      [0, 0],
+      [0, 3]
+    ])).toEqual([
+      [1],
+      [1],
+      [2],
+      [2]
+    ])
+    expect(makeAreas([
+      [0, 0],
+      [0, 4]
+    ])).toEqual([
+      [1],
+      [1],
+      [0],
+      [2],
+      [2]
+    ])
+    expect(makeAreas([
+      [0, 0],
+      [3, 0]
+    ])).toEqual([
+      [1, 1, 2, 2]
+    ])
+    expect(makeAreas([
+      [0, 0],
+      [4, 0]
+    ])).toEqual([
+      [1, 1, 0, 2, 2]
+    ])
+  })
+  it('make the example map', () => {
+    expect(makeAreas([
+      [1, 1],
+      [1, 6],
+      [8, 3],
+      [3, 4],
+      [5, 5],
+      [8, 9]
+    ])).toEqual([
+      [1, 1, 1, 1, 1, 0, 3, 3, 3],
+      [1, 1, 1, 1, 1, 0, 3, 3, 3],
+      [1, 1, 1, 4, 4, 5, 3, 3, 3],
+      [1, 1, 4, 4, 4, 5, 3, 3, 3],
+      [0, 0, 4, 4, 4, 5, 5, 3, 3],
+      [2, 2, 0, 4, 5, 5, 5, 5, 3],
+      [2, 2, 2, 0, 5, 5, 5, 5, 0],
+      [2, 2, 2, 0, 5, 5, 5, 6, 6],
+      [2, 2, 2, 0, 5, 5, 6, 6, 6],
+      [2, 2, 2, 0, 6, 6, 6, 6, 6]
+    ])
+  })
+  it('should calculate the max area', () => {
+    expect(maxArea([
+      [0, 0],
+      [0, 3]
+    ])).toEqual(2)
+    expect(maxArea([
+      [0, 0],
+      [0, 4]
+    ])).toEqual(2)
+    expect(maxArea([
+      [0, 0],
+      [3, 0]
+    ])).toEqual(2)
+    expect(maxArea([
+      [0, 0],
+      [4, 0]
+    ])).toEqual(2)
+    expect(maxArea([
+      [0, 0],
+      [3, 3]
+    ])).toEqual(6)
   })
   it('should solve the example', () => {
     expect(maxArea([
@@ -150,7 +166,6 @@ describe('make areas', () => {
       [8, 9]
     ])).toEqual(17)
   })
-  /*
   it('should calculate the solution', () => {
     expect(maxArea([
       [242, 112],
@@ -204,5 +219,5 @@ describe('make areas', () => {
       [292, 311],
       [202, 62]
     ])).toEqual(16918)
-  }) */
+  })
 })
