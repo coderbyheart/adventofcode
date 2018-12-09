@@ -50,10 +50,22 @@ const makeAreas = coordinates => {
 }
 
 const maxArea = coordinates => {
+  const notInfinite = countAreas(coordinates)
+  return notInfinite[Object.keys(notInfinite).sort((c1, c2) => notInfinite[c2] - notInfinite[c1])[0]]
+}
+
+const countAreas = coordinates => {
   const areas = makeAreas(coordinates)
   const countPerCoordinate = {}
+  const maxX = areas[0].length - 1
+  const maxY = areas.length - 1
+  const infiniteAreas = {}
   for (let y = 0; y < areas.length; y++) {
     for (let x = 0; x < areas[0].length; x++) {
+      // Do not count areas with infinite reach (= those at the edges)
+      if (y === 0 || x === 0 || y === maxY || x === maxX) {
+        infiniteAreas[areas[y][x]] = true
+      }
       if (!countPerCoordinate[areas[y][x]]) {
         countPerCoordinate[areas[y][x]] = 1
       } else {
@@ -61,13 +73,18 @@ const maxArea = coordinates => {
       }
     }
   }
-  return countPerCoordinate[Object.keys(countPerCoordinate).sort((c1, c2) => countPerCoordinate[c2] - countPerCoordinate[c1])[0]]
+  return Object.keys(countPerCoordinate).reduce((cMap, c) => {
+    if (+c === 0) return cMap
+    if (infiniteAreas[c]) return cMap
+    cMap[c] = countPerCoordinate[c]
+    return cMap
+  }, {})
 }
-
 
 module.exports = {
   makeAreas,
   maxArea,
   makeMap,
-  distance
+  distance,
+  countAreas
 }

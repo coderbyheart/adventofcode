@@ -1,13 +1,13 @@
 'use strict'
 
+/* global describe, it, expect */
+
 const {
   makeAreas,
   maxArea,
   makeMap,
-  distance
+  distance,
 } = require('./day6')
-
-/* global describe, it, expect */
 
 describe('Manhattan Distance', () => {
   it('should calculate the manhatten distance', () => {
@@ -134,28 +134,6 @@ describe('make areas', () => {
       [2, 2, 2, 0, 6, 6, 6, 6, 6]
     ])
   })
-  it('should calculate the max area', () => {
-    expect(maxArea([
-      [0, 0],
-      [0, 3]
-    ])).toEqual(2)
-    expect(maxArea([
-      [0, 0],
-      [0, 4]
-    ])).toEqual(2)
-    expect(maxArea([
-      [0, 0],
-      [3, 0]
-    ])).toEqual(2)
-    expect(maxArea([
-      [0, 0],
-      [4, 0]
-    ])).toEqual(2)
-    expect(maxArea([
-      [0, 0],
-      [3, 3]
-    ])).toEqual(6)
-  })
   it('should solve the example', () => {
     expect(maxArea([
       [1, 1],
@@ -218,6 +196,6 @@ describe('make areas', () => {
       [114, 168],
       [292, 311],
       [202, 62]
-    ])).toEqual(16918)
+    ])).toEqual(3933)
   })
 })
