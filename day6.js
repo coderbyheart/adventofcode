@@ -81,10 +81,26 @@ const countAreas = coordinates => {
   }, {})
 }
 
+const safeRegion = (coordinates, max = 32) => {
+  const map = makeMap(coordinates)
+  let safeRegions = 0
+  for (let y = 0; y < map.length; y++) {
+    for (let x = 0; x < map[0].length; x++) {
+      let total = 0
+      for (let i = 0; i < coordinates.length; i++) {
+        total += distance([x, y], [coordinates[i][0], coordinates[i][1]])
+      }
+      if (total < max) safeRegions++
+    }
+  }
+  return safeRegions
+}
+
 module.exports = {
   makeAreas,
   maxArea,
   makeMap,
   distance,
-  countAreas
+  countAreas,
+  safeRegion
 }
