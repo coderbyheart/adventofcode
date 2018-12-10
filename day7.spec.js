@@ -1,6 +1,6 @@
 'use strict'
 
-const { readFileSync } = require('fs');
+const {readFileSync} = require('fs')
 
 /* global describe, it, expect, safeRegion  */
 
@@ -74,6 +74,23 @@ describe('build a linked list', () => {
   })
   it('should solve the puzzle', () => {
     const input = readFileSync('./day7.txt', 'utf-8').split('\n')
-    expect(runList(makeList(input))).toEqual('CABDFE')
+    expect(runList(makeList(input))).toEqual('GJKLDFNPTMQXIYHUVREOZSAWCB')
   })
 })
+
+/*
+describe('build time!', () => {
+  it.only('should calculate the build time', () => {
+    // expect(buildTime(l, 2, 0)).toEqual(15)
+    expect(buildTime(makeList([
+      'Step C must be finished before step A can begin.',
+      'Step C must be finished before step F can begin.',
+      'Step A must be finished before step B can begin.',
+      'Step A must be finished before step D can begin.',
+      'Step B must be finished before step E can begin.',
+      'Step D must be finished before step E can begin.',
+      'Step F must be finished before step E can begin.'
+    ]), 2, 0)).toEqual(15)
+  })
+})
+*/
