@@ -1,6 +1,5 @@
 class Circle {
   constructor (numPlayers) {
-    this.marbles = []
     this.numPlayers = numPlayers
     this.scores = {}
     for (let i = 0; i < numPlayers; i++) {
@@ -10,33 +9,50 @@ class Circle {
 
   placeMarble () {
     if (this.currentMarble === undefined) {
-      this.currentMarble = 0
+      const marble = {n: 0}
+      marble.next = marble
+      marble.prev = marble
+      this.currentMarble = marble
+      this.firstMarble = marble
       this.placements = 0
-      this.marbles.push(this.currentMarble)
     } else {
-      const marbleToBePlaced = ++this.placements
+      const marbleToBePlacedValue = ++this.placements
       const currentPlayer = this.placements % this.numPlayers
-      if (marbleToBePlaced % 23 === 0) {
+      if (marbleToBePlacedValue % 23 === 0) {
         // However, if the marble that is about to be placed has a number which is a multiple of 23, something entirely different happens:
         // First, the current player keeps the marble they would have placed, adding it to their score.
-        this.scores[currentPlayer] += marbleToBePlaced
+        this.scores[currentPlayer] += marbleToBePlacedValue
         // In addition, the marble 7 marbles counter-clockwise from the current marble is removed from the circle
-        let idx = (this.marbles.indexOf(this.currentMarble) - 7) % this.marbles.length
-        // Correct negative offset
-        if (idx < 0) {
-          idx = this.marbles.length + idx
+        let marbleToRemove = this.currentMarble
+        for (let i = 0; i < 7; i++) {
+          marbleToRemove = marbleToRemove.prev
         }
+        marbleToRemove.prev.next = marbleToRemove.next
         // The marble located immediately clockwise of the marble that was removed becomes the new current marble.
-        this.currentMarble = this.marbles[(idx + 1) % this.marbles.length]
+        this.currentMarble = marbleToRemove.next
         // and also added to the current player's score.
-        this.scores[currentPlayer] += this.marbles[idx]
-        this.marbles.splice(idx, 1)
+        this.scores[currentPlayer] += marbleToRemove.n
       } else {
-        const idx = (this.marbles.indexOf(this.currentMarble) + 1) % this.marbles.length
-        this.marbles.splice(idx + 1, 0, marbleToBePlaced)
-        this.currentMarble = marbleToBePlaced
+        const marble = {
+          n: marbleToBePlacedValue,
+          prev: this.currentMarble.next,
+          next: this.currentMarble.next.next
+        }
+        this.currentMarble.next.next = marble
+        this.currentMarble.next.next.next.prev = marble
+        this.currentMarble = marble
       }
     }
+  }
+
+  marbles () {
+    const marbles = []
+    let marble = this.firstMarble
+    do {
+      marbles.push(marble.n)
+      marble = marble.next
+    } while (marble !== this.firstMarble)
+    return marbles
   }
 
   winningScore () {

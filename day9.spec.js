@@ -9,41 +9,41 @@ describe('marble mania', () => {
   it('should calculate the winning score', () => {
     const c = new Circle(5)
     c.placeMarble()
-    expect(c.currentMarble).toEqual(0)
-    expect(c.marbles).toEqual([0])
+    expect(c.currentMarble.n).toEqual(0)
+    expect(c.marbles()).toEqual([0])
     c.placeMarble()
-    expect(c.currentMarble).toEqual(1)
-    expect(c.marbles).toEqual([0, 1])
+    expect(c.currentMarble.n).toEqual(1)
+    expect(c.marbles()).toEqual([0, 1])
     c.placeMarble()
-    expect(c.currentMarble).toEqual(2)
-    expect(c.marbles).toEqual([0, 2, 1])
+    expect(c.currentMarble.n).toEqual(2)
+    expect(c.marbles()).toEqual([0, 2, 1])
     c.placeMarble()
-    expect(c.currentMarble).toEqual(3)
-    expect(c.marbles).toEqual([0, 2, 1, 3])
+    expect(c.currentMarble.n).toEqual(3)
+    expect(c.marbles()).toEqual([0, 2, 1, 3])
     c.placeMarble()
-    expect(c.currentMarble).toEqual(4)
-    expect(c.marbles).toEqual([0, 4, 2, 1, 3])
+    expect(c.currentMarble.n).toEqual(4)
+    expect(c.marbles()).toEqual([0, 4, 2, 1, 3])
     for (let i = 0; i < 18; i++) {
       c.placeMarble()
     }
-    expect(c.currentMarble).toEqual(22)
-    expect(c.marbles).toEqual([
+    expect(c.currentMarble.n).toEqual(22)
+    expect(c.marbles()).toEqual([
       0, 16, 8, 17, 4, 18, 9, 19, 2, 20, 10, 21, 5, 22, 11, 1, 12, 6, 13, 3, 14, 7, 15
     ])
     // Rule 23
     c.placeMarble()
-    expect(c.currentMarble).toEqual(19)
-    expect(c.marbles).toEqual([
+    expect(c.currentMarble.n).toEqual(19)
+    expect(c.marbles()).toEqual([
       0, 16, 8, 17, 4, 18, 19, 2, 20, 10, 21, 5, 22, 11, 1, 12, 6, 13, 3, 14, 7, 15
     ])
     c.placeMarble()
-    expect(c.currentMarble).toEqual(24)
-    expect(c.marbles).toEqual([
+    expect(c.currentMarble.n).toEqual(24)
+    expect(c.marbles()).toEqual([
       0, 16, 8, 17, 4, 18, 19, 2, 24, 20, 10, 21, 5, 22, 11, 1, 12, 6, 13, 3, 14, 7, 15
     ])
     c.placeMarble()
-    expect(c.currentMarble).toEqual(25)
-    expect(c.marbles).toEqual([
+    expect(c.currentMarble.n).toEqual(25)
+    expect(c.marbles()).toEqual([
       0, 16, 8, 17, 4, 18, 19, 2, 24, 20, 25, 10, 21, 5, 22, 11, 1, 12, 6, 13, 3, 14, 7, 15
     ])
     expect(c.winningScore()).toEqual(32)
@@ -57,5 +57,6 @@ describe('marble mania', () => {
   })
   it('should calculate the puzzle', () => {
     expect(getWinningScore(413, 71082)).toEqual(416424)
+    expect(getWinningScore(413, 7108200)).toEqual(3498287922)
   })
 })
