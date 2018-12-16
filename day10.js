@@ -17,7 +17,7 @@ const movePoints = points => points.map(({x, y, vx, vy}) => ({
   vy
 }))
 
-const drawMap = points => {
+const drawMap = (points, scale = 1) => {
   const [minX, minY, maxX, maxY] = [
     points.reduce((min, {x}) => {
       if (x < min) return x
@@ -38,23 +38,18 @@ const drawMap = points => {
   ]
   const offsetX = minX < 0 ? Math.abs(minX) : 0
   const offsetY = minY < 0 ? Math.abs(minY) : 0
+  const height = Math.ceil((maxY + offsetY + 1) * scale)
+  const width = Math.ceil((maxX + offsetX + 1) * scale)
   const map = []
-  for (let y = 0; y <= maxY + offsetY; y++) {
-    map[y] = []
-    for (let x = 0; x <= maxX + offsetX; x++) {
-      map[y][x] = '.'
-    }
+  for (let y = 0; y < height; y++) {
+    map[y] = '.'.repeat(width)
   }
   points.forEach(({x, y}) => {
-    const mapY = y + offsetY
-    const mapX = x + offsetX
-    map[mapY][mapX] = '#'
+    const mapY = Math.floor((y + offsetY) * scale)
+    const mapX = Math.floor((x + offsetX) * scale)
+    map[mapY] = map[mapY].substr(0, mapX) + '#' + map[mapY].substr(mapX + 1)
   })
-  let flattened = ''
-  map.forEach(row => {
-    flattened += row.join('') + '\n'
-  })
-  return flattened
+  return map
 }
 
 module.exports = {
