@@ -1,8 +1,11 @@
 'use strict'
 
-const {parsePoints, movePoints, drawMap} = require('./day10')
-
 /* global describe, it, expect, safeRegion  */
+
+const {parsePoints, movePoints, drawMap} = require('./day10')
+const {readFileSync} = require('fs')
+const input = readFileSync('./day10.txt', 'utf-8')
+const solution = readFileSync('./day10.solution.txt', 'utf-8')
 
 describe('stars alignment', () => {
   it('should parse the points', () => {
@@ -22,23 +25,23 @@ describe('stars alignment', () => {
   it('should draw the map', () => {
     expect(drawMap([
       {x: 0, y: 0}
-    ])).toEqual(
-      '#\n'
+    ]).join('\n')).toEqual(
+      '#'
     )
     expect(drawMap([
       {x: 1, y: 1}
-    ])).toEqual(
+    ]).join('\n')).toEqual(
       '..\n' +
-      '.#\n'
+      '.#'
     )
     expect(drawMap([
       {x: 3, y: 2, vx: 1, vy: -2},
       {x: 6, y: 3, vx: 1, vy: -2}
-    ])).toEqual(
+    ]).join('\n')).toEqual(
       '.......\n' +
       '.......\n' +
       '...#...\n' +
-      '......#\n'
+      '......#'
     )
   })
   it('should draw the example map', () => {
@@ -75,7 +78,7 @@ describe('stars alignment', () => {
       'position=<14,  7> velocity=<-2,  0>',
       'position=<-3,  6> velocity=< 2, -1>'
     ])
-    expect(drawMap(points)).toEqual(
+    expect(drawMap(points).join('\n')).toEqual(
       '........#.............\n' +
       '................#.....\n' +
       '.........#.#..#.......\n' +
@@ -91,9 +94,9 @@ describe('stars alignment', () => {
       '.......#..............\n' +
       '...........#..#.......\n' +
       '#...........#.........\n' +
-      '...#.......#..........\n'
+      '...#.......#..........'
     )
-    expect(drawMap(movePoints(points))).toEqual(
+    expect(drawMap(movePoints(points)).join('\n')).toEqual(
       '........#....#....\n' +
       '......#.....#.....\n' +
       '#.........#......#\n' +
@@ -105,9 +108,9 @@ describe('stars alignment', () => {
       '......#.#.........\n' +
       '......#...#.....#.\n' +
       '#...........#.....\n' +
-      '..#.....#.#.......\n'
+      '..#.....#.#.......'
     )
-    expect(drawMap(movePoints(movePoints(movePoints(points))))).toEqual(
+    expect(drawMap(movePoints(movePoints(movePoints(points)))).join('\n')).toEqual(
       '#...#..###\n' +
       '#...#...#.\n' +
       '#...#...#.\n' +
@@ -115,7 +118,15 @@ describe('stars alignment', () => {
       '#...#...#.\n' +
       '#...#...#.\n' +
       '#...#...#.\n' +
-      '#...#..###\n'
+      '#...#..###'
     )
+  })
+  it('should solve the puzzle', () => {
+    let points = parsePoints(input.split('\n'))
+
+    for (let i = 0; i <= 10458; i++) {
+      points = movePoints(points)
+    }
+    expect(drawMap(points).join('\n')).toEqual(solution)
   })
 })
