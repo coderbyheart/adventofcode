@@ -1,6 +1,5 @@
 'use strict'
 
-const {readFileSync} = require('fs')
 const { Circle, getWinningScore } = require('./day9')
 
 /* global describe, it, expect, safeRegion  */
