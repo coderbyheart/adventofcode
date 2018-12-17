@@ -31,17 +31,14 @@ describe('stars alignment', () => {
     expect(drawMap([
       {x: 1, y: 1}
     ]).join('\n')).toEqual(
-      '..\n' +
-      '.#'
+      '#'
     )
     expect(drawMap([
       {x: 3, y: 2, vx: 1, vy: -2},
       {x: 6, y: 3, vx: 1, vy: -2}
     ]).join('\n')).toEqual(
-      '.......\n' +
-      '.......\n' +
-      '...#...\n' +
-      '......#'
+      '#...\n' +
+      '...#'
     )
   })
   it('should draw the example map', () => {

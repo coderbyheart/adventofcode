@@ -36,8 +36,8 @@ const drawMap = (points, scale = 1) => {
       return max
     }, 0)
   ]
-  const offsetX = minX < 0 ? Math.abs(minX) : 0
-  const offsetY = minY < 0 ? Math.abs(minY) : 0
+  const offsetX = -minX
+  const offsetY = -minY
   const height = Math.ceil((maxY + offsetY + 1) * scale)
   const width = Math.ceil((maxX + offsetX + 1) * scale)
   const map = []
