@@ -36,10 +36,19 @@ const notes = [
   '.#... => #',
   '#.##. => #',
   '..### => .'
-]
+].map(n => n.match(/(?<pattern>[.#]{5}) => (?<result>[.#])/).groups)
 let res = {pot0: 0, pots: initialState}
-for (let i = 0; i < 50000000000; i++) {
-  console.log(i / 50000000000)
+let lastResults = [res]
+for (let i = 1; i <= 50000000; i++) {
   res = subsus(res.pot0, res.pots, notes)
+  lastResults.push(res)
+  console.log(res.pots)
+  if (lastResults.length > 10) lastResults.shift()
+  if (lastResults.reduce((same, {pots}, k) => k > 0 ? (same ? lastResults[k - 1].pots === pots : false) : true) === true) {
+    console.log(sumGen({
+      pots: lastResults[0].pots,
+      pot0: 50000000000 - i + lastResults[0].pot0
+    }))
+    break
+  }
 }
-console.log(sumGen(res))

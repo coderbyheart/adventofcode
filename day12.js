@@ -1,7 +1,7 @@
 'use strict'
 
 const subsus = (pot0, initialState, notes) => {
-  const startState = `....${initialState}....`
+  const startState = `.....${initialState}.....`
   const pots = notes.reduce((newState, {pattern, result}) => {
     let idx = -1
     do {
@@ -13,8 +13,10 @@ const subsus = (pot0, initialState, notes) => {
     return newState
   }, '.'.repeat(startState.length))
 
+  const newPot0 = pot0 + pots.match(/^\.+/g)[0].length - 5
+
   return {
-    pot0: pot0 - (4 - pots.match(/^\.+/g)[0].length),
+    pot0: newPot0,
     pots: pots.replace(/^\.+/g, '').replace(/\.+$/g, '')
   }
 }
