@@ -2,20 +2,16 @@
 
 const chalk = require('chalk')
 
-const parseLevel = state => {
-  const rows = state.split('\n').filter(l => l.length)
+const parseLevel = level => {
+  const rows = level.split('\n').filter(l => l.length)
   const width = rows.reduce((max, line) => Math.max(line.length, max), 0)
   const height = rows.length
-  const currentState = [
-    ...rows.map(r => [...r])
-  ]
-  const nextState = [
-    ...rows.map(r => [...r])
-  ]
+  let normalizedMap = rows.map(r => r.padEnd(width, ' ')).join('') // Make sure all lines are of same length
+  let mapWithoutCarts = `${normalizedMap}`
   const carts = []
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
-      const m = (currentState[y][x] || '').match(/(?<dir>[\^v<>])/)
+      const m = (normalizedMap[y * width + x] || '').match(/(?<dir>[\^v<>])/)
       if (m) {
         const { dir } = m.groups
         carts.push({
@@ -24,41 +20,43 @@ const parseLevel = state => {
         switch (dir) {
           case '^':
           case 'v':
-            nextState[y][x] = '|'
+            mapWithoutCarts = mapWithoutCarts.substr(0, y * width + x) + '|' + mapWithoutCarts.substr(y * width + x + 1)
             break
           case '<':
           case '>':
-            nextState[y][x] = '-'
+            mapWithoutCarts = mapWithoutCarts.substr(0, y * width + x) + '-' + mapWithoutCarts.substr(y * width + x + 1)
             break
         }
       }
     }
   }
   return {
-    map: nextState,
+    map: {
+      width, height, map: mapWithoutCarts
+    },
     carts
   }
 }
 
-const renderMap = map => map.reduce((s, row) => s + row.join('').replace(/ +$/g, '') + '\n', '')
+const renderMap = ({ map, width }) => {
+  return map.match(new RegExp(`.{${width}}`, 'g')).join('\n')
+}
 
-const renderMapAndCarts = (map, carts, colored = false) => {
-  const width = map.reduce((max, line) => Math.max(line.length, max), 0)
-  const height = map.length
+const renderMapAndCarts = ({ map, width, height }, carts, colored = false) => {
   let r = []
   for (let y = 0; y < height; y++) {
     r[y] = []
     for (let x = 0; x < width; x++) {
-      r[y][x] = colored ? chalk.gray(map[y][x] || '') : map[y][x] || ''
+      r[y][x] = colored ? chalk.gray(map[y * width + x]) : map[y * width + x]
     }
   }
   carts.forEach(({ x, y, dir }) => {
     r[y][x] = colored ? chalk.green(dir) : dir
   })
-  return renderMap(r)
+  return r.reduce((s, r) => s + r.join('') + '\n', '')
 }
 
-const tick = (map, carts) => {
+const tick = ({ map, width }, carts, removeCrashingCarts = false) => {
   const movedCarts = carts.map(cart => {
     let { dir, x, y, turn } = cart
     switch (dir) {
@@ -75,7 +73,7 @@ const tick = (map, carts) => {
         x++
         break
     }
-    const n = map[y][x]
+    const n = map[y * width + x]
     switch (n) {
       case '-':
       case '|':
@@ -132,6 +130,13 @@ const tick = (map, carts) => {
     return { dir, x, y, turn }
   }).sort(({ y: y1 }, { y: y2 }) => y1 - y2)
 
+  if (removeCrashingCarts) {
+    const notCrashed = movedCarts.filter(cart => movedCarts.find(cartn => cart !== cartn && cart.x === cartn.x && cart.y === cartn.y) === undefined)
+    if (notCrashed.length === 1) {
+      throw new LastCartError(`Last cart at ${notCrashed[0].x},${notCrashed[0].y}`, notCrashed[0].x, notCrashed[0].y)
+    }
+    return notCrashed
+  }
   const crashed = movedCarts.filter(cart => movedCarts.find(cartn => cart !== cartn && cart.x === cartn.x && cart.y === cartn.y))
   if (crashed.length) throw new Crash(`Crash at ${crashed[0].x},${crashed[0].y}`, crashed[0].x, crashed[0].y)
   return movedCarts
@@ -171,6 +176,17 @@ module.exports = {
 }
 
 class Crash extends Error {
+  constructor (msg, x, y) {
+    super(msg)
+    this.x = x
+    this.y = y
+    this.name = Crash.name
+    Error.captureStackTrace(this, Crash)
+    Object.setPrototypeOf(this, Crash.prototype)
+  }
+}
+
+class LastCartError extends Error {
   constructor (msg, x, y) {
     super(msg)
     this.x = x
