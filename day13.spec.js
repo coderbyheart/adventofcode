@@ -172,6 +172,11 @@ describe('Mine Cart Madness', () => {
         turn: 1
       }
     ])
+  })
+
+  it('should solve the example', () => {
+    const { map } = parseLevel(states[0])
+    const mapTick = tick.bind(undefined, map)
     let { carts: tickedCarts } = parseLevel(states[0])
     for (let i = 0; i < 13; i++) {
       tickedCarts = mapTick(tickedCarts)
@@ -199,6 +204,41 @@ describe('Mine Cart Madness', () => {
     }
   })
 
+  it('should turn', () => {
+    // turn left the first time
+    let { map, carts } = parseLevel('' +
+      ' +v    \n' +
+      ' +++++<\n' +
+      '>+++++ \n' +
+      '    ^+ \n'
+    )
+    carts = tick(map, carts)
+    expect(renderMapAndCarts(map, carts)).toEqual('' +
+      ' +|    \n' +
+      ' +>++v-\n' +
+      '-^++<+ \n' +
+      '    |+ \n'
+    )
+    // go straight the second time
+
+    carts = tick(map, carts)
+    expect(renderMapAndCarts(map, carts)).toEqual('' +
+      ' +|    \n' +
+      ' ^+>++-\n' +
+      '-++<+v \n' +
+      '    |+ \n'
+    )
+    // turn right the third time
+
+    carts = tick(map, carts)
+    expect(renderMapAndCarts(map, carts)).toEqual('' +
+      ' >|    \n' +
+      ' +++v+-\n' +
+      '-+^+++ \n' +
+      '    |< \n'
+    )
+  })
+
   it('should not multi-crash', () => {
     let { map, carts } = parseLevel('' +
       '/---\\      \n' +
@@ -211,7 +251,7 @@ describe('Mine Cart Madness', () => {
     expect(renderMapAndCarts(map, carts)).toEqual('' +
       '/---\\        \n' +
       '|   |  /----\\\n' +
-      '| /->--+-\\  |\n' +
+      '| /-<--+-\\  |\n' +
       '| | |  | |  |\n' +
       '\\-+-/  \\-+--/\n' +
       '  \\------/   \n')

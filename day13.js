@@ -131,13 +131,13 @@ const moveCart = ({ map, width }, cart) => {
 
 const tick = ({ map, width }, carts, removeCrashingCarts = false) => {
   let movedCarts = []
-  let prevCart
   for (let i = 0; i < carts.length; i++) {
     const movedCart = moveCart({ map, width }, carts[i])
+    const prevCart = movedCarts[i - 1]
     if (prevCart) {
       if (prevCart.x === movedCart.x && prevCart.y === movedCart.y) {
         if (removeCrashingCarts) {
-          movedCarts = movedCarts.splice(movedCarts.indexOf(prevCart), 1)
+          movedCarts.splice(movedCarts.indexOf(prevCart), 1)
         } else {
           throw new Crash(`Crash at ${movedCart.x},${movedCart.y}`, movedCart.x, movedCart.y)
         }
@@ -147,9 +147,10 @@ const tick = ({ map, width }, carts, removeCrashingCarts = false) => {
     } else {
       movedCarts.push(movedCart)
     }
-    prevCart = movedCart
   }
-  return movedCarts.sort(({ y: y1 }, { y: y2 }) => y1 - y2)
+  return movedCarts
+    .sort(({ x: x1 }, { x: x2 }) => x1 - x2)
+    .sort(({ y: y1 }, { y: y2 }) => y1 - y2)
 }
 
 const turnLeft = dir => {
