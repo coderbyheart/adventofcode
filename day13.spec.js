@@ -199,17 +199,21 @@ describe('Mine Cart Madness', () => {
     }
   })
 
-  it('should solve the puzzle', () => {
-    let { map, carts } = parseLevel(input)
-    try {
-      do {
-        carts = tick(map, carts)
-        renderMapAndCarts(map, carts)
-      } while (true)
-    } catch (err) {
-      expect(err.message).toEqual('Crash at 100,21')
-      expect(err.x).toEqual(100)
-      expect(err.y).toEqual(21)
-    }
+  it('should not multi-crash', () => {
+    let { map, carts } = parseLevel('' +
+      '/---\\      \n' +
+      '|   v  /----\\\n' +
+      '| /-+<-+-\\  |\n' +
+      '| | ^  | |  |\n' +
+      '\\-+-/  \\-+--/\n' +
+      '  \\------/\n')
+    carts = tick(map, carts, true)
+    expect(renderMapAndCarts(map, carts)).toEqual('' +
+      '/---\\        \n' +
+      '|   |  /----\\\n' +
+      '| /->--+-\\  |\n' +
+      '| | |  | |  |\n' +
+      '\\-+-/  \\-+--/\n' +
+      '  \\------/   \n')
   })
 })

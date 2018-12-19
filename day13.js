@@ -56,90 +56,100 @@ const renderMapAndCarts = ({ map, width, height }, carts, colored = false) => {
   return r.reduce((s, r) => s + r.join('') + '\n', '')
 }
 
-const tick = ({ map, width }, carts, removeCrashingCarts = false) => {
-  const movedCarts = carts.map(cart => {
-    let { dir, x, y, turn } = cart
-    switch (dir) {
-      case '^':
-        y--
-        break
-      case 'v':
-        y++
-        break
-      case '<':
-        x--
-        break
-      case '>':
-        x++
-        break
-    }
-    const n = map[y * width + x]
-    switch (n) {
-      case '-':
-      case '|':
-        break
-      case '+':
-        switch (cart.turn) { // left, straight, right
-          case 0:
-            dir = turnLeft(dir)
-            break
-          case 1:
-            // keep straight
-            break
-          case 2:
-            dir = turnRight(dir)
-            break
-        }
-        turn = (turn + 1) % 3
-        break
-      case '\\':
-        switch (dir) {
-          case '^':
-            dir = '<'
-            break
-          case 'v':
-            dir = '>'
-            break
-          case '>':
-            dir = 'v'
-            break
-          case '<':
-            dir = '^'
-            break
-        }
-        break
-      case '/':
-        switch (dir) {
-          case '^':
-            dir = '>'
-            break
-          case 'v':
-            dir = '<'
-            break
-          case '>':
-            dir = '^'
-            break
-          case '<':
-            dir = 'v'
-            break
-        }
-        break
-      default:
-        throw Error('Off track!')
-    }
-    return { dir, x, y, turn }
-  }).sort(({ y: y1 }, { y: y2 }) => y1 - y2)
-
-  if (removeCrashingCarts) {
-    const notCrashed = movedCarts.filter(cart => movedCarts.find(cartn => cart !== cartn && cart.x === cartn.x && cart.y === cartn.y) === undefined)
-    if (notCrashed.length === 1) {
-      throw new LastCartError(`Last cart at ${notCrashed[0].x},${notCrashed[0].y}`, notCrashed[0].x, notCrashed[0].y)
-    }
-    return notCrashed
+const moveCart = ({ map, width }, cart) => {
+  let { dir, x, y, turn } = cart
+  switch (dir) {
+    case '^':
+      y--
+      break
+    case 'v':
+      y++
+      break
+    case '<':
+      x--
+      break
+    case '>':
+      x++
+      break
   }
-  const crashed = movedCarts.filter(cart => movedCarts.find(cartn => cart !== cartn && cart.x === cartn.x && cart.y === cartn.y))
-  if (crashed.length) throw new Crash(`Crash at ${crashed[0].x},${crashed[0].y}`, crashed[0].x, crashed[0].y)
-  return movedCarts
+  const n = map[y * width + x]
+  switch (n) {
+    case '-':
+    case '|':
+      break
+    case '+':
+      switch (cart.turn) { // left, straight, right
+        case 0:
+          dir = turnLeft(dir)
+          break
+        case 1:
+          // keep straight
+          break
+        case 2:
+          dir = turnRight(dir)
+          break
+      }
+      turn = (turn + 1) % 3
+      break
+    case '\\':
+      switch (dir) {
+        case '^':
+          dir = '<'
+          break
+        case 'v':
+          dir = '>'
+          break
+        case '>':
+          dir = 'v'
+          break
+        case '<':
+          dir = '^'
+          break
+      }
+      break
+    case '/':
+      switch (dir) {
+        case '^':
+          dir = '>'
+          break
+        case 'v':
+          dir = '<'
+          break
+        case '>':
+          dir = '^'
+          break
+        case '<':
+          dir = 'v'
+          break
+      }
+      break
+    default:
+      throw Error('Off track!')
+  }
+  return { dir, x, y, turn }
+}
+
+const tick = ({ map, width }, carts, removeCrashingCarts = false) => {
+  let movedCarts = []
+  let prevCart
+  for (let i = 0; i < carts.length; i++) {
+    const movedCart = moveCart({ map, width }, carts[i])
+    if (prevCart) {
+      if (prevCart.x === movedCart.x && prevCart.y === movedCart.y) {
+        if (removeCrashingCarts) {
+          movedCarts = movedCarts.splice(movedCarts.indexOf(prevCart), 1)
+        } else {
+          throw new Crash(`Crash at ${movedCart.x},${movedCart.y}`, movedCart.x, movedCart.y)
+        }
+      } else {
+        movedCarts.push(movedCart)
+      }
+    } else {
+      movedCarts.push(movedCart)
+    }
+    prevCart = movedCart
+  }
+  return movedCarts.sort(({ y: y1 }, { y: y2 }) => y1 - y2)
 }
 
 const turnLeft = dir => {
