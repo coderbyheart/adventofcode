@@ -2,9 +2,9 @@
 
 /* global describe, it, expect  */
 
-const {parseLevel, tick, renderMap, renderMapAndCarts} = require('./day13')
+const { parseLevel, tick, renderMap, renderMapAndCarts } = require('./day13')
 
-const {readFileSync} = require('fs')
+const { readFileSync } = require('fs')
 const input = readFileSync('./day13.txt', 'utf-8')
 const inputAsMap = readFileSync('./day13.map.txt', 'utf-8')
 
@@ -117,7 +117,7 @@ const states = [
 
 describe('Mine Cart Madness', () => {
   it('should parse the level', () => {
-    const {carts, map} = parseLevel(states[0])
+    const { carts, map } = parseLevel(states[0])
     expect(renderMap(map)).toEqual(
       '/---\\\n' +
       '|   |  /----\\\n' +
@@ -142,7 +142,7 @@ describe('Mine Cart Madness', () => {
     ])
   })
   it('should move the carts', () => {
-    const {map, carts} = parseLevel(states[0])
+    const { map, carts } = parseLevel(states[0])
     const mapTick = tick.bind(undefined, map)
     expect(mapTick(carts)).toEqual([
       {
@@ -172,7 +172,7 @@ describe('Mine Cart Madness', () => {
         turn: 1
       }
     ])
-    let {carts: tickedCarts} = parseLevel(states[0])
+    let { carts: tickedCarts } = parseLevel(states[0])
     for (let i = 0; i < 13; i++) {
       tickedCarts = mapTick(tickedCarts)
     }
@@ -200,7 +200,7 @@ describe('Mine Cart Madness', () => {
   })
 
   it('should solve the puzzle', () => {
-    let {map, carts} = parseLevel(input)
+    let { map, carts } = parseLevel(input)
     expect(renderMap(map)).toEqual(inputAsMap)
     expect(renderMapAndCarts(map, carts)).toEqual(input)
     try {
@@ -209,9 +209,9 @@ describe('Mine Cart Madness', () => {
         renderMapAndCarts(map, carts)
       } while (true)
     } catch (err) {
-      expect(err.message).toEqual('Crash at 57,112')
-      expect(err.x).toEqual(57)
-      expect(err.y).toEqual(112)
+      expect(err.message).toEqual('Crash at 100,21')
+      expect(err.x).toEqual(100)
+      expect(err.y).toEqual(21)
     }
   })
 })
