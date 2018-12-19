@@ -1,6 +1,6 @@
 'use strict'
 
-const {readFileSync} = require('fs')
+const { readFileSync } = require('fs')
 
 /* global describe, it, expect, safeRegion  */
 
@@ -11,13 +11,13 @@ const parseStep = s => {
 
 const makeList = steps => steps.reduce((list, step) => {
   const [a, b] = parseStep(step)
-  const nodeA = list.find(({step}) => step === a)
-  const nodeB = list.find(({step}) => step === b)
+  const nodeA = list.find(({ step }) => step === a)
+  const nodeB = list.find(({ step }) => step === b)
   if (!nodeA) {
-    list.push({step: a, depends: []})
+    list.push({ step: a, depends: [] })
   }
   if (!nodeB) {
-    list.push({step: b, depends: [a]})
+    list.push({ step: b, depends: [a] })
   } else {
     nodeB.depends.push(a)
   }
@@ -30,14 +30,14 @@ const runList = (list, steps = '') => {
   }
   let nextSteps
   if (!steps.length) {
-    nextSteps = list.filter(({depends}) => depends.length === 0)
+    nextSteps = list.filter(({ depends }) => depends.length === 0)
   } else {
-    nextSteps = list.filter(({depends}) => depends.reduce((inSteps, dependsOn) => {
+    nextSteps = list.filter(({ depends }) => depends.reduce((inSteps, dependsOn) => {
       if (inSteps === false) return inSteps
       return steps.includes(dependsOn)
     }, true))
   }
-  nextSteps.sort(({step: s1}, {step: s2}) => s1 > s2 ? 1 : -1)
+  nextSteps.sort(({ step: s1 }, { step: s2 }) => s1 > s2 ? 1 : -1)
   const step = nextSteps[0]
   list.splice(list.indexOf(step), 1)
   return runList(list, `${steps}${step.step}`)

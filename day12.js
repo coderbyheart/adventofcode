@@ -2,7 +2,7 @@
 
 const subsus = (pot0, initialState, notes) => {
   const startState = `.....${initialState}.....`
-  const pots = notes.reduce((newState, {pattern, result}) => {
+  const pots = notes.reduce((newState, { pattern, result }) => {
     let idx = -1
     do {
       idx = startState.indexOf(pattern, idx + 1)
@@ -21,7 +21,7 @@ const subsus = (pot0, initialState, notes) => {
   }
 }
 
-const sumGen = ({pot0, pots}) => pots.split('').reduce((sum, pot, index) => sum + (pot === '#' ? index + pot0 : 0), 0)
+const sumGen = ({ pot0, pots }) => pots.split('').reduce((sum, pot, index) => sum + (pot === '#' ? index + pot0 : 0), 0)
 
 module.exports = {
   subsus,

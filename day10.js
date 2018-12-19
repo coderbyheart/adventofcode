@@ -10,7 +10,7 @@ const parsePoints = points => points.map(
   }
 )
 
-const movePoints = points => points.map(({x, y, vx, vy}) => ({
+const movePoints = points => points.map(({ x, y, vx, vy }) => ({
   x: x + vx,
   y: y + vy,
   vx,
@@ -19,19 +19,19 @@ const movePoints = points => points.map(({x, y, vx, vy}) => ({
 
 const drawMap = (points, scale = 1) => {
   const [minX, minY, maxX, maxY] = [
-    points.reduce((min, {x}) => {
+    points.reduce((min, { x }) => {
       if (x < min) return x
       return min
     }, Number.MAX_SAFE_INTEGER),
-    points.reduce((min, {y}) => {
+    points.reduce((min, { y }) => {
       if (y < min) return y
       return min
     }, Number.MAX_SAFE_INTEGER),
-    points.reduce((max, {x}) => {
+    points.reduce((max, { x }) => {
       if (x > max) return x
       return max
     }, 0),
-    points.reduce((max, {y}) => {
+    points.reduce((max, { y }) => {
       if (y > max) return y
       return max
     }, 0)
@@ -44,7 +44,7 @@ const drawMap = (points, scale = 1) => {
   for (let y = 0; y < height; y++) {
     map[y] = '.'.repeat(width)
   }
-  points.forEach(({x, y}) => {
+  points.forEach(({ x, y }) => {
     const mapY = Math.floor((y + offsetY) * scale)
     const mapX = Math.floor((x + offsetX) * scale)
     map[mapY] = map[mapY].substr(0, mapX) + '#' + map[mapY].substr(mapX + 1)

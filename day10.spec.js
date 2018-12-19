@@ -2,8 +2,8 @@
 
 /* global describe, it, expect, safeRegion  */
 
-const {parsePoints, movePoints, drawMap} = require('./day10')
-const {readFileSync} = require('fs')
+const { parsePoints, movePoints, drawMap } = require('./day10')
+const { readFileSync } = require('fs')
 const input = readFileSync('./day10.txt', 'utf-8')
 const solution = readFileSync('./day10.solution.txt', 'utf-8')
 
@@ -12,30 +12,30 @@ describe('stars alignment', () => {
     expect(parsePoints([
       'position=< 3, 9> velocity=< 1, -2>'
     ])).toEqual([
-      {x: 3, y: 9, vx: 1, vy: -2}
+      { x: 3, y: 9, vx: 1, vy: -2 }
     ])
   })
   it('should move the points', () => {
     expect(movePoints(movePoints(movePoints(parsePoints([
       'position=< 3, 9> velocity=< 1, -2>'
     ]))))).toEqual([
-      {x: 6, y: 3, vx: 1, vy: -2}
+      { x: 6, y: 3, vx: 1, vy: -2 }
     ])
   })
   it('should draw the map', () => {
     expect(drawMap([
-      {x: 0, y: 0}
+      { x: 0, y: 0 }
     ]).join('\n')).toEqual(
       '#'
     )
     expect(drawMap([
-      {x: 1, y: 1}
+      { x: 1, y: 1 }
     ]).join('\n')).toEqual(
       '#'
     )
     expect(drawMap([
-      {x: 3, y: 2, vx: 1, vy: -2},
-      {x: 6, y: 3, vx: 1, vy: -2}
+      { x: 3, y: 2, vx: 1, vy: -2 },
+      { x: 6, y: 3, vx: 1, vy: -2 }
     ]).join('\n')).toEqual(
       '#...\n' +
       '...#'

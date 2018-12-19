@@ -2,7 +2,7 @@
 
 /* global describe, it, expect  */
 
-const {subsus, sumGen} = require('./day12')
+const { subsus, sumGen } = require('./day12')
 
 describe('Subterranean Sustainability', () => {
   it('should solve the example', () => {
@@ -75,7 +75,7 @@ describe('Subterranean Sustainability', () => {
       '#.##. => #',
       '..### => .'
     ].map(n => n.match(/(?<pattern>[.#]{5}) => (?<result>[.#])/).groups)
-    let res = {pot0: 0, pots: initialState}
+    let res = { pot0: 0, pots: initialState }
     for (let i = 0; i < 20; i++) {
       res = subsus(res.pot0, res.pots, notes)
     }

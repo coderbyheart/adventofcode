@@ -1,4 +1,4 @@
-const {makeAreas, countAreas} = require('./day6')
+const { makeAreas, countAreas } = require('./day6')
 
 const fs = require('fs')
 const PNG = require('pngjs').PNG
@@ -8,7 +8,7 @@ const input = require('./day6.json');
   const areas = makeAreas(input)
   const notInfiniteAreas = countAreas(input)
 
-  const newfile = new PNG({width: areas[0].length, height: areas.length})
+  const newfile = new PNG({ width: areas[0].length, height: areas.length })
   const colors = {}
 
   for (let y = 0; y < newfile.height; y++) {
@@ -22,7 +22,7 @@ const input = require('./day6.json');
           Math.floor(Math.random() * 255),
           Math.floor(Math.random() * 255)
         ] : [
-          255,255,255
+          255, 255, 255
         ]
       }
 

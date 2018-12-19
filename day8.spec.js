@@ -1,10 +1,10 @@
 'use strict'
 
-const {readFileSync} = require('fs')
+const { readFileSync } = require('fs')
 
 /* global describe, it, expect, safeRegion  */
 
-const input = readFileSync('./day8.txt', 'utf-8');
+const input = readFileSync('./day8.txt', 'utf-8')
 
 const parseTree = (sequence, parent, tree = []) => {
   const node = {
@@ -78,7 +78,6 @@ describe('tree parser', () => {
     const tree = parseTree('2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2'.split(' ').map(n => +n))
     expect(tree).toHaveLength(4)
   })
-
 })
 describe('metadataSum', () => {
   it('should sum the example sequence', () => {

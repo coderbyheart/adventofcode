@@ -9,7 +9,7 @@ class Circle {
 
   placeMarble () {
     if (this.currentMarble === undefined) {
-      const marble = {n: 0}
+      const marble = { n: 0 }
       marble.next = marble
       marble.prev = marble
       this.currentMarble = marble

@@ -12,7 +12,6 @@ const {
 
 const input = require('./day6.json')
 
-
 describe('Manhattan Distance', () => {
   it('should calculate the manhatten distance', () => {
     expect(distance([0, 0], [0, 0])).toEqual(0)

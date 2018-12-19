@@ -33,7 +33,7 @@ const calculateGridPower = (x, y, serial, gridSize) => {
 
 const fullestCellWithGrid = (serial, gridSize = 3) => {
   const left = Math.floor(gridSize / 2)
-  const maxPower = {power: 0, x: left, y: 300 - left}
+  const maxPower = { power: 0, x: left, y: 300 - left }
   for (let x = left + 1; x <= 300 - left; x++) {
     for (let y = left + 1; y <= 300 - left; y++) {
       const power = calculateGridPower(x, y, serial, gridSize)
@@ -60,7 +60,7 @@ const fullestCell = serial => {
     cell = fullestCellWithGrid(serial, ++s)
     cells.push(cell)
   } while (cell.power > 0 && s <= 300)
-  return cells.sort(({power: p1}, {power: p2}) => p2 - p1)[0]
+  return cells.sort(({ power: p1 }, { power: p2 }) => p2 - p1)[0]
 }
 
 module.exports = {
