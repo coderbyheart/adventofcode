@@ -6,39 +6,39 @@ const { readFileSync } = require('fs')
 const input = readFileSync('./day16.txt', 'utf-8')
 
 const addr = (A, B, C, reg) => {
-  reg[C] = reg[A] + reg[B]
+  reg[C] = (reg[A] || 0) + (reg[B] || 0)
   return reg
 }
 const addi = (A, B, C, reg) => {
-  reg[C] = reg[A] + B
+  reg[C] = (reg[A] || 0) + B
   return reg
 }
 const mulr = (A, B, C, reg) => {
-  reg[C] = reg[A] * reg[B]
+  reg[C] = (reg[A] || 0) * (reg[B] || 0)
   return reg
 }
 const muli = (A, B, C, reg) => {
-  reg[C] = reg[A] * B
+  reg[C] = (reg[A] || 0) * B
   return reg
 }
 const banr = (A, B, C, reg) => {
-  reg[C] = reg[A] & reg[B]
+  reg[C] = (reg[A] || 0) & (reg[B] || 0)
   return reg
 }
 const bani = (A, B, C, reg) => {
-  reg[C] = reg[A] & B
+  reg[C] = (reg[A] || 0) & B
   return reg
 }
 const borr = (A, B, C, reg) => {
-  reg[C] = reg[A] | reg[B]
+  reg[C] = (reg[A] || 0) | (reg[B] || 0)
   return reg
 }
 const bori = (A, B, C, reg) => {
-  reg[C] = reg[A] | B
+  reg[C] = (reg[A] || 0) | B
   return reg
 }
 const setr = (A, B, C, reg) => {
-  reg[C] = reg[A]
+  reg[C] = (reg[A] || 0)
   return reg
 }
 const seti = (A, B, C, reg) => {
@@ -46,27 +46,27 @@ const seti = (A, B, C, reg) => {
   return reg
 }
 const gtir = (A, B, C, reg) => {
-  reg[C] = A > reg[B] ? 1 : 0
+  reg[C] = A > (reg[B] || 0) ? 1 : 0
   return reg
 }
 const gtri = (A, B, C, reg) => {
-  reg[C] = reg[A] > B ? 1 : 0
+  reg[C] = (reg[A] || 0) > B ? 1 : 0
   return reg
 }
 const gtrr = (A, B, C, reg) => {
-  reg[C] = reg[A] > reg[B] ? 1 : 0
+  reg[C] = (reg[A] || 0) > (reg[B] || 0) ? 1 : 0
   return reg
 }
 const eqir = (A, B, C, reg) => {
-  reg[C] = A === reg[B] ? 1 : 0
+  reg[C] = A === (reg[B] || 0) ? 1 : 0
   return reg
 }
 const eqri = (A, B, C, reg) => {
-  reg[C] = reg[A] === B ? 1 : 0
+  reg[C] = (reg[A] || 0) === B ? 1 : 0
   return reg
 }
 const eqrr = (A, B, C, reg) => {
-  reg[C] = reg[A] === reg[B] ? 1 : 0
+  reg[C] = (reg[A] || 0) === (reg[B] || 0) ? 1 : 0
   return reg
 }
 
@@ -223,12 +223,91 @@ describe('findMatchingOpcodes', () => {
   })
 })
 
+const findOpcodeNumbers = input => {
+  // Count how often they are matched
+  const opcodeMatches = input
+    .split('\n\n')
+    .filter(s => /^Before:/.test(s))
+    .map(s => {
+      const [before, opWithInput, after] = s.split('\n')
+      const op = JSON.parse(`[${opWithInput.replace(/ /g, ',')}]`)
+      const [opNumber, ...values] = op
+      return [
+        opNumber,
+        findMatchingOpcodes(
+          JSON.parse(before.replace(/Before: /, '')),
+          values,
+          JSON.parse(after.replace(/After: /, ''))
+        )
+      ]
+    })
+  const opStats = opcodeMatches
+    .reduce((opStats, [opNumber, matches]) => {
+      if (!opStats[opNumber]) {
+        opStats[opNumber] = {}
+      }
+      matches.forEach(match => {
+        if (!opStats[opNumber][match]) {
+          opStats[opNumber][match] = 1
+        } else {
+          opStats[opNumber][match]++
+        }
+      })
+      return opStats
+    }, {})
+  return flattenOpStats(opStats)
+}
+
+// Figure out which number is which op by exclusion
+const flattenOpStats = (opStats, opNumbers = {}) => {
+  // we are done if all are of length 0
+  if (Object.keys(opStats).filter(key => Object.keys(opStats[key]).length === 0).length === Object.keys(opStats).length) {
+    return opNumbers
+  }
+  // Find the opStats which only have one candidate left
+  const onlyOneMatch = Object.keys(opStats)
+    .filter(key => Object.keys(opStats[key]).length === 1)
+    .reduce((opNumbers, opCode) => {
+      opNumbers[opCode] = Object.keys(opStats[opCode])[0]
+      return opNumbers
+    }, {})
+  // remove the known ops from the opStats
+  Object.keys(opStats).forEach(key => {
+    Object.keys(onlyOneMatch).forEach(knownOp => {
+      delete opStats[key][onlyOneMatch[knownOp]]
+    })
+  })
+  return flattenOpStats(opStats, {
+    ...opNumbers,
+    ...onlyOneMatch
+  })
+}
+
+describe('findOpcodeNumbers', () => {
+  it('should find the ops for the numbers', () => {
+    expect(findOpcodeNumbers(input.split('\n\n\n')[0])).toEqual({
+      '0': 'muli',
+      '1': 'borr',
+      '2': 'gtri',
+      '3': 'eqri',
+      '4': 'gtrr',
+      '5': 'eqir',
+      '6': 'addi',
+      '7': 'setr',
+      '8': 'mulr',
+      '9': 'addr',
+      '10': 'bori',
+      '11': 'bani',
+      '12': 'seti',
+      '13': 'eqrr',
+      '14': 'banr',
+      '15': 'gtir'
+    })
+  })
+})
+
 describe('Chronal Classification', () => {
   it('should solve the puzzle', () => {
-    expect(input
-      .split('\n\n')
-      .filter(s => /^Before:/.test(s))
-    ).toHaveLength(807)
     expect(input
       .split('\n\n')
       .filter(s => /^Before:/.test(s))
@@ -242,5 +321,23 @@ describe('Chronal Classification', () => {
           JSON.parse(after.replace(/After: /, ''))
         ).length >= 3
       })).toHaveLength(563)
+  })
+  it('should match the opcodes', () => {
+    // FIXME: Implement exclusion
+
+    const [samples, program] = input.split('\n\n\n')
+
+    const numberedOps = findOpcodeNumbers(samples)
+
+    const register = [0]
+    program
+      .split('\n')
+      .filter(s => s.length)
+      .forEach(opWithInput => {
+        const op = JSON.parse(`[${opWithInput.replace(/ /g, ',')}]`)
+        const [opNumber, ...values] = op
+        opcodes[numberedOps[opNumber]](...values, register)
+      })
+    expect(register[0]).toEqual(629)
   })
 })
