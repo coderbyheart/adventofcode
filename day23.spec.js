@@ -2,7 +2,7 @@
 
 /* global describe, it, expect  */
 
-const { readFileSync } = require('fs')
+const {readFileSync} = require('fs')
 const input = readFileSync('./day23.txt', 'utf-8')
 
 const distance = ([x1, y1, z1], [x2, y2, z2]) => Math.abs(x1 - x2) + Math.abs(y1 - y2) + Math.abs(z1 - z2)
@@ -18,16 +18,18 @@ const examples = '' +
   'pos=<1,1,2>, r=1\n' +
   'pos=<1,3,1>, r=1'
 
+const parseInput = input => input
+  .split('\n')
+  .map(b => b.match(/pos=<(?<x>-?[0-9]+),(?<y>-?[0-9]+),(?<z>-?[0-9]+)>, r=(?<radius>-?[0-9]+)/).groups)
+  .map(({x, y, z, radius}) => [
+    parseInt(x, 10),
+    parseInt(y, 10),
+    parseInt(z, 10),
+    parseInt(radius, 10)
+  ])
+
 const numberOfNanobotsInRange = input => {
-  const bots = input
-    .split('\n')
-    .map(b => b.match(/pos=<(?<x>-?[0-9]+),(?<y>-?[0-9]+),(?<z>-?[0-9]+)>, r=(?<radius>-?[0-9]+)/).groups)
-    .map(({ x, y, z, radius }) => [
-      parseInt(x, 10),
-      parseInt(y, 10),
-      parseInt(z, 10),
-      parseInt(radius, 10)
-    ])
+  const bots = parseInput(input)
   const network = bots
     .map(bot => ({
       bot,
