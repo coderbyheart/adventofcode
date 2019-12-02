@@ -1,6 +1,8 @@
 import { computeSequence } from "./intcode"
 import { fileToArray } from "./utils/fileToArray"
 
+const sequence = () => fileToArray('day2.input.txt', s => s.split(',').map(s => parseInt(s, 10)))[0]
+
 describe('Intcode program', () => {
     test('Opcode 1 adds together numbers', () => {
         expect(computeSequence([1, 9, 10, 3, 99, 3, 11, 0, 99, 30, 40, 50])).toEqual([1, 9, 10, 70, 99, 3, 11, 0, 99, 30, 40, 50])
@@ -35,15 +37,13 @@ describe('Intcode program', () => {
         expect(computeSequence(sequence)).toEqual(expected)
     })
     test('compute solution 1', async () => {
-        const sequence = (await fileToArray('day2.input.txt', s => s.split(',').map(s => parseInt(s, 10))))[0]
-        expect(computeSequence(sequence)[0]).toEqual(4484226)
+        expect(computeSequence(sequence())[0]).toEqual(4484226)
     })
     test('compute solution 2', async () => {
-        const sequence = (await fileToArray('day2.input.txt', s => s.split(',').map(s => parseInt(s, 10))))[0]
         expect.assertions(1)
         for (let noun = 0; noun < 100; noun++) {
             for (let verb = 0; verb < 100; verb++) {
-                const s = [...sequence]
+                const s = [...sequence()]
                 s[1] = noun
                 s[2] = verb
                 if (computeSequence(s)[0] === 19690720) {

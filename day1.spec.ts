@@ -1,6 +1,8 @@
 import { moduleLaunchFuel, modulesLaunchFuel, moduleLaunchFuelWithExtraFuelForFuel, modulesLaunchFuelWithExtraFuelForFuel } from "./moduleLaunchFuel"
 import { fileToArray } from "./utils/fileToArray"
 
+const modules = fileToArray<number>('day1.input.txt', s => parseInt(s, 10))
+
 describe('Fuel Counter-Upper needs to determined the amount of fuel required', () => {
     describe('module launch fuel', () => {
         test.each([
@@ -13,7 +15,6 @@ describe('Fuel Counter-Upper needs to determined the amount of fuel required', (
         })
     })
     it('should calculate the required fuel for all modules', async () => {
-        const modules = await fileToArray<number>('day1.input.txt', s => parseInt(s, 10))
         expect(modulesLaunchFuel(modules)).toEqual(3421505)
     })
     describe('fuel for fuel needs to be calculated', () => {
@@ -26,7 +27,6 @@ describe('Fuel Counter-Upper needs to determined the amount of fuel required', (
         })
     })
     it('should calculate the required fuel for all modules including the extra fuel', async () => {
-        const modules = await fileToArray<number>('day1.input.txt', s => parseInt(s, 10))
         expect(modulesLaunchFuelWithExtraFuelForFuel(modules)).toEqual(5129386)
     })
 })
