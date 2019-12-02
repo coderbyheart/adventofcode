@@ -38,4 +38,19 @@ describe('Intcode program', () => {
         const sequence = (await fileToArray('day2.input.txt', s => s.split(',').map(s => parseInt(s, 10))))[0]
         expect(computeSequence(sequence)[0]).toEqual(4484226)
     })
+    test('compute solution 2', async () => {
+        const sequence = (await fileToArray('day2.input.txt', s => s.split(',').map(s => parseInt(s, 10))))[0]
+        expect.assertions(1)
+        for (let noun = 0; noun < 100; noun++) {
+            for (let verb = 0; verb < 100; verb++) {
+                const s = [...sequence]
+                s[1] = noun
+                s[2] = verb
+                if (computeSequence(s)[0] === 19690720) {
+                    const solution = 100 * noun + verb
+                    expect(solution).toEqual(5696)
+                }
+            }
+        }
+    })
 })
