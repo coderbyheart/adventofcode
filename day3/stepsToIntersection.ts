@@ -14,5 +14,5 @@ export const stepsToIntersection = (wireDirections: string[][]): number => {
         // Sum up the distances of all wires to the intersection
         .map(steps => steps.reduce((sum, step) => sum + step, 0))
         .sort((a, b) => b - a)
-        .pop() || 0
+        .pop() as number
 }

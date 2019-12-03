@@ -3,7 +3,7 @@
   "version": "0.0.0-development",
   "description": "Advent of Code 2019: https://adventofcode.com/",
   "scripts": {
-    "test": "jest"
+    "test": "jest --coverage --verbose"
   },
   "repository": {
     "type": "git",
@@ -57,7 +57,14 @@
       "ts-jest": {
         "diagnostics": true
       }
+    },
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
     }
-  },
-  "dependencies": {}
+  }
 }
