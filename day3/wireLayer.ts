@@ -2,7 +2,8 @@ export const wireLayer = (directions: string[]): [number, number][] => {
     const wire: [number, number][] = [[0, 0]]
     let pos = [0, 0] as [number, number]
     directions.forEach(direction => {
-        const [dir, d] = direction.split('')
+        const dir = direction[0]
+        const d = direction.substr(1)
         const distance = parseInt(d, 10)
         let currentX = pos[0]
         let currentY = pos[1]

@@ -1,20 +1,26 @@
-export const wireCrossSectionFinder = (wires: [number, number][][]): [number, number][] => {
-    const wirePositionsCounter = {} as { [key: string]: { count: number, position: [number, number] } }
+import { wireLayer } from "./wireLayer"
 
-    wires.forEach(wire => wire.forEach(pos => {
+export const wireCrossSectionFinder = (wireDirections: string[][]): [number, number][] => {
+    const wirePositionsCounter = {} as { [key: string]: { wires: { [key: number]: boolean }, position: [number, number] } }
+
+    const wires = wireDirections.map(wireLayer)
+
+    wires.forEach((wire, id) => wire.forEach(pos => {
         if (pos[0] === 0 && pos[1] === 0) return
         const coord = `${pos[0]}x${pos[1]}`
         if (!wirePositionsCounter[coord]) {
             wirePositionsCounter[coord] = {
-                count: 1,
+                wires: {
+                    [id]: true
+                },
                 position: pos
             }
         } else {
-            wirePositionsCounter[coord].count++
+            wirePositionsCounter[coord].wires[id] = true
         }
     }))
 
     return Object.values(wirePositionsCounter)
-        .filter(({ count }) => count > 1)
+        .filter(({ wires }) => Object.keys(wires).length > 1)
         .map(({ position }) => position)
 }
