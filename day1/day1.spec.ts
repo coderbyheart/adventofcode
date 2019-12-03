@@ -1,7 +1,7 @@
-import { moduleLaunchFuel, modulesLaunchFuel, moduleLaunchFuelWithExtraFuelForFuel, modulesLaunchFuelWithExtraFuelForFuel } from "./moduleLaunchFuel"
-import { fileToArray } from "./utils/fileToArray"
+import { moduleLaunchFuel, modulesLaunchFuel, moduleLaunchFuelWithExtraFuelForFuel, modulesLaunchFuelWithExtraFuelForFuel } from "../day2/moduleLaunchFuel"
+import { fileToArray } from "../utils/fileToArray"
 
-const modules = fileToArray<number>('day1.input.txt', s => parseInt(s, 10))
+const modules = fileToArray<number>('day1/input.txt', s => parseInt(s, 10))
 
 describe('Fuel Counter-Upper needs to determined the amount of fuel required', () => {
     describe('module launch fuel', () => {
