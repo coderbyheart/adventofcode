@@ -1,4 +1,4 @@
-import { computeSequence } from "../day1/intcode"
+import { computeSequence } from "./intcode"
 import { fileToArray } from "../utils/fileToArray"
 
 const sequence = () => fileToArray('day2/input.txt', s => s.split(',').map(s => parseInt(s, 10)))[0]
