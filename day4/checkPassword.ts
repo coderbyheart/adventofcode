@@ -18,6 +18,6 @@ const largerGroupMatch = /0{2,}|1{2,}|2{2,}|3{2,}|4{2,}|5{2,}|6{2,}|7{2,}|8{2,}|
 
 export const checkPasswordWithLargerGroup = (password: number) => {
     if (!checkPassword(password)) return false
-    const groups = password.toString().match(largerGroupMatch)
-    return groups?.filter(group => group.length == 2).length ? true : false
+    const groups = password.toString().match(largerGroupMatch) as string[]
+    return groups.filter(group => group.length == 2).length ? true : false
 }
