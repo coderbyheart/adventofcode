@@ -13,3 +13,11 @@ const checkIncreasingDigits = (password: number) => password.toString().split(''
     if (digits[pos - 1] > digit) return false
     return valid
 }, true)
+
+const largerGroupMatch = /0{2,}|1{2,}|2{2,}|3{2,}|4{2,}|5{2,}|6{2,}|7{2,}|8{2,}|9{2,}/g
+
+export const checkPasswordWithLargerGroup = (password: number) => {
+    if (!checkPassword(password)) return false
+    const groups = password.toString().match(largerGroupMatch)
+    return groups?.filter(group => group.length == 2).length ? true : false
+}
