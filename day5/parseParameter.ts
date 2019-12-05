@@ -10,7 +10,11 @@ export const parseParameter = (parameter: number) => {
         // the first parameter's mode is in the hundreds digit, 
         // the second parameter's mode is in the thousands digit, 
         // the third parameter's mode is in the ten-thousands digit, and so on. 
-        modes: s.substr(0, s.length - 2).split('').map(s => parseInt(s, 10)).reverse()
+        modes: s.substr(0, s.length - 2).split('').map(s => {
+            const m = parseInt(s, 10)
+            if (m !== 0 && m !== 1) { throw new Error(`Invalid parameter mode: ${s}`) }
+            return m
+        }).reverse()
         // Any missing modes are 0. -> these are blank in the modes array
     }
 }

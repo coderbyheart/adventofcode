@@ -10,4 +10,7 @@ describe('Parameter mode parser', () => {
             ]
         })
     })
+    it('should not except invalid modes', () => {
+        expect(() => parseParameter(2002)).toThrow(/Invalid parameter mode: 2/)
+    })
 })
