@@ -1,7 +1,7 @@
 import { ParameterMode } from "./parseParameter"
 
 const getParameter = (sequence: number[], pos: number, modes: ParameterMode[]) =>
-    (param: number) => modes[pos + param] === ParameterMode.IMMEDIATE ? sequence[pos + param + 1] : sequence[sequence[pos + param + 1]]
+    (param: number) => modes[param] === ParameterMode.IMMEDIATE ? sequence[pos + param + 1] : sequence[sequence[pos + param + 1]]
 
 const add = (sequence: number[], pos: number, modes: ParameterMode[]): number => {
     const p = getParameter(sequence, pos, modes)

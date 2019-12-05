@@ -5,7 +5,7 @@ describe('Intcode program with parameter mode', () => {
     test('Opcode 1 adds together numbers', () => {
         expect(computeSequence({ sequence: [1, 9, 10, 3, 99, 3, 11, 0, 99, 30, 40, 50] })).toEqual([1, 9, 10, 70, 99, 3, 11, 0, 99, 30, 40, 50])
     })
-    test.only('Opcode 2 multiplies together numbers', () => {
+    test('Opcode 2 multiplies together numbers', () => {
         expect(computeSequence({ sequence: [1, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50], pos: 4 })).toEqual([3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50])
     })
     test('Opcode 3 takes a single integer as input and saves it to the address given by its only parameter', () => {
