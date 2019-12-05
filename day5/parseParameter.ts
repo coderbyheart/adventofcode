@@ -1,5 +1,10 @@
 
-export const parseParameter = (parameter: number) => {
+export enum ParameterMode {
+    POSITION = 0,
+    IMMEDIATE = 1
+}
+
+export const parseParameter = (parameter: number): { op: number, modes: ParameterMode[] } => {
     const s = parameter.toString()
 
     return {

@@ -1,16 +1,23 @@
-const add = (sequence: number[], pos: number): number => {
-    const noun = sequence[pos + 1]
-    const verb = sequence[pos + 2]
+import { ParameterMode } from "./parseParameter"
+
+const getParameter = (sequence: number[], pos: number, modes: ParameterMode[]) =>
+    (param: number) => modes[pos + param] === ParameterMode.IMMEDIATE ? sequence[pos + param + 1] : sequence[sequence[pos + param + 1]]
+
+const add = (sequence: number[], pos: number, modes: ParameterMode[]): number => {
+    const p = getParameter(sequence, pos, modes)
+    const v1 = p(0)
+    const v2 = p(1)
     const out = sequence[pos + 3]
-    sequence[out] = sequence[noun] + sequence[verb]
+    sequence[out] = v1 + v2
     return 4
 }
 
-const mul = (sequence: number[], pos: number): number => {
-    const noun = sequence[pos + 1]
-    const verb = sequence[pos + 2]
+const mul = (sequence: number[], pos: number, modes: ParameterMode[]): number => {
+    const p = getParameter(sequence, pos, modes)
+    const v1 = p(0)
+    const v2 = p(1)
     const out = sequence[pos + 3]
-    sequence[out] = sequence[noun] * sequence[verb]
+    sequence[out] = v1 * v2
     return 4
 }
 
@@ -20,31 +27,42 @@ const store = (sequence: number[], pos: number, input: number): number => {
     return 2
 }
 
-const retrieve = (sequence: number[], pos: number): number => {
-    const k = sequence[pos + 1]
-    return sequence[k]
+const retrieve = (sequence: number[], pos: number, modes: ParameterMode[]): number => {
+    return getParameter(sequence, pos, modes)(0)
 }
 
 const instructions = {
     1: add,
-    2: mul,
-    3: store
+    2: mul
 }
 
-export const computeSequence = (args: { sequence: number[], pos?: number, input?: number, output?: (out: number) => void }): number[] => {
-    const { sequence, input, output } = args
+const defaultOpcodeParser = (op: number) => ({ op, modes: [] })
+
+export const computeSequence = (args: {
+    sequence: number[],
+    pos?: number,
+    input?: number,
+    output?: (out: number) => void,
+    opcodeParser?: (op: number) => { op: number, modes: ParameterMode[] }
+}): number[] => {
+    const { sequence, input, output, opcodeParser } = args
     const pos = args.pos || 0
-    const op = sequence[pos]
+    const { op, modes } = (opcodeParser || defaultOpcodeParser)(sequence[pos])
+
     switch (op) {
         case 1:
         case 2:
+            return computeSequence({
+                ...args,
+                pos: pos + instructions[op](sequence, pos, modes)
+            })
         case 3:
             return computeSequence({
                 ...args,
-                pos: pos + instructions[op](sequence, pos, input as number)
+                pos: pos + store(sequence, pos, input as number)
             })
         case 4:
-            const out = retrieve(sequence, pos)
+            const out = retrieve(sequence, pos, modes)
             if (output) output(out)
             return computeSequence({
                 ...args,
