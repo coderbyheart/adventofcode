@@ -68,4 +68,12 @@ describe('Intcode program', () => {
         }))
         expect(sequence).toEqual([1002, 4, 3, 4, 99, 99])
     })
+    test('negative values', () => {
+        const sequence = [1101, 100, -1, 4, 0]
+        expect(computeSequence({
+            sequence,
+            opcodeParser: parseParameter
+        }))
+        expect(sequence).toEqual([1101, 100, -1, 4, 99])
+    })
 })
