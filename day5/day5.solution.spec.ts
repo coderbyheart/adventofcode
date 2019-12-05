@@ -16,4 +16,3 @@ describe('Day 5: Part 1', () => {
         expect(outputs.pop()).toEqual(13210611)
     })
 })
-

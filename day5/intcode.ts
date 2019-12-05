@@ -31,9 +31,44 @@ const retrieve = (sequence: number[], pos: number, modes: ParameterMode[]): numb
     return getParameter(sequence, pos, modes)(0)
 }
 
+const jumpIf = (expected: boolean) => (sequence: number[], pos: number, modes: ParameterMode[]): number => {
+    const p = getParameter(sequence, pos, modes)
+    const v1 = p(0)
+    const v2 = p(1)
+    if (expected && v1 > 0) {
+        return v2
+    }
+    if (!expected && v1 === 0) {
+        return v2
+    }
+    return pos + 3
+}
+
+const lessThan = (sequence: number[], pos: number, modes: ParameterMode[]): number => {
+    const p = getParameter(sequence, pos, modes)
+    const v1 = p(0)
+    const v2 = p(1)
+    const out = sequence[pos + 3]
+    sequence[out] = v1 < v2 ? 1 : 0
+    return pos + 4
+}
+
+const equals = (sequence: number[], pos: number, modes: ParameterMode[]): number => {
+    const p = getParameter(sequence, pos, modes)
+    const v1 = p(0)
+    const v2 = p(1)
+    const out = sequence[pos + 3]
+    sequence[out] = v1 === v2 ? 1 : 0
+    return pos + 4
+}
+
 const instructions = {
     1: add,
-    2: mul
+    2: mul,
+    5: jumpIf(true),
+    6: jumpIf(false),
+    7: lessThan,
+    8: equals,
 }
 
 export const computeSequence = (args: {
@@ -49,6 +84,10 @@ export const computeSequence = (args: {
     switch (op) {
         case 1:
         case 2:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
             return computeSequence({
                 ...args,
                 pos: instructions[op](sequence, pos, modes)
