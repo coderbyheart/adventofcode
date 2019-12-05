@@ -21,6 +21,18 @@ describe('Intcode program', () => {
             }
         })
     })
+    test('[3,0,4,0,99] outputs whatever it gets as input', () => {
+        expect.assertions(2)
+        const sequence = [3, 0, 4, 0, 99]
+        computeSequence({
+            sequence,
+            input: 42,
+            output: out => {
+                expect(out).toEqual(42)
+            }
+        })
+        expect(sequence).toEqual([42, 0, 4, 0, 99])
+    })
     test('Opcode 99 halts', () => {
         expect(computeSequence({ sequence: [99] })).toEqual([99])
     })
