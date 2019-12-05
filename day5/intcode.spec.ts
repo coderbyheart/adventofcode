@@ -1,5 +1,4 @@
 import { computeSequence } from "./intcode"
-import { parseParameter } from "./parseParameter"
 
 describe('Intcode program with parameter mode', () => {
     test('Opcode 1 adds together numbers', () => {
@@ -38,7 +37,7 @@ describe('Intcode program with parameter mode', () => {
         expect(computeSequence({ sequence: [99] })).toEqual([99])
     })
     test('Unknown opcode should throw an error', () => {
-        expect(() => computeSequence({ sequence: [3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50] })).toThrow(/Unknown opcode 3500/)
+        expect(() => computeSequence({ sequence: [35, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50] })).toThrow(/Unknown opcode 35/)
     })
     test.each([
         [
@@ -64,7 +63,6 @@ describe('Intcode program with parameter mode', () => {
         const sequence = [1002, 4, 3, 4, 33, 99]
         expect(computeSequence({
             sequence,
-            opcodeParser: parseParameter
         }))
         expect(sequence).toEqual([1002, 4, 3, 4, 99, 99])
     })
@@ -72,7 +70,6 @@ describe('Intcode program with parameter mode', () => {
         const sequence = [1101, 100, -1, 4, 0]
         expect(computeSequence({
             sequence,
-            opcodeParser: parseParameter
         }))
         expect(sequence).toEqual([1101, 100, -1, 4, 99])
     })

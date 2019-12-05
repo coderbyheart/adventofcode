@@ -1,4 +1,4 @@
-import { ParameterMode } from "./parseParameter"
+import { ParameterMode, parseParameter } from "./parseParameter"
 
 const getParameter = (sequence: number[], pos: number, modes: ParameterMode[]) =>
     (param: number) => modes[param] === ParameterMode.IMMEDIATE ? sequence[pos + param + 1] : sequence[sequence[pos + param + 1]]
@@ -36,18 +36,15 @@ const instructions = {
     2: mul
 }
 
-const defaultOpcodeParser = (op: number) => ({ op, modes: [] })
-
 export const computeSequence = (args: {
     sequence: number[],
     pos?: number,
     input?: number,
     output?: (out: number) => void,
-    opcodeParser?: (op: number) => { op: number, modes: ParameterMode[] }
 }): number[] => {
-    const { sequence, input, output, opcodeParser } = args
+    const { sequence, input, output } = args
     const pos = args.pos || 0
-    const { op, modes } = (opcodeParser || defaultOpcodeParser)(sequence[pos])
+    const { op, modes } = parseParameter(sequence[pos])
 
     switch (op) {
         case 1:
