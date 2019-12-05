@@ -1,7 +1,7 @@
 import { computeSequence } from "./intcode"
 import { parseParameter } from "./parseParameter"
 
-describe('Intcode program', () => {
+describe('Intcode program with parameter mode', () => {
     test('Opcode 1 adds together numbers', () => {
         expect(computeSequence({ sequence: [1, 9, 10, 3, 99, 3, 11, 0, 99, 30, 40, 50] })).toEqual([1, 9, 10, 70, 99, 3, 11, 0, 99, 30, 40, 50])
     })
