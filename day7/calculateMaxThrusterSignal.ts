@@ -1,4 +1,4 @@
-import { calculateThrusterSignalForSequence } from './calculateThrusterSignalForSequence'
+import { calculateThrusterSignal } from './calculateThrusterSignal'
 
 const thrusters = [0, 1, 2, 3, 4]
 
@@ -19,10 +19,7 @@ const permutate = (arr: number[]): number[][] => {
 
 export const calculateMaxThrusterSignal = (program: number[]): number => {
 	return permutate(thrusters).reduce((maxThrusterSignal, phaseSettings) => {
-		const thrusterSignal = calculateThrusterSignalForSequence(
-			program,
-			phaseSettings,
-		)
+		const thrusterSignal = calculateThrusterSignal(program, phaseSettings)
 		if (thrusterSignal > maxThrusterSignal) return thrusterSignal
 		return maxThrusterSignal
 	}, 0)
