@@ -80,9 +80,9 @@ describe('Calculate the thruster signal for a given sequence', () => {
 		],
 	])(
 		'program %p with phase setting sequence %p should calculate max thruster signal %i',
-		(program, phaseSettingSequence, expected) => {
+		async (program, phaseSettingSequence, expected) => {
 			expect(
-				calculateThrusterSignal(
+				await calculateThrusterSignal(
 					program as number[],
 					phaseSettingSequence as number[],
 				),

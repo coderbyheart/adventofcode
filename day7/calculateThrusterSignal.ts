@@ -1,14 +1,14 @@
 import { compute, toInput } from '../day5/intcode'
 
-export const calculateThrusterSignal = (
+export const calculateThrusterSignal = async (
 	program: number[],
 	sequence: number[],
 	thruster = 0,
 	input = 0,
-): number => {
+): Promise<number> => {
 	if (thruster > 4) return input
 	let output = 0
-	compute({
+	await compute({
 		program,
 		input: toInput([sequence[thruster], input]),
 		output: out => {

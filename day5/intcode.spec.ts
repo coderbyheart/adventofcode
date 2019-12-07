@@ -1,39 +1,39 @@
 import { compute, toInput } from './intcode'
 
 describe('Intcode program with parameter mode', () => {
-	test('Opcode 1 adds together numbers', () => {
+	test('Opcode 1 adds together numbers', async () => {
 		expect(
-			compute({
+			await compute({
 				program: [1, 9, 10, 3, 99, 3, 11, 0, 99, 30, 40, 50],
 			}),
 		).toEqual([1, 9, 10, 70, 99, 3, 11, 0, 99, 30, 40, 50])
 	})
-	test('Opcode 2 multiplies together numbers', () => {
+	test('Opcode 2 multiplies together numbers', async () => {
 		expect(
-			compute({
+			await compute({
 				program: [1, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50],
 				pos: 4,
 			}),
 		).toEqual([3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50])
 	})
-	test('Opcode 3 takes a single integer as input and saves it to the address given by its only parameter', () => {
+	test('Opcode 3 takes a single integer as input and saves it to the address given by its only parameter', async () => {
 		const seq = [3, 50, 99]
-		expect(compute({ input: toInput([42]), program: seq }))
+		expect(await compute({ input: toInput([42]), program: seq }))
 		expect(seq[50]).toEqual(42)
 	})
-	test('Opcode 4 outputs the value of its only parameter.', () => {
+	test('Opcode 4 outputs the value of its only parameter.', async () => {
 		expect.assertions(1)
-		compute({
+		await compute({
 			program: [4, 3, 99, 42],
 			output: out => {
 				expect(out).toEqual(42)
 			},
 		})
 	})
-	test('[3,0,4,0,99] outputs whatever it gets as input', () => {
+	test('[3,0,4,0,99] outputs whatever it gets as input', async () => {
 		expect.assertions(2)
 		const program = [3, 0, 4, 0, 99]
-		compute({
+		await compute({
 			program,
 			input: toInput([42]),
 			output: out => {
@@ -42,15 +42,15 @@ describe('Intcode program with parameter mode', () => {
 		})
 		expect(program).toEqual([42, 0, 4, 0, 99])
 	})
-	test('Opcode 99 halts', () => {
-		expect(compute({ program: [99] })).toEqual([99])
+	test('Opcode 99 halts', async () => {
+		expect(await compute({ program: [99] })).toEqual([99])
 	})
 	test('Unknown opcode should throw an error', () => {
-		expect(() =>
+		expect(
 			compute({
 				program: [35, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50],
 			}),
-		).toThrow(/Unknown opcode 35/)
+		).rejects.toThrow(/Unknown opcode 35/)
 	})
 	test.each([
 		[
@@ -69,22 +69,22 @@ describe('Intcode program with parameter mode', () => {
 			[1, 1, 1, 4, 99, 5, 6, 0, 99],
 			[30, 1, 1, 4, 2, 5, 6, 0, 99],
 		],
-	])(`%p equals %p`, (program, expected) => {
-		expect(compute({ program })).toEqual(expected)
+	])(`%p equals %p`, async (program, expected) => {
+		expect(await compute({ program })).toEqual(expected)
 	})
-	test('Program with parameter modes', () => {
+	test('Program with parameter modes', async () => {
 		const program = [1002, 4, 3, 4, 33, 99]
 		expect(
-			compute({
+			await compute({
 				program,
 			}),
 		)
 		expect(program).toEqual([1002, 4, 3, 4, 99, 99])
 	})
-	test('negative values', () => {
+	test('negative values', async () => {
 		const program = [1101, 100, -1, 4, 0]
 		expect(
-			compute({
+			await compute({
 				program,
 			}),
 		)
@@ -264,16 +264,19 @@ describe('Intcode program with parameter mode', () => {
 				9,
 				1001,
 			],
-		])('%p with input %i should output %i', (program, input, expected) => {
-			let output
-			compute({
-				program: [...(program as number[])],
-				input: toInput([input] as number[]),
-				output: out => {
-					output = out
-				},
-			})
-			expect(output).toEqual(expected)
-		})
+		])(
+			'%p with input %i should output %i',
+			async (program, input, expected) => {
+				let output
+				await compute({
+					program: [...(program as number[])],
+					input: toInput([input] as number[]),
+					output: out => {
+						output = out
+					},
+				})
+				expect(output).toEqual(expected)
+			},
+		)
 	})
 })

@@ -17,9 +17,15 @@ const permutate = (arr: number[]): number[][] => {
 	return ret
 }
 
-export const calculateMaxThrusterSignal = (program: number[]): number => {
-	return permutate(thrusters).reduce((maxThrusterSignal, phaseSettings) => {
-		const thrusterSignal = calculateThrusterSignal(program, phaseSettings)
+export const calculateMaxThrusterSignal = async (
+	program: number[],
+): Promise<number> => {
+	const thrusterSignals = await Promise.all(
+		permutate(thrusters).map(async phaseSettings =>
+			calculateThrusterSignal(program, phaseSettings),
+		),
+	)
+	return thrusterSignals.reduce((maxThrusterSignal, thrusterSignal) => {
 		if (thrusterSignal > maxThrusterSignal) return thrusterSignal
 		return maxThrusterSignal
 	}, 0)

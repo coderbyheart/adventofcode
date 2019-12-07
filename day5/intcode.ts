@@ -1,6 +1,7 @@
 import { ParameterMode, parseParameter } from './parseParameter'
 
-export const toInput = (array: number[]) => () => array.shift()
+export const toInput = (array: number[]) => async () =>
+	Promise.resolve(array.shift())
 
 const getParameter = (
 	sequence: number[],
@@ -103,16 +104,13 @@ const instructions = {
 	8: equals,
 }
 
-export const compute = (args: {
+export const compute = async (args: {
 	program: number[]
 	pos?: number
-	input?: () => number | undefined
+	input?: () => Promise<number | undefined>
 	output?: (out: number) => void
-}): number[] => {
+}): Promise<number[]> => {
 	const { program: sequence, input, output } = args
-	console.log({
-		sequence,
-	})
 	const pos = args.pos || 0
 	const { op, modes } = parseParameter(sequence[pos])
 	let out: number
@@ -130,7 +128,7 @@ export const compute = (args: {
 				pos: instructions[op](sequence, pos, modes),
 			})
 		case 3:
-			inp = input?.() as number
+			inp = (await input?.()) as number
 			if (inp === undefined) {
 				throw new Error('Missing input')
 			}

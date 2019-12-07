@@ -6,9 +6,9 @@ const program = fileToArray('day5/input.txt', s =>
 )[0]
 
 describe('Day 5: Part 1', () => {
-	it('should calculate the solution', () => {
+	it('should calculate the solution', async () => {
 		const outputs = [] as number[]
-		compute({
+		await compute({
 			program: [...program],
 			input: toInput([1]),
 			output: out => {
@@ -20,9 +20,9 @@ describe('Day 5: Part 1', () => {
 })
 
 describe('Day 5: Part 2', () => {
-	it('should calculate the solution', () => {
+	it('should calculate the solution', async () => {
 		const outputs = [] as number[]
-		compute({
+		await compute({
 			program: [...program],
 			input: toInput([5]),
 			output: out => {

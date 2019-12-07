@@ -1,4 +1,4 @@
-import { compute, toInput } from '../day5/intcode'
+import { compute } from '../day5/intcode'
 
 type ThrusterPrograms = { [key: number]: number[] }
 const makePrograms = (program: number[]): ThrusterPrograms => ({
@@ -9,28 +9,51 @@ const makePrograms = (program: number[]): ThrusterPrograms => ({
 	4: [...program],
 })
 
-type ThrusterInputs = { [key: number]: number[] }
-const makeInputs = (sequence: number[]): ThrusterInputs => ({
-	0: [sequence[0], 0],
-	1: [sequence[1]],
-	2: [sequence[2]],
-	3: [sequence[3]],
-	4: [sequence[4]],
+const inputGenerator = (
+	inp: number[],
+	takers: ((value: number) => void)[] = [],
+) => ({
+	take: async () => {
+		const i = inp.shift()
+		if (i !== undefined) return Promise.resolve(i)
+		return new Promise<number>(resolve => {
+			takers.push(resolve)
+		})
+	},
+	push: (value: number) => {
+		inp.push(value)
+		takers.forEach(fn => fn(value))
+	},
+	inputs: inp,
 })
 
-const computeThruster = (
+type ThrusterInputs = {
+	[key: number]: {
+		take: () => Promise<number>
+		push: (value: number) => void
+		inputs: number[]
+	}
+}
+const makeInputs = (sequence: number[]): ThrusterInputs => ({
+	0: inputGenerator([sequence[0], 0]),
+	1: inputGenerator([sequence[1]]),
+	2: inputGenerator([sequence[2]]),
+	3: inputGenerator([sequence[3]]),
+	4: inputGenerator([sequence[4]]),
+})
+
+const computeThruster = async (
 	thruster: number,
 	programs: ThrusterPrograms,
 	inputs: ThrusterInputs,
 ) =>
 	compute({
 		program: programs[thruster],
-		input: toInput(inputs[thruster]),
+		input: inputs[thruster].take,
 		output: out => {
 			console.log(`Thruster ${thruster} outputs ${out}`)
 			const nextThruster = (thruster + 1) % 5
 			inputs[nextThruster].push(out)
-			computeThruster(nextThruster, programs, inputs)
 		},
 	})
 
@@ -41,5 +64,9 @@ export const calculateThrusterWithFeedbackLoop = (
 	inputs = makeInputs(sequence),
 ): number => {
 	computeThruster(0, programs, inputs)
+	computeThruster(1, programs, inputs)
+	computeThruster(2, programs, inputs)
+	computeThruster(3, programs, inputs)
+	computeThruster(4, programs, inputs)
 	return -1
 }
