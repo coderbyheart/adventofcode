@@ -9,31 +9,37 @@ const makePrograms = (program: number[]): ThrusterPrograms => ({
 	4: [...program],
 })
 
+type ThrusterInputs = { [key: number]: number[] }
+const makeInputs = (sequence: number[]): ThrusterInputs => ({
+	0: [sequence[0], 0],
+	1: [sequence[1]],
+	2: [sequence[2]],
+	3: [sequence[3]],
+	4: [sequence[4]],
+})
+
+const computeThruster = (
+	thruster: number,
+	programs: ThrusterPrograms,
+	inputs: ThrusterInputs,
+) =>
+	compute({
+		program: programs[thruster],
+		input: toInput(inputs[thruster]),
+		output: out => {
+			console.log(`Thruster ${thruster} outputs ${out}`)
+			const nextThruster = (thruster + 1) % 5
+			inputs[nextThruster].push(out)
+			computeThruster(nextThruster, programs, inputs)
+		},
+	})
+
 export const calculateThrusterWithFeedbackLoop = (
 	program: number[],
 	sequence: number[],
-	thruster = 0,
-	input = 0,
 	programs = makePrograms(program),
+	inputs = makeInputs(sequence),
 ): number => {
-	if (thruster > 4) return input
-	let output = 0
-	// Initiate programs
-	console.log({
-		thruster,
-	})
-	compute({
-		program: programs[thruster],
-		input: toInput([sequence[thruster], input]),
-		output: out => {
-			output = out
-		},
-	})
-	return calculateThrusterWithFeedbackLoop(
-		program,
-		sequence,
-		++thruster,
-		output,
-		programs,
-	)
+	computeThruster(0, programs, inputs)
+	return -1
 }

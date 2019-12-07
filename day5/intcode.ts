@@ -110,6 +110,9 @@ export const compute = (args: {
 	output?: (out: number) => void
 }): number[] => {
 	const { program: sequence, input, output } = args
+	console.log({
+		sequence,
+	})
 	const pos = args.pos || 0
 	const { op, modes } = parseParameter(sequence[pos])
 	let out: number
