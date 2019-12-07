@@ -1,30 +1,30 @@
-import { computeSequence } from './intcode'
+import { compute } from './intcode'
 
 describe('Intcode program with parameter mode', () => {
 	test('Opcode 1 adds together numbers', () => {
 		expect(
-			computeSequence({
-				sequence: [1, 9, 10, 3, 99, 3, 11, 0, 99, 30, 40, 50],
+			compute({
+				program: [1, 9, 10, 3, 99, 3, 11, 0, 99, 30, 40, 50],
 			}),
 		).toEqual([1, 9, 10, 70, 99, 3, 11, 0, 99, 30, 40, 50])
 	})
 	test('Opcode 2 multiplies together numbers', () => {
 		expect(
-			computeSequence({
-				sequence: [1, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50],
+			compute({
+				program: [1, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50],
 				pos: 4,
 			}),
 		).toEqual([3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50])
 	})
 	test('Opcode 3 takes a single integer as input and saves it to the address given by its only parameter', () => {
 		const seq = [3, 50, 99]
-		expect(computeSequence({ input: 42, sequence: seq }))
+		expect(compute({ input: [42], program: seq }))
 		expect(seq[50]).toEqual(42)
 	})
 	test('Opcode 4 outputs the value of its only parameter.', () => {
 		expect.assertions(1)
-		computeSequence({
-			sequence: [4, 3, 99, 42],
+		compute({
+			program: [4, 3, 99, 42],
 			output: out => {
 				expect(out).toEqual(42)
 			},
@@ -32,23 +32,23 @@ describe('Intcode program with parameter mode', () => {
 	})
 	test('[3,0,4,0,99] outputs whatever it gets as input', () => {
 		expect.assertions(2)
-		const sequence = [3, 0, 4, 0, 99]
-		computeSequence({
-			sequence,
-			input: 42,
+		const program = [3, 0, 4, 0, 99]
+		compute({
+			program,
+			input: [42],
 			output: out => {
 				expect(out).toEqual(42)
 			},
 		})
-		expect(sequence).toEqual([42, 0, 4, 0, 99])
+		expect(program).toEqual([42, 0, 4, 0, 99])
 	})
 	test('Opcode 99 halts', () => {
-		expect(computeSequence({ sequence: [99] })).toEqual([99])
+		expect(compute({ program: [99] })).toEqual([99])
 	})
 	test('Unknown opcode should throw an error', () => {
 		expect(() =>
-			computeSequence({
-				sequence: [35, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50],
+			compute({
+				program: [35, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50],
 			}),
 		).toThrow(/Unknown opcode 35/)
 	})
@@ -69,26 +69,26 @@ describe('Intcode program with parameter mode', () => {
 			[1, 1, 1, 4, 99, 5, 6, 0, 99],
 			[30, 1, 1, 4, 2, 5, 6, 0, 99],
 		],
-	])(`%p equals %p`, (sequence, expected) => {
-		expect(computeSequence({ sequence })).toEqual(expected)
+	])(`%p equals %p`, (program, expected) => {
+		expect(compute({ program })).toEqual(expected)
 	})
 	test('Program with parameter modes', () => {
-		const sequence = [1002, 4, 3, 4, 33, 99]
+		const program = [1002, 4, 3, 4, 33, 99]
 		expect(
-			computeSequence({
-				sequence,
+			compute({
+				program,
 			}),
 		)
-		expect(sequence).toEqual([1002, 4, 3, 4, 99, 99])
+		expect(program).toEqual([1002, 4, 3, 4, 99, 99])
 	})
 	test('negative values', () => {
-		const sequence = [1101, 100, -1, 4, 0]
+		const program = [1101, 100, -1, 4, 0]
 		expect(
-			computeSequence({
-				sequence,
+			compute({
+				program,
 			}),
 		)
-		expect(sequence).toEqual([1101, 100, -1, 4, 99])
+		expect(program).toEqual([1101, 100, -1, 4, 99])
 	})
 
 	describe('Opcodes 5-8', () => {
@@ -264,11 +264,11 @@ describe('Intcode program with parameter mode', () => {
 				9,
 				1001,
 			],
-		])('%p with input %i should output %i', (sequence, input, expected) => {
+		])('%p with input %i should output %i', (program, input, expected) => {
 			let output
-			computeSequence({
-				sequence: [...(sequence as number[])],
-				input: input as number,
+			compute({
+				program: [...(program as number[])],
+				input: [input] as number[],
 				output: out => {
 					output = out
 				},

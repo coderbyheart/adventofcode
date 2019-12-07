@@ -1,6 +1,6 @@
-import { calculateTrusterSignalForSequence } from './calculateTrusterSignalForSequence'
+import { calculateThrusterSignalForSequence } from './calculateThrusterSignalForSequence'
 
-describe('Calculate the truster signal for a given sequence', () => {
+describe('Calculate the thruster signal for a given sequence', () => {
 	test.each([
 		[
 			[3, 15, 3, 16, 1002, 16, 10, 16, 1, 16, 15, 15, 4, 15, 99, 0, 0],
@@ -79,10 +79,10 @@ describe('Calculate the truster signal for a given sequence', () => {
 			65210,
 		],
 	])(
-		'program %p with phase setting sequence %p should calculate max truster signal %i',
+		'program %p with phase setting sequence %p should calculate max thruster signal %i',
 		(program, phaseSettingSequence, expected) => {
 			expect(
-				calculateTrusterSignalForSequence(
+				calculateThrusterSignalForSequence(
 					program as number[],
 					phaseSettingSequence as number[],
 				),

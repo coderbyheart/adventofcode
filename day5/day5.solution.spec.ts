@@ -1,16 +1,16 @@
-import { computeSequence } from './intcode'
+import { compute } from './intcode'
 import { fileToArray } from '../utils/fileToArray'
 
-const sequence = fileToArray('day5/input.txt', s =>
+const program = fileToArray('day5/input.txt', s =>
 	s.split(',').map(s => parseInt(s, 10)),
 )[0]
 
 describe('Day 5: Part 1', () => {
 	it('should calculate the solution', () => {
 		const outputs = [] as number[]
-		computeSequence({
-			sequence: [...sequence],
-			input: 1,
+		compute({
+			program: [...program],
+			input: [1],
 			output: out => {
 				outputs.push(out)
 			},
@@ -22,9 +22,9 @@ describe('Day 5: Part 1', () => {
 describe('Day 5: Part 2', () => {
 	it('should calculate the solution', () => {
 		const outputs = [] as number[]
-		computeSequence({
-			sequence: [...sequence],
-			input: 5,
+		compute({
+			program: [...program],
+			input: [5],
 			output: out => {
 				outputs.push(out)
 			},

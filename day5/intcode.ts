@@ -101,13 +101,13 @@ const instructions = {
 	8: equals,
 }
 
-export const computeSequence = (args: {
-	sequence: number[]
+export const compute = (args: {
+	program: number[]
 	pos?: number
-	input?: number
+	input?: number[]
 	output?: (out: number) => void
 }): number[] => {
-	const { sequence, input, output } = args
+	const { program: sequence, input, output } = args
 	const pos = args.pos || 0
 	const { op, modes } = parseParameter(sequence[pos])
 	let out: number
@@ -119,19 +119,19 @@ export const computeSequence = (args: {
 		case 6:
 		case 7:
 		case 8:
-			return computeSequence({
+			return compute({
 				...args,
 				pos: instructions[op](sequence, pos, modes),
 			})
 		case 3:
-			return computeSequence({
+			return compute({
 				...args,
-				pos: store(sequence, pos, input as number),
+				pos: store(sequence, pos, input?.shift() as number),
 			})
 		case 4:
 			out = retrieve(sequence, pos, modes)
 			if (output) output(out)
-			return computeSequence({
+			return compute({
 				...args,
 				pos: pos + 2,
 			})
