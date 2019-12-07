@@ -1,5 +1,7 @@
 import { ParameterMode, parseParameter } from './parseParameter'
 
+export const toInput = (array: number[]) => () => array.shift()
+
 const getParameter = (
 	sequence: number[],
 	pos: number,
@@ -104,13 +106,14 @@ const instructions = {
 export const compute = (args: {
 	program: number[]
 	pos?: number
-	input?: number[]
+	input?: () => number | undefined
 	output?: (out: number) => void
 }): number[] => {
 	const { program: sequence, input, output } = args
 	const pos = args.pos || 0
 	const { op, modes } = parseParameter(sequence[pos])
 	let out: number
+	let inp: number
 
 	switch (op) {
 		case 1:
@@ -124,9 +127,13 @@ export const compute = (args: {
 				pos: instructions[op](sequence, pos, modes),
 			})
 		case 3:
+			inp = input?.() as number
+			if (inp === undefined) {
+				throw new Error('Missing input')
+			}
 			return compute({
 				...args,
-				pos: store(sequence, pos, input?.shift() as number),
+				pos: store(sequence, pos, inp),
 			})
 		case 4:
 			out = retrieve(sequence, pos, modes)

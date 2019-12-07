@@ -1,4 +1,4 @@
-import { compute } from './intcode'
+import { compute, toInput } from './intcode'
 import { fileToArray } from '../utils/fileToArray'
 
 const program = fileToArray('day5/input.txt', s =>
@@ -10,7 +10,7 @@ describe('Day 5: Part 1', () => {
 		const outputs = [] as number[]
 		compute({
 			program: [...program],
-			input: [1],
+			input: toInput([1]),
 			output: out => {
 				outputs.push(out)
 			},
@@ -24,7 +24,7 @@ describe('Day 5: Part 2', () => {
 		const outputs = [] as number[]
 		compute({
 			program: [...program],
-			input: [5],
+			input: toInput([5]),
 			output: out => {
 				outputs.push(out)
 			},

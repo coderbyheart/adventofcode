@@ -1,4 +1,4 @@
-import { compute } from './intcode'
+import { compute, toInput } from './intcode'
 
 describe('Intcode program with parameter mode', () => {
 	test('Opcode 1 adds together numbers', () => {
@@ -18,7 +18,7 @@ describe('Intcode program with parameter mode', () => {
 	})
 	test('Opcode 3 takes a single integer as input and saves it to the address given by its only parameter', () => {
 		const seq = [3, 50, 99]
-		expect(compute({ input: [42], program: seq }))
+		expect(compute({ input: toInput([42]), program: seq }))
 		expect(seq[50]).toEqual(42)
 	})
 	test('Opcode 4 outputs the value of its only parameter.', () => {
@@ -35,7 +35,7 @@ describe('Intcode program with parameter mode', () => {
 		const program = [3, 0, 4, 0, 99]
 		compute({
 			program,
-			input: [42],
+			input: toInput([42]),
 			output: out => {
 				expect(out).toEqual(42)
 			},
@@ -268,7 +268,7 @@ describe('Intcode program with parameter mode', () => {
 			let output
 			compute({
 				program: [...(program as number[])],
-				input: [input] as number[],
+				input: toInput([input] as number[]),
 				output: out => {
 					output = out
 				},
