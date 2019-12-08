@@ -1,7 +1,7 @@
 import { calculateThrusterWithFeedbackLoop } from './calculateThrusterWithFeedbackLoop'
 
 describe('Feedback Loop', () => {
-	test.skip.each([
+	test.each([
 		[
 			[
 				3,
