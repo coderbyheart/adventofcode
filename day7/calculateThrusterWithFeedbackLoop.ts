@@ -1,18 +1,7 @@
 import { compute } from '../day5/intcode'
 
-type ThrusterPrograms = { [key: number]: number[] }
-const makePrograms = (program: number[]): ThrusterPrograms => ({
-	0: [...program],
-	1: [...program],
-	2: [...program],
-	3: [...program],
-	4: [...program],
-})
-
-const inputGenerator = (
-	inp: number[],
-	takers: ((value: number) => void)[] = [],
-) => ({
+type Taker = (value: number) => void
+const inputGenerator = (inp: number[], takers: Taker[] = []) => ({
 	take: async () => {
 		const i = inp.shift()
 		if (i !== undefined) return Promise.resolve(i)
@@ -22,51 +11,69 @@ const inputGenerator = (
 	},
 	push: (value: number) => {
 		inp.push(value)
-		takers.forEach(fn => fn(value))
+
+		let taker: Taker | undefined
+		while ((taker = takers.shift())) {
+			taker(value)
+		}
 	},
 	inputs: inp,
 })
 
-type ThrusterInputs = {
-	[key: number]: {
-		take: () => Promise<number>
-		push: (value: number) => void
-		inputs: number[]
-	}
-}
-const makeInputs = (sequence: number[]): ThrusterInputs => ({
-	0: inputGenerator([sequence[0], 0]),
-	1: inputGenerator([sequence[1]]),
-	2: inputGenerator([sequence[2]]),
-	3: inputGenerator([sequence[3]]),
-	4: inputGenerator([sequence[4]]),
-})
-
-const computeThruster = async (
-	thruster: number,
-	programs: ThrusterPrograms,
-	inputs: ThrusterInputs,
-) =>
-	compute({
-		program: programs[thruster],
-		input: inputs[thruster].take,
-		output: out => {
-			console.log(`Thruster ${thruster} outputs ${out}`)
-			const nextThruster = (thruster + 1) % 5
-			inputs[nextThruster].push(out)
-		},
-	})
-
-export const calculateThrusterWithFeedbackLoop = (
+export const calculateThrusterWithFeedbackLoop = async (
 	program: number[],
 	sequence: number[],
-	programs = makePrograms(program),
-	inputs = makeInputs(sequence),
-): number => {
-	computeThruster(0, programs, inputs)
-	computeThruster(1, programs, inputs)
-	computeThruster(2, programs, inputs)
-	computeThruster(3, programs, inputs)
-	computeThruster(4, programs, inputs)
+): Promise<number> => {
+	const programs = {
+		0: [...program],
+		1: [...program],
+		2: [...program],
+		3: [...program],
+		4: [...program],
+	}
+	const inputs = {
+		0: inputGenerator([sequence[0], 0]),
+		1: inputGenerator([sequence[1]]),
+		2: inputGenerator([sequence[2]]),
+		3: inputGenerator([sequence[3]]),
+		4: inputGenerator([sequence[4]]),
+	}
+	await Promise.all([
+		compute({
+			program: programs[0],
+			input: inputs[0].take,
+			output: out => {
+				inputs[1].push(out)
+			},
+		}),
+		compute({
+			program: programs[1],
+			input: inputs[1].take,
+			output: out => {
+				inputs[2].push(out)
+			},
+		}),
+		compute({
+			program: programs[2],
+			input: inputs[2].take,
+			output: out => {
+				inputs[3].push(out)
+			},
+		}),
+		compute({
+			program: programs[3],
+			input: inputs[3].take,
+			output: out => {
+				inputs[4].push(out)
+			},
+		}),
+		compute({
+			program: programs[4],
+			input: inputs[4].take,
+			output: out => {
+				inputs[0].push(out)
+			},
+		}),
+	])
 	return -1
 }

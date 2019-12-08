@@ -102,9 +102,9 @@ describe('Feedback Loop', () => {
 		],
 	])(
 		'program %p with phase setting sequence %p should calculate max thruster signal %i',
-		(program, phaseSettingSequence, expected) => {
+		async (program, phaseSettingSequence, expected) => {
 			expect(
-				calculateThrusterWithFeedbackLoop(
+				await calculateThrusterWithFeedbackLoop(
 					program as number[],
 					phaseSettingSequence as number[],
 				),
