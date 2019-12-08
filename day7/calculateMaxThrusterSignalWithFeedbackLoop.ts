@@ -1,14 +1,14 @@
-import { calculateThrusterSignal } from './calculateThrusterSignal'
 import { permutate } from './permutate'
+import { calculateThrusterWithFeedbackLoop } from './calculateThrusterWithFeedbackLoop'
 
-const thrusters = [0, 1, 2, 3, 4]
+const thrusters = [5, 6, 7, 8, 9]
 
-export const calculateMaxThrusterSignal = async (
+export const calculateMaxThrusterSignalWithFeedbackLoop = async (
 	program: number[],
 ): Promise<number> => {
 	const thrusterSignals = await Promise.all(
 		permutate(thrusters).map(async phaseSettings =>
-			calculateThrusterSignal(program, phaseSettings),
+			calculateThrusterWithFeedbackLoop(program, phaseSettings),
 		),
 	)
 	return thrusterSignals.reduce((maxThrusterSignal, thrusterSignal) => {
