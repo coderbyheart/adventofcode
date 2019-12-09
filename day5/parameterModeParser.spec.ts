@@ -1,4 +1,4 @@
-import { parseParameter } from './parseParameter'
+import { parseParameter } from '../intcode/parseParameter'
 
 describe('Parameter mode parser', () => {
 	it('should parse parameters', () => {

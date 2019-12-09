@@ -1,4 +1,4 @@
-import { compute, toInput } from './intcode'
+import { compute, toInput } from '../intcode/intcode'
 
 describe('Intcode program with parameter mode', () => {
 	test('Opcode 1 adds together numbers', async () => {

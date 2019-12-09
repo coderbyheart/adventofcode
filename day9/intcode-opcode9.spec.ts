@@ -1,4 +1,4 @@
-import { compute } from '../day5/intcode'
+import { compute } from '../intcode/intcode'
 
 describe('intcode: opcode 9 and memory', () => {
 	test('copy itself', async () => {

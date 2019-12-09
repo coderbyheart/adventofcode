@@ -1,4 +1,4 @@
-import { compute, toInput } from '../day5/intcode'
+import { compute, toInput } from '../intcode/intcode'
 
 export const calculateThrusterSignal = async (
 	program: number[],

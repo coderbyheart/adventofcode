@@ -1,5 +1,5 @@
 import { fileToArray } from '../utils/fileToArray'
-import { compute, toInput } from '../day5/intcode'
+import { compute, toInput } from '../intcode/intcode'
 
 const program = fileToArray('day9/input.txt', s =>
 	s.split(',').map(s => parseInt(s, 10)),

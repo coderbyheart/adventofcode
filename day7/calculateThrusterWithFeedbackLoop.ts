@@ -1,4 +1,4 @@
-import { compute } from '../day5/intcode'
+import { compute } from '../intcode/intcode'
 
 type Taker = (value: number) => void
 const inputGenerator = (inp: number[], takers: Taker[] = []) => ({

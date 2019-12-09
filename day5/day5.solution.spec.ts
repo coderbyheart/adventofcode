@@ -1,4 +1,4 @@
-import { compute, toInput } from './intcode'
+import { compute, toInput } from '../intcode/intcode'
 import { fileToArray } from '../utils/fileToArray'
 
 const program = fileToArray('day5/input.txt', s =>
