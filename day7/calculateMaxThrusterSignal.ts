@@ -8,7 +8,7 @@ export const calculateMaxThrusterSignal = async (
 ): Promise<number> => {
 	const thrusterSignals = await Promise.all(
 		permutate(thrusters).map(async phaseSettings =>
-			calculateThrusterSignal(program, phaseSettings),
+			calculateThrusterSignal([...program], phaseSettings),
 		),
 	)
 	return thrusterSignals.reduce((maxThrusterSignal, thrusterSignal) => {

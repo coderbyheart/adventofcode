@@ -147,52 +147,61 @@ export const compute = async (args: {
 	pos?: number
 	input?: () => Promise<number | undefined>
 	output?: (out: number) => void
-	relativeBase?: number
 }): Promise<number[]> => {
-	const { program: sequence, input, output } = args
-	const pos = args.pos || 0
-	const relativeBase = args.relativeBase || 0
-	const { op, modes } = parseParameter(sequence[pos])
+	const { program, input, output } = args
+	let pos = args.pos || 0
+	let relativeBase = 0
 
-	switch (op) {
-		case OPCODES.ADD:
-		case OPCODES.MULTIPLY:
-		case OPCODES.JUMP_IF_TRUE:
-		case OPCODES.JUMP_IF_FALSE:
-		case OPCODES.LESS_THAN:
-		case OPCODES.EQUALS:
-			return compute({
-				...args,
-				pos: instructions[op](sequence, pos, modes, relativeBase),
-			})
-		case OPCODES.INPUT:
-			return (async inp => {
-				if (inp === undefined) {
-					throw new Error('Missing input')
-				}
-				return compute({
-					...args,
-					pos: store(sequence, pos, modes, relativeBase, inp),
-				})
-			})(await input?.())
-		case OPCODES.OUTPUT:
-			return (async out => {
-				if (output) output(out)
-				return compute({
-					...args,
-					pos: pos + 2,
-				})
-			})(retrieve(sequence, pos, modes, relativeBase))
-		case OPCODES.ADJUST_RELATIVE_BASE:
-			return (async out =>
-				compute({
-					...args,
-					pos: pos + 2,
-					relativeBase: relativeBase + sequence[out],
-				}))(getPosition(sequence, pos, modes, relativeBase)(0))
-		case OPCODES.EXIT:
-			return sequence
-		default:
-			throw new Error(`Unknown opcode ${op}!`)
+	const setPos = (newPos: number) => {
+		pos = newPos
+	}
+
+	const setRelativeBase = (newRelativeBase: number) => {
+		relativeBase = newRelativeBase
+	}
+
+	// eslint-disable-next-line no-constant-condition
+	while (true) {
+		const { op, modes } = parseParameter(program[pos])
+		switch (op) {
+			case OPCODES.ADD:
+			case OPCODES.MULTIPLY:
+			case OPCODES.JUMP_IF_TRUE:
+			case OPCODES.JUMP_IF_FALSE:
+			case OPCODES.LESS_THAN:
+			case OPCODES.EQUALS:
+				setPos(instructions[op](program, pos, modes, relativeBase))
+				break
+			case OPCODES.INPUT:
+				setPos(
+					await (async inp => {
+						if (inp === undefined) {
+							throw new Error('Missing input')
+						}
+						return store(program, pos, modes, relativeBase, inp)
+					})(await input?.()),
+				)
+				break
+			case OPCODES.OUTPUT:
+				setPos(
+					await (async out => {
+						if (output) output(out)
+						return pos + 2
+					})(retrieve(program, pos, modes, relativeBase)),
+				)
+				break
+			case OPCODES.ADJUST_RELATIVE_BASE:
+				setPos(
+					(position => {
+						setRelativeBase(relativeBase + program[position])
+						return pos + 2
+					})(getPosition(program, pos, modes, relativeBase)(0)),
+				)
+				break
+			case OPCODES.EXIT:
+				return program
+			default:
+				throw new Error(`Unknown opcode ${op}!`)
+		}
 	}
 }
