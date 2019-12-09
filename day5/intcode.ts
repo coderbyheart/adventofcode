@@ -3,21 +3,32 @@ import { ParameterMode, parseParameter } from './parseParameter'
 export const toInput = (array: number[]) => async () =>
 	Promise.resolve(array.shift())
 
+const undefTo0 = (n?: any): number => (n === undefined ? 0 : n)
+const getOrZero = (sequence: number[], pos: number) => undefTo0(sequence[pos])
+
 const getParameter = (
 	sequence: number[],
 	pos: number,
 	modes: ParameterMode[],
-) => (param: number) =>
-	modes[param] === ParameterMode.IMMEDIATE
-		? sequence[pos + param + 1]
-		: sequence[sequence[pos + param + 1]]
+	relativeBase: number,
+) => (param: number) => {
+	if (modes[param] === ParameterMode.IMMEDIATE)
+		return getOrZero(sequence, pos + param + 1)
+	if (modes[param] === ParameterMode.RELATIVE)
+		return getOrZero(
+			sequence,
+			relativeBase + getOrZero(sequence, pos + param + 1),
+		)
+	return getOrZero(sequence, getOrZero(sequence, pos + param + 1))
+}
 
 const add = (
 	sequence: number[],
 	pos: number,
 	modes: ParameterMode[],
+	relativeBase: number,
 ): number => {
-	const p = getParameter(sequence, pos, modes)
+	const p = getParameter(sequence, pos, modes, relativeBase)
 	const v1 = p(0)
 	const v2 = p(1)
 	const out = sequence[pos + 3]
@@ -29,8 +40,9 @@ const mul = (
 	sequence: number[],
 	pos: number,
 	modes: ParameterMode[],
+	relativeBase: number,
 ): number => {
-	const p = getParameter(sequence, pos, modes)
+	const p = getParameter(sequence, pos, modes, relativeBase)
 	const v1 = p(0)
 	const v2 = p(1)
 	const out = sequence[pos + 3]
@@ -48,16 +60,19 @@ const retrieve = (
 	sequence: number[],
 	pos: number,
 	modes: ParameterMode[],
+	relativeBase: number,
 ): number => {
-	return getParameter(sequence, pos, modes)(0)
+	const v = getParameter(sequence, pos, modes, relativeBase)(0)
+	return v
 }
 
 const jumpIf = (expected: boolean) => (
 	sequence: number[],
 	pos: number,
 	modes: ParameterMode[],
+	relativeBase: number,
 ): number => {
-	const p = getParameter(sequence, pos, modes)
+	const p = getParameter(sequence, pos, modes, relativeBase)
 	const v1 = p(0)
 	const v2 = p(1)
 	if (expected && v1 > 0) {
@@ -73,8 +88,9 @@ const lessThan = (
 	sequence: number[],
 	pos: number,
 	modes: ParameterMode[],
+	relativeBase: number,
 ): number => {
-	const p = getParameter(sequence, pos, modes)
+	const p = getParameter(sequence, pos, modes, relativeBase)
 	const v1 = p(0)
 	const v2 = p(1)
 	const out = sequence[pos + 3]
@@ -86,8 +102,9 @@ const equals = (
 	sequence: number[],
 	pos: number,
 	modes: ParameterMode[],
+	relativeBase: number,
 ): number => {
-	const p = getParameter(sequence, pos, modes)
+	const p = getParameter(sequence, pos, modes, relativeBase)
 	const v1 = p(0)
 	const v2 = p(1)
 	const out = sequence[pos + 3]
@@ -109,9 +126,11 @@ export const compute = async (args: {
 	pos?: number
 	input?: () => Promise<number | undefined>
 	output?: (out: number) => void
+	relativeBase?: number
 }): Promise<number[]> => {
 	const { program: sequence, input, output } = args
 	const pos = args.pos || 0
+	const relativeBase = args.relativeBase || 0
 	const { op, modes } = parseParameter(sequence[pos])
 	let out: number
 	let inp: number
@@ -125,7 +144,7 @@ export const compute = async (args: {
 		case 8:
 			return compute({
 				...args,
-				pos: instructions[op](sequence, pos, modes),
+				pos: instructions[op](sequence, pos, modes, relativeBase),
 			})
 		case 3:
 			inp = (await input?.()) as number
@@ -137,11 +156,17 @@ export const compute = async (args: {
 				pos: store(sequence, pos, inp),
 			})
 		case 4:
-			out = retrieve(sequence, pos, modes)
+			out = retrieve(sequence, pos, modes, relativeBase)
 			if (output) output(out)
 			return compute({
 				...args,
 				pos: pos + 2,
+			})
+		case 9:
+			return compute({
+				...args,
+				pos: pos + 2,
+				relativeBase: relativeBase + sequence[pos + 1],
 			})
 		case 99:
 			return sequence

@@ -1,7 +1,14 @@
 export enum ParameterMode {
 	POSITION = 0,
 	IMMEDIATE = 1,
+	RELATIVE = 2,
 }
+
+const parameterModes = [
+	ParameterMode.POSITION,
+	ParameterMode.IMMEDIATE,
+	ParameterMode.RELATIVE,
+]
 
 export const parseParameter = (
 	parameter: number,
@@ -21,7 +28,7 @@ export const parseParameter = (
 			.split('')
 			.map(s => {
 				const m = parseInt(s, 10)
-				if (m !== 0 && m !== 1) {
+				if (!parameterModes.includes(m)) {
 					throw new Error(`Invalid parameter mode: ${s}`)
 				}
 				return m
