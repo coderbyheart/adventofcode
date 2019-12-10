@@ -1,7 +1,7 @@
 import { fileToArray } from '../utils/fileToArray'
 import { compute, toInput } from '../intcode/intcode'
 
-const program = fileToArray('day9/input.txt', s =>
+const program = fileToArray('day09/input.txt', s =>
 	s.split(',').map(s => parseInt(s, 10)),
 )[0]
 

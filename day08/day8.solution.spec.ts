@@ -4,7 +4,7 @@ import { imageChecksum } from './imageChecksum'
 import { renderImage, COLOR_BLACK, COLOR_RED } from './renderImage'
 import * as chalk from 'chalk'
 
-const data = fileToArray('day8/input.txt', s =>
+const data = fileToArray('day08/input.txt', s =>
 	s.split('').map(s => parseInt(s, 10)),
 )[0]
 

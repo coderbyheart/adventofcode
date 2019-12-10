@@ -2,7 +2,7 @@ import { computeSequence } from './intcode'
 import { fileToArray } from '../utils/fileToArray'
 
 const sequence = () =>
-	fileToArray('day2/input.txt', s => s.split(',').map(s => parseInt(s, 10)))[0]
+	fileToArray('day02/input.txt', s => s.split(',').map(s => parseInt(s, 10)))[0]
 
 describe('Intcode program', () => {
 	test('Opcode 1 adds together numbers', () => {

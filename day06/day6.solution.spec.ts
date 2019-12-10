@@ -4,7 +4,7 @@ import { parseOrbits, byId, GalaxyObject } from './parseOrbits'
 import { findSharedOrbit } from './findSharedOrbit'
 import { countHopsVia } from './countHopsVia'
 
-const orbits = fileToArray('day6/input.txt', s => s)
+const orbits = fileToArray('day06/input.txt', s => s)
 const galaxy = parseOrbits(orbits)
 
 describe('Day 6: Part 1', () => {

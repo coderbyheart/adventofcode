@@ -2,7 +2,7 @@ import { fileToArray } from '../utils/fileToArray'
 import { closestIntersectionDistance } from './closestIntersectionDistance'
 import { stepsToIntersection } from './stepsToIntersection'
 
-const directions = fileToArray('day3/input.txt', s => s.split(','))
+const directions = fileToArray('day03/input.txt', s => s.split(','))
 
 describe('Day 3: Part 1', () => {
 	it('should calculate the solution', () => {

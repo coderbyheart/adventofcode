@@ -2,7 +2,7 @@ import { fileToArray } from '../utils/fileToArray'
 import { calculateMaxThrusterSignal } from './calculateMaxThrusterSignal'
 import { calculateMaxThrusterSignalWithFeedbackLoop } from './calculateMaxThrusterSignalWithFeedbackLoop'
 
-const program = fileToArray('day7/input.txt', s =>
+const program = fileToArray('day07/input.txt', s =>
 	s.split(',').map(s => parseInt(s, 10)),
 )[0]
 
