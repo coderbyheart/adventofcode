@@ -1,79 +1,86 @@
 import { angleTo } from './angleTo'
 import { distanceTo } from './distanceTo'
 
+/**
+ * Cleans up a map string and removes all characters that are not part of a map.
+ *
+ * A map is described with # as asteriods and '.' as empty fields.
+ */
 export const mapToField = (map: string): string[] =>
 	map.split('').filter(s => /[.#]/.test(s))
 
+/**
+ * Point as tuple:
+ * 1. X coordinate
+ * 2. Y coordinate
+ */
+type Point = [number, number]
+
+/**
+ * Returns all the asteroid positions on the map
+ */
 export const getAsteroidsInField = (field: string[], width: number) =>
 	field.reduce((asteroids, c, index) => {
-		if (c === '#') asteroids.push([index % width, Math.floor(index / width)])
+		if (c === '#') {
+			// Add the position of the asteroid to the result
+			// Calculate the X,Y based on the position in the string and the given field width
+			asteroids.push([index % width, Math.floor(index / width)])
+		}
 		return asteroids
-	}, [] as [number, number][])
+	}, [] as Point[])
 
-const equals = (a: [number, number], b: [number, number]): boolean =>
-	a[0] === b[0] && a[1] === b[1]
+const equals = (a: Point, b: Point): boolean => a[0] === b[0] && a[1] === b[1]
 
-const normalizeAngle = (a: number): number => (a < 0 ? 180 + (180 + a) : a)
-
-type Asteroid = {
-	asteroid: [number, number]
+export type Asteroid = {
+	asteroid: Point
 	distance: number
 	angle: number
 }
 
+/**
+ * Calculates the line of sight (LOS) to all asteroids from the given asteroid
+ */
 export const trackAsteroids = (
-	asteroids: [number, number][],
-	asteroid: [number, number],
+	asteroids: Point[],
+	asteroid: Point,
 ): Asteroid[] =>
 	asteroids
+		// Ignore the given asteroid itself
 		.filter(a => !equals(a, asteroid))
 		.map(otherAsteroid => ({
 			asteroid: otherAsteroid,
+			// Calculate the distance to the other asteroid's position
+			// This is later used to determine whether an asteroid blocks the direct LOS on to other asteroids
 			distance: distanceTo(asteroid, otherAsteroid),
+			// Calculate the angle to the other asteroid's position
 			angle: angleTo(asteroid, otherAsteroid),
 		}))
+		// Sort the asteroids by distance, from near to far
 		.sort(({ distance: d1 }, { distance: d2 }) => d1 - d2)
 
-export const calculateVaporization = (asteroids: Asteroid[]): Asteroid[] => {
-	const sortedByAttackAngle = asteroids
-		.map(a => ({
-			...a,
-			angle: normalizeAngle(a.angle + 90), // Laser points up
-		}))
-		.sort(({ angle: a1 }, { angle: a2 }) => a1 - a2)
-	// Start with the first asteroid
-	let target = sortedByAttackAngle.shift()
-	const poa = [target] as Asteroid[]
-	// store laser position
-	let laserAngle = target?.angle
-	while (sortedByAttackAngle.length) {
-		// Find the next asteroid which can be reached after rotating
-		target = sortedByAttackAngle.find(
-			({ angle }) => angle > (laserAngle as number),
-		) as Asteroid
-		// Reset the laser to 0, and find the next asteroid
-		if (!target) {
-			target = sortedByAttackAngle.find(({ angle }) => angle >= 0) as Asteroid
-		}
-		poa.push(target)
-		sortedByAttackAngle.splice(sortedByAttackAngle.indexOf(target), 1)
-		// store laser position
-		laserAngle = target?.angle
-	}
-	return poa
-}
-
+/**
+ * This counts the asteroids that can be seen from the given asteroid
+ */
 export const countVisibleAsteroids = (
-	asteroids: [number, number][],
-	asteroid: [number, number],
+	asteroids: Point[],
+	asteroid: Point,
 ): number => {
+	// Calculate the line of sight (LOS) to all asteroids
 	const lineOfSights = trackAsteroids(asteroids, asteroid)
+	// Remove those asteroids from the list that cannot be seen
+	// This is done by going through the list of tracked asteroids (which are sorted by distance)
+	// and removing those who are on the exact same LOS (have the same angle to the given asteroid)
+	// but are further away
 	const visible = lineOfSights.reduce(
-		(visible, los) =>
+		(visible, lineOfSight) =>
 			visible.filter(l => {
-				if (equals(l.asteroid, los.asteroid)) return true
-				if (l.angle !== los.angle) return true
-				if (l.distance < los.distance) return true
+				// This LOS compares to itself, do not remove
+				if (equals(l.asteroid, lineOfSight.asteroid)) return true
+				// This LOS has a different, angle so it cannot be blocking, do not remove
+				if (l.angle !== lineOfSight.angle) return true
+				// This asteroid is closer to the given asteroid, so it cannot be locked by this LOS, do not remove
+				if (l.distance < lineOfSight.distance) return true
+				// This LOS has the same angle, and is further away, do remove
 				return false
 			}),
 		lineOfSights,
@@ -81,19 +88,32 @@ export const countVisibleAsteroids = (
 	return visible.length
 }
 
+/**
+ * Triplet describing a station:
+ * 1. X coordinate on the map
+ * 2. Y coordinate on the map
+ * 3. no of observable asteroids
+ */
+type Station = [number, number, number]
+
+/**
+ * Calculates the best monitoring station for asteroids
+ *
+ * @param map The map of the galaxy, in string notation
+ * @param width The width of the map (height = map.length / width)
+ * @returns The position of the asteroid which is best suited for the monitoring station
+ */
 export const findBestAsteroidForMonitoringStation = (
 	map: string,
 	width: number,
-): [number, number, number] | undefined => {
-	const asteroids = getAsteroidsInField(mapToField(map), width)
-	const visible = asteroids.map((asteroid, _, asteroids) => [
-		...asteroid,
-		countVisibleAsteroids(asteroids, asteroid),
-	]) as [number, number, number][]
-
-	const station = visible
+): Station | undefined =>
+	getAsteroidsInField(mapToField(map), width)
+		// For all asteroids, count the visible asteroids and add the asteroids position and the count to a triple
+		.map((asteroid, _, asteroids) => [
+			...asteroid,
+			countVisibleAsteroids(asteroids, asteroid),
+		])
+		// Sort by count
 		.sort(([, , countA], [, , countB]) => countA - countB)
-		.pop()
-
-	return station
-}
+		// Return item with highest count
+		.pop() as Station | undefined

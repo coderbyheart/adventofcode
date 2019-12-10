@@ -3,8 +3,8 @@ import {
 	trackAsteroids,
 	getAsteroidsInField,
 	mapToField,
-	calculateVaporization,
 } from './findBestAsteroidForMonitoringStation'
+import { calculateVaporization } from './calculateVaporization'
 
 const map = `
 .###..#......###..#...#
