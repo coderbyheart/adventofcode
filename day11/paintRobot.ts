@@ -1,6 +1,6 @@
 import { move } from './move'
 
-enum COLOR {
+export enum COLOR {
 	BLACK = 0,
 	WHITE = 1,
 }
