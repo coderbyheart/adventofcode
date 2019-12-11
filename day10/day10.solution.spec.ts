@@ -36,11 +36,10 @@ const width = 23
 
 describe('Day 10: Part 1', () => {
 	it(`calculate the solution`, () => {
-		expect(findBestAsteroidForMonitoringStation(map, width)).toEqual([
-			19,
-			11,
-			230,
-		])
+		expect(findBestAsteroidForMonitoringStation(map, width)).toEqual({
+			asteroid: [19, 11],
+			visibleAsteroids: 230,
+		})
 	})
 })
 

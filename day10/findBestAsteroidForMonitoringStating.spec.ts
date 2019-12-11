@@ -11,7 +11,7 @@ describe('Find the best asteroid for a monitoring station', () => {
             .#.....
             `,
 			7,
-			[3, 2, 4],
+			{ asteroid: [3, 2], visibleAsteroids: 4 },
 		],
 		[
 			`
@@ -22,7 +22,7 @@ describe('Find the best asteroid for a monitoring station', () => {
             ...##
             `,
 			5,
-			[3, 4, 8],
+			{ asteroid: [3, 4], visibleAsteroids: 8 },
 		],
 		[
 			`
@@ -38,7 +38,7 @@ describe('Find the best asteroid for a monitoring station', () => {
             .#....####
             `,
 			10,
-			[5, 8, 33],
+			{ asteroid: [5, 8], visibleAsteroids: 33 },
 		],
 		[
 			`
@@ -54,7 +54,7 @@ describe('Find the best asteroid for a monitoring station', () => {
             .####.###.
             `,
 			10,
-			[1, 2, 35],
+			{ asteroid: [1, 2], visibleAsteroids: 35 },
 		],
 		[
 			`
@@ -70,7 +70,7 @@ describe('Find the best asteroid for a monitoring station', () => {
             .....#.#..
             `,
 			10,
-			[6, 3, 41],
+			{ asteroid: [6, 3], visibleAsteroids: 41 },
 		],
 		[
 			`
@@ -96,7 +96,7 @@ describe('Find the best asteroid for a monitoring station', () => {
             ###.##.####.##.#..##
             `,
 			20,
-			[11, 13, 210],
+			{ asteroid: [11, 13], visibleAsteroids: 210 },
 		],
 	])(`should find monitoring station in %s on %p`, (map, width, expected) => {
 		expect(

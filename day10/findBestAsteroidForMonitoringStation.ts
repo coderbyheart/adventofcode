@@ -10,11 +10,11 @@ export const mapToField = (map: string): string[] =>
 	map.split('').filter(s => /[.#]/.test(s))
 
 /**
- * Point as tuple:
+ * Asteroid as tuple:
  * 1. X coordinate
  * 2. Y coordinate
  */
-type Point = [number, number]
+type Asteroid = [number, number]
 
 /**
  * Returns all the asteroid positions on the map
@@ -27,12 +27,13 @@ export const getAsteroidsInField = (field: string[], width: number) =>
 			asteroids.push([index % width, Math.floor(index / width)])
 		}
 		return asteroids
-	}, [] as Point[])
+	}, [] as Asteroid[])
 
-const equals = (a: Point, b: Point): boolean => a[0] === b[0] && a[1] === b[1]
+const equals = (a: Asteroid, b: Asteroid): boolean =>
+	a[0] === b[0] && a[1] === b[1]
 
-export type Asteroid = {
-	asteroid: Point
+export type TrackedAsteroid = {
+	asteroid: Asteroid
 	distance: number
 	angle: number
 }
@@ -41,9 +42,9 @@ export type Asteroid = {
  * Calculates the line of sight (LOS) to all asteroids from the given asteroid
  */
 export const trackAsteroids = (
-	asteroids: Point[],
-	asteroid: Point,
-): Asteroid[] =>
+	asteroids: Asteroid[],
+	asteroid: Asteroid,
+): TrackedAsteroid[] =>
 	asteroids
 		// Ignore the given asteroid itself
 		.filter(a => !equals(a, asteroid))
@@ -62,8 +63,8 @@ export const trackAsteroids = (
  * This counts the asteroids that can be seen from the given asteroid
  */
 export const countVisibleAsteroids = (
-	asteroids: Point[],
-	asteroid: Point,
+	asteroids: Asteroid[],
+	asteroid: Asteroid,
 ): number => {
 	// Calculate the line of sight (LOS) to all asteroids
 	const lineOfSights = trackAsteroids(asteroids, asteroid)
@@ -88,13 +89,10 @@ export const countVisibleAsteroids = (
 	return visible.length
 }
 
-/**
- * Triplet describing a station:
- * 1. X coordinate on the map
- * 2. Y coordinate on the map
- * 3. no of observable asteroids
- */
-type Station = [number, number, number]
+type Station = {
+	asteroid: Asteroid
+	visibleAsteroids: number
+}
 
 /**
  * Calculates the best monitoring station for asteroids
@@ -109,11 +107,14 @@ export const findBestAsteroidForMonitoringStation = (
 ): Station | undefined =>
 	getAsteroidsInField(mapToField(map), width)
 		// For all asteroids, count the visible asteroids and add the asteroids position and the count to a triple
-		.map((asteroid, _, asteroids) => [
-			...asteroid,
-			countVisibleAsteroids(asteroids, asteroid),
-		])
+		.map((asteroid, _, asteroids) => ({
+			asteroid,
+			visibleAsteroids: countVisibleAsteroids(asteroids, asteroid),
+		}))
 		// Sort by count
-		.sort(([, , countA], [, , countB]) => countA - countB)
+		.sort(
+			({ visibleAsteroids: countA }, { visibleAsteroids: countB }) =>
+				countA - countB,
+		)
 		// Return item with highest count
 		.pop() as Station | undefined
