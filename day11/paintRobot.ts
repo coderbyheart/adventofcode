@@ -20,7 +20,7 @@ export enum DIRECTION {
 export type Position = [number, number]
 const equals = (a: Position, b: Position): boolean =>
 	a[0] === b[0] && a[1] === b[1]
-type PaintedPanel = { pos: Position; color: COLOR }
+export type PaintedPanel = { pos: Position; color: COLOR }
 
 export const paintRobot = (): [
 	(input: number) => COLOR,
