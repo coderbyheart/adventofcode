@@ -1,6 +1,7 @@
 import { compute } from '../intcode/intcode'
 import { TilePosition, Tile } from './screen'
 import { fileToArray } from '../utils/fileToArray'
+import { renderScreen } from './renderScreen'
 
 const program = fileToArray('day13/input.txt', s =>
 	s.split(',').map(s => parseInt(s, 10)),
@@ -24,5 +25,7 @@ describe('Day 13: Part 1', () => {
 		})
 
 		expect(screen.filter(([, , tile]) => tile === Tile.BLOCK)).toHaveLength(376)
+
+		renderScreen(screen)
 	})
 })
