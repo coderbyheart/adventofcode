@@ -13,11 +13,9 @@ export const drawPanels = (panels: PaintedPanel[]) => {
 	const xOffset = -minWidth
 
 	const minHeight = panels.reduce(
-		(minHeight, { pos: [x] }) => (x < minHeight ? x : minHeight),
+		(minHeight, { pos: [, y] }) => (y < minHeight ? y : minHeight),
 		0,
 	)
-	//const maxHeight = panels.reduce((maxHeight, { pos: [x] }) => x > maxHeight ? x : maxHeight, 0)
-	//const height = Math.abs(minHeight) + maxHeight
 	const yOffset = -minHeight
 
 	return panels.reduce((picture, { pos, color }) => {
