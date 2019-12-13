@@ -5,5 +5,3 @@ export enum Tile {
 	HORIZONTAL_PADDLE = 3,
 	BALL = 4,
 }
-
-export type TilePosition = [number, number, Tile]
