@@ -1,5 +1,27 @@
+import { nanofactory } from './nanofactory'
+
 describe('Nanofactory', () => {
 	it.each([
+		[`10 ORE => 1 FUEL`, 10],
+		[
+			`10 ORE => 2 A
+            10 A => 1 FUEL
+            `,
+			50,
+		],
+		[
+			`10 ORE => 1 A
+            10 A => 1 FUEL
+            `,
+			100,
+		],
+		[
+			`10 ORE => 1 A
+            10 A => 1 B
+            10 A, 1 B => 1 FUEL
+            `,
+			200,
+		],
 		[
 			`
             10 ORE => 10 A
@@ -11,6 +33,7 @@ describe('Nanofactory', () => {
             `,
 			31,
 		],
+
 		[
 			`
             9 ORE => 2 A
@@ -77,6 +100,6 @@ describe('Nanofactory', () => {
 			2210736,
 		],
 	])('should calculate that %p needs %i for 1 FUEL', (example, ore) => {
-		expect(nanofactory(example)).toEqual(ore)
+		expect(nanofactory(example as string)).toEqual(ore)
 	})
 })
