@@ -1,4 +1,5 @@
 import { compute } from '../intcode/intcode'
+import { findShortestPath } from './findShortesPath'
 
 enum STATUS {
 	HIT_WALL = 0,
@@ -23,11 +24,7 @@ const directions = [
 const randomDirection = () =>
 	directions[Math.floor(Math.random() * directions.length)]
 
-export const drawMap = async (
-	map: string[][],
-	movementCount: number,
-	inLessThanNSteps: number,
-): Promise<void> => {
+const getOffsets = (map: string[][]) => {
 	const ys = Object.keys(map)
 		.map(s => parseInt(s, 10))
 		.sort((a, b) => a - b)
@@ -53,6 +50,19 @@ export const drawMap = async (
 	const yOffset = Math.abs(Math.min(minY))
 	const xOffset = Math.abs(Math.min(minX))
 
+	return {
+		xOffset,
+		yOffset,
+		minX,
+		maxX,
+		minY,
+		maxY,
+	}
+}
+
+export const drawMap = async (map: string[][]): Promise<void> => {
+	const { xOffset, yOffset, minX, maxX, minY, maxY } = getOffsets(map)
+
 	const screen = [] as string[][]
 
 	for (let y = minY; y <= maxY; y++) {
@@ -64,11 +74,31 @@ export const drawMap = async (
 		}
 	}
 
-	process.stdout.write('\x1B[2J')
+	//process.stdout.write('\x1B[2J')
 	const drawnMap = screen.map(col => col.join('')).join('\n')
 	console.log(drawnMap)
-	console.log({ movementCount, inLessThanNSteps })
-	await new Promise(resolve => setTimeout(resolve, 10))
+}
+
+export const toBitMap = (
+	map: string[][],
+	oxygenSystemPosition: [number, number],
+): boolean[][] => {
+	const { xOffset, yOffset, minX, maxX, minY, maxY } = getOffsets(map)
+
+	const bitMap = [] as boolean[][]
+
+	for (let y = minY; y <= maxY; y++) {
+		const yPos = y - yOffset
+		if (!bitMap[yPos]) bitMap[yPos] = []
+		for (let x = minX; x <= maxX; x++) {
+			const xPos = x - xOffset
+			bitMap[yPos][xPos] = map[y][x] === '.'
+		}
+	}
+
+	bitMap[oxygenSystemPosition[1]][oxygenSystemPosition[0]] = true
+
+	return bitMap
 }
 
 type Taker = (value: number) => void
@@ -167,114 +197,125 @@ const getArrow = (direction: DIRECTION) => {
 	}
 }
 
-export const repairRobot = async (
-	program: number[],
-	inLessThanNSteps = Infinity,
-): Promise<number> => {
-	let currentDirection = randomDirection()
-	const direction = inputGenerator([randomDirection()])
-	let movementCount = 1
-	let stop: () => void
-	const map = [] as string[][]
-	const pos = [
-		Math.floor(Number.MAX_SAFE_INTEGER / 2),
-		Math.floor(Number.MAX_SAFE_INTEGER / 2),
-	] as [number, number]
-	await compute({
-		program,
-		exit: exitFn => {
-			stop = exitFn
-		},
-		input: async () => {
-			currentDirection = await direction.take()
-			return currentDirection
-		},
-		output: async out => {
-			if (movementCount > inLessThanNSteps) {
-				stop()
-				return
-			}
-			if (map[pos[1]] === undefined) {
-				map[pos[1]] = []
-			}
-			switch (out) {
-				case STATUS.HIT_WALL:
-					switch (currentDirection) {
-						case DIRECTION.NORTH:
-							if (map[pos[1] - 1] === undefined) {
-								map[pos[1] - 1] = []
-							}
-							map[pos[1] - 1][pos[0]] = WALL
-							break
-						case DIRECTION.SOUTH:
-							if (map[pos[1] + 1] === undefined) {
-								map[pos[1] + 1] = []
-							}
-							map[pos[1] + 1][pos[0]] = WALL
-							break
-						case DIRECTION.WEST:
-							map[pos[1]][pos[0] - 1] = WALL
-							break
-						case DIRECTION.EAST:
-							map[pos[1]][pos[0] + 1] = WALL
-							break
-					}
-					// await drawMap(map, movementCount, inLessThanNSteps)
-					// Change direction
-					direction.push(getNewDirection(map, pos))
-					movementCount++
-					return
-				case STATUS.MOVED:
-					if (map[pos[1]] === undefined) {
-						map[pos[1]] = []
-					}
-					map[pos[1]][pos[0]] = '.'
-					switch (currentDirection) {
-						case DIRECTION.NORTH:
-							pos[1] -= 1
-							break
-						case DIRECTION.SOUTH:
-							pos[1] += 1
-							break
-						case DIRECTION.WEST:
-							pos[0] -= 1
-							break
-						case DIRECTION.EAST:
-							pos[0] += 1
-							break
-					}
-					if (map[pos[1]] === undefined) {
-						map[pos[1]] = []
-					}
-					map[pos[1]][pos[0]] = getArrow(currentDirection)
-					// await drawMap(map, movementCount, inLessThanNSteps)
-					direction.push(getNewDirection(map, pos))
-					movementCount++
-					return
-				case STATUS.OXYGEN_SYSTEM_FOUND:
-					stop()
-					if (map[pos[1]] === undefined) {
-						map[pos[1]] = []
-					}
-					switch (currentDirection) {
-						case DIRECTION.NORTH:
-							pos[1] -= 1
-							break
-						case DIRECTION.SOUTH:
-							pos[1] += 1
-							break
-						case DIRECTION.WEST:
-							pos[0] -= 1
-							break
-						case DIRECTION.EAST:
-							pos[0] += 1
-							break
-					}
-					map[pos[1]][pos[0]] = 'x'
-					await drawMap(map, movementCount, inLessThanNSteps)
-					return
-			}
-		},
+const findOxygenSystem = async (program: number[]) =>
+	new Promise<{
+		start: [number, number]
+		oxygenSystemPosition: [number, number]
+		map: boolean[][]
+		// eslint-disable-next-line no-async-promise-executor
+	}>(async resolve => {
+		let currentDirection = randomDirection()
+		const direction = inputGenerator([randomDirection()])
+		const map = [] as string[][]
+		const start = Math.floor(Number.MAX_SAFE_INTEGER / 2)
+		const pos = [start, start] as [number, number]
+		let oxygenSystemPosition = undefined
+		await compute({
+			program,
+			input: async () => {
+				currentDirection = await direction.take()
+				return currentDirection
+			},
+			output: async out => {
+				if (map[pos[1]] === undefined) {
+					map[pos[1]] = []
+				}
+				switch (out) {
+					case STATUS.HIT_WALL:
+						switch (currentDirection) {
+							case DIRECTION.NORTH:
+								if (map[pos[1] - 1] === undefined) {
+									map[pos[1] - 1] = []
+								}
+								map[pos[1] - 1][pos[0]] = WALL
+								break
+							case DIRECTION.SOUTH:
+								if (map[pos[1] + 1] === undefined) {
+									map[pos[1] + 1] = []
+								}
+								map[pos[1] + 1][pos[0]] = WALL
+								break
+							case DIRECTION.WEST:
+								map[pos[1]][pos[0] - 1] = WALL
+								break
+							case DIRECTION.EAST:
+								map[pos[1]][pos[0] + 1] = WALL
+								break
+						}
+						// await drawMap(map)
+						// Change direction
+						direction.push(getNewDirection(map, pos))
+						return
+					case STATUS.MOVED:
+						if (map[pos[1]] === undefined) {
+							map[pos[1]] = []
+						}
+						map[pos[1]][pos[0]] = '.'
+						switch (currentDirection) {
+							case DIRECTION.NORTH:
+								pos[1] -= 1
+								break
+							case DIRECTION.SOUTH:
+								pos[1] += 1
+								break
+							case DIRECTION.WEST:
+								pos[0] -= 1
+								break
+							case DIRECTION.EAST:
+								pos[0] += 1
+								break
+						}
+						if (map[pos[1]] === undefined) {
+							map[pos[1]] = []
+						}
+						map[pos[1]][pos[0]] = getArrow(currentDirection)
+						// await drawMap(map)
+						direction.push(getNewDirection(map, pos))
+						return
+					case STATUS.OXYGEN_SYSTEM_FOUND:
+						if (map[pos[1]] === undefined) {
+							map[pos[1]] = []
+						}
+						map[pos[1]][pos[0]] = '.'
+
+						switch (currentDirection) {
+							case DIRECTION.NORTH:
+								oxygenSystemPosition = [pos[0], pos[1] - 1]
+								break
+							case DIRECTION.SOUTH:
+								oxygenSystemPosition = [pos[0], pos[1] + 1]
+								break
+							case DIRECTION.WEST:
+								oxygenSystemPosition = [pos[0] - 1, pos[1]]
+								break
+							case DIRECTION.EAST:
+								oxygenSystemPosition = [pos[0] + 1, pos[1]]
+								break
+						}
+						map[oxygenSystemPosition[1]][oxygenSystemPosition[0]] = 'x'
+						await drawMap(map)
+						;(({ yOffset, xOffset }) => {
+							const x = [
+								oxygenSystemPosition[0] - xOffset,
+								oxygenSystemPosition[1] - yOffset,
+							] as [number, number]
+							resolve({
+								start: [start - xOffset, start - yOffset],
+								oxygenSystemPosition: x,
+								map: toBitMap(map, x),
+							})
+						})(getOffsets(map))
+						return
+				}
+			},
+		})
 	})
-	return movementCount
+
+export const repairRobot = async (program: number[]): Promise<number> => {
+	const { start, oxygenSystemPosition, map } = await findOxygenSystem(program)
+	console.log(`Oxygen System is at position`, oxygenSystemPosition)
+	console.log(`Start`, start)
+	const path = findShortestPath(map, start, oxygenSystemPosition)
+	console.log(`Shortest path: ${path.length}`)
+	return path.length
 }
