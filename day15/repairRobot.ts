@@ -253,6 +253,25 @@ export const repairRobot = async (
 					return
 				case STATUS.OXYGEN_SYSTEM_FOUND:
 					stop()
+					if (map[pos[1]] === undefined) {
+						map[pos[1]] = []
+					}
+					switch (currentDirection) {
+						case DIRECTION.NORTH:
+							pos[1] -= 1
+							break
+						case DIRECTION.SOUTH:
+							pos[1] += 1
+							break
+						case DIRECTION.WEST:
+							pos[0] -= 1
+							break
+						case DIRECTION.EAST:
+							pos[0] += 1
+							break
+					}
+					map[pos[1]][pos[0]] = 'x'
+					await drawMap(map, movementCount, inLessThanNSteps)
 					return
 			}
 		},
