@@ -9,6 +9,6 @@ const recipes = fs.readFileSync(
 
 describe('Day 14: Part 1', () => {
 	it('should calculate the solution', () => {
-		expect(nanofactory(recipes)).toEqual(168046)
+		expect(nanofactory(recipes, 'FUEL', 1)).toEqual(168046)
 	})
 })

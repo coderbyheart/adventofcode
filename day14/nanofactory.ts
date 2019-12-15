@@ -11,63 +11,57 @@ const parseChem = (chemical: string): ChemicalAmount => {
 	}
 }
 
-const FUEL = 'FUEL'
 const ORE = 'ORE'
 
 type Reaction = {
 	inputs: ChemicalAmount[]
 	output: ChemicalAmount
+	stock: number
 }
 
 type Reactions = {
 	[key: string]: Reaction
 }
 
-type Stock = {
-	[key: string]: number
-}
-
-const startReaction = (
+const makeChemical = (
 	reactions: Reactions,
-	stock?: Stock,
-	reaction?: Reaction,
+	chemical: string,
+	need: number,
 ): number => {
-	if (!stock) stock = {}
-	if (!reaction) reaction = reactions[FUEL]
+	if (chemical === ORE) return need // Is always available
 
-	// Inputs that only require Ore
-	const oreInputs = reaction.inputs.filter(({ symbol }) => symbol === ORE)
-	const oreAmount = oreInputs.reduce((total, { amount }) => total + amount, 0)
+	const reaction = reactions[chemical]
 
-	const reactionInputs = reaction.inputs.filter(({ symbol }) => symbol !== ORE)
-
-	const reactionOutputs = reactionInputs
-		.map(({ symbol, amount }) => {
-			if (!stock) {
-				stock = {}
-			}
-			if (!stock[symbol]) {
-				stock[symbol] = 0
-			}
-			stock[symbol] -= amount
-			let ore = 0
-			while (stock[symbol] < 0) {
-				ore += startReaction(reactions, stock, reactions[symbol])
-			}
-			return ore
-		})
-		.reduce((total, amount) => total + amount, 0)
-
-	if (!stock[reaction.output.symbol]) {
-		stock[reaction.output.symbol] = reaction.output.amount
-	} else {
-		stock[reaction.output.symbol] += reaction.output.amount
+	if (reaction.stock > need) {
+		// We have enough in stock
+		reaction.stock -= need
+		return 0
 	}
 
-	return oreAmount + reactionOutputs
+	need -= reaction.stock
+
+	// Calculate the leftovers and stock them
+	const extra = reaction.output.amount - (need % reaction.output.amount)
+	if (extra == reaction.output.amount) {
+		reaction.stock = 0
+	} else {
+		reaction.stock = extra
+	}
+
+	// How often do we need to run the reaction?
+	const mult = Math.ceil(need / reaction.output.amount)
+	let oreUsed = 0
+	for (const input of reaction.inputs) {
+		oreUsed += makeChemical(reactions, input.symbol, input.amount * mult)
+	}
+	return oreUsed
 }
 
-export const nanofactory = (reactions: string): number => {
+export const nanofactory = (
+	reactions: string,
+	chemical: string,
+	amountneed: number,
+): number => {
 	const r = reactions
 		.split('\n')
 		.map(s => s.trim())
@@ -83,10 +77,11 @@ export const nanofactory = (reactions: string): number => {
 				[output.symbol]: {
 					inputs,
 					output,
+					stock: 0,
 				},
 			}),
 			{} as Reactions,
 		)
 
-	return startReaction(r)
+	return makeChemical(r, chemical, amountneed)
 }
