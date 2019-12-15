@@ -62,7 +62,6 @@ export const drawMap = async (map: string[][]): Promise<void> => {
 	}
 
 	console.log(screen.map(col => col.join('')).join('\n'))
-	return new Promise(resolve => setTimeout(resolve, 1000))
 }
 
 export const repairRobot = async (
@@ -121,7 +120,6 @@ export const repairRobot = async (
 						return nextDir
 					})()
 					movementCount++
-					await drawMap(map)
 					return
 				case STATUS.MOVED:
 					if (map[pos[1]] === undefined) {
@@ -145,7 +143,6 @@ export const repairRobot = async (
 					map[pos[1]][pos[0]] = '▀'
 					direction = randomDirection()
 					movementCount++
-					await drawMap(map)
 					return
 				case STATUS.OXYGEN_SYSTEM_FOUND:
 					stop()
