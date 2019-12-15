@@ -147,6 +147,7 @@ export const compute = async (args: {
 	pos?: number
 	input?: () => Promise<number | undefined>
 	output?: (out: number) => void
+	exit?: (fn: () => void) => void
 }): Promise<number[]> => {
 	const { program, input, output } = args
 	let pos = args.pos || 0
@@ -160,8 +161,16 @@ export const compute = async (args: {
 		relativeBase = newRelativeBase
 	}
 
+	let running = true
+
+	if (args.exit) {
+		args.exit(() => {
+			running = false
+		})
+	}
+
 	// eslint-disable-next-line no-constant-condition
-	while (true) {
+	while (true && running) {
 		const { op, modes } = parseParameter(program[pos])
 		switch (op) {
 			case OPCODES.ADD:
@@ -204,4 +213,6 @@ export const compute = async (args: {
 				throw new Error(`Unknown opcode ${op}!`)
 		}
 	}
+
+	return program
 }
