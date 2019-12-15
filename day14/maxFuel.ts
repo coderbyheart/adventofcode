@@ -6,7 +6,7 @@ import { nanofactory } from './nanofactory'
 export const maxFuel = (reactions: string, maxOre = 1000000000000): number => {
 	let min = 0
 	let max = maxOre
-	while (max >= min && min !== max) {
+	while (max > min && min !== max) {
 		const n = Math.floor((max + min) / 2)
 		const ore = nanofactory(reactions, 'FUEL', n)
 		if (ore > maxOre) {
@@ -15,5 +15,5 @@ export const maxFuel = (reactions: string, maxOre = 1000000000000): number => {
 			min = n + 1
 		}
 	}
-	return min - 1
+	return min
 }

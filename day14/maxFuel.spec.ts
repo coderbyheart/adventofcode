@@ -14,7 +14,7 @@ describe('It should calculate the max fuel', () => {
             165 ORE => 2 GPVTF
             3 DCFZ, 7 NZVS, 5 HKGWZ, 10 PSHF => 8 KHKGT
             `,
-			82892753,
+			82892754,
 		],
 		[
 			`
@@ -31,7 +31,7 @@ describe('It should calculate the max fuel', () => {
             1 VJHF, 6 MNCFX => 4 RFSQX
             176 ORE => 6 VJHF
             `,
-			5586022,
+			5586023,
 		],
 		[
 			`
@@ -53,7 +53,7 @@ describe('It should calculate the max fuel', () => {
             7 XCVML => 6 RJRHP
             5 BHXH, 4 VRPVC => 5 LTCX
             `,
-			460664,
+			460665,
 		],
 	])('Should calculate the max fuel for %p as %i', (recipes, expected) => {
 		expect(maxFuel(recipes as string)).toEqual(expected)
