@@ -57,12 +57,8 @@ const makeChemical = (
 	return oreUsed
 }
 
-export const nanofactory = (
-	reactions: string,
-	chemical: string,
-	amountneed: number,
-): number => {
-	const r = reactions
+export const parseReactions = (reactions: string) =>
+	reactions
 		.split('\n')
 		.map(s => s.trim())
 		.filter(s => s)
@@ -83,5 +79,8 @@ export const nanofactory = (
 			{} as Reactions,
 		)
 
-	return makeChemical(r, chemical, amountneed)
-}
+export const nanofactory = (
+	reactions: string,
+	chemical: string,
+	amountneed: number,
+): number => makeChemical(parseReactions(reactions), chemical, amountneed)

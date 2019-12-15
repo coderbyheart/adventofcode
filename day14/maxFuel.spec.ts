@@ -1,57 +1,7 @@
-import { nanofactory } from './nanofactory'
+import { maxFuel } from './maxFuel'
 
-describe('Nanofactory', () => {
-	it.only.each([
-		[`10 ORE => 1 FUEL`, 10],
-		[
-			`10 ORE => 1 A
-            10 A => 1 FUEL
-            `,
-			100,
-		],
-		[
-			`10 ORE => 2 A
-            10 A => 1 FUEL
-            `,
-			50,
-		],
-		[
-			`10 ORE => 1 A
-            10 A => 1 B
-            10 A, 1 B => 1 FUEL
-            `,
-			200,
-		],
-		[
-			`10 ORE => 2 A
-            10 A => 1 B
-            10 A, 1 B => 1 FUEL
-            `,
-			100,
-		],
-		[
-			`
-            10 ORE => 10 A
-            1 ORE => 1 B
-            7 A, 1 B => 1 C
-            7 A, 1 C => 1 D
-            7 A, 1 D => 1 E
-            7 A, 1 E => 1 FUEL
-            `,
-			31,
-		],
-		[
-			`
-            9 ORE => 2 A
-            8 ORE => 3 B
-            7 ORE => 5 C
-            3 A, 4 B => 1 AB
-            5 B, 7 C => 1 BC
-            4 C, 1 A => 1 CA
-            2 AB, 3 BC, 4 CA => 1 FUEL
-            `,
-			165,
-		],
+describe('It should calculate the max fuel', () => {
+	it.each([
 		[
 			`
             157 ORE => 5 NZVS
@@ -64,7 +14,7 @@ describe('Nanofactory', () => {
             165 ORE => 2 GPVTF
             3 DCFZ, 7 NZVS, 5 HKGWZ, 10 PSHF => 8 KHKGT
             `,
-			13312,
+			82892753,
 		],
 		[
 			`
@@ -81,7 +31,7 @@ describe('Nanofactory', () => {
             1 VJHF, 6 MNCFX => 4 RFSQX
             176 ORE => 6 VJHF
             `,
-			180697,
+			5586022,
 		],
 		[
 			`
@@ -103,9 +53,9 @@ describe('Nanofactory', () => {
             7 XCVML => 6 RJRHP
             5 BHXH, 4 VRPVC => 5 LTCX
             `,
-			2210736,
+			460664,
 		],
-	])('should calculate that %p needs %i for 1 FUEL', (example, ore) => {
-		expect(nanofactory(example as string, 'FUEL', 1)).toEqual(ore)
+	])('Should calculate the max fuel for %p as %i', (recipes, expected) => {
+		expect(maxFuel(recipes as string)).toEqual(expected)
 	})
 })
