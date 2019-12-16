@@ -7,6 +7,8 @@ const program = fileToArray('day15/input.txt', s =>
 	s.split(',').map(s => parseInt(s, 10)),
 )[0]
 
+jest.setTimeout(60000)
+
 describe('Day 15: Part 1', () => {
 	it('should find the solution', async () => {
 		const { start, oxygenSystemPosition, map } = await findOxygenSystem(program)
