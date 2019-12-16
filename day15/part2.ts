@@ -10,6 +10,10 @@ const main = async () => {
 	// Because the implementation favours unvisited fields, this maze will be fully explored
 	const r2 = await findOxygenSystem([...program], r1.usedMap)
 	await drawMap(r2.usedMap)
+	const floodMap = r2.map.map(row => row.map(b => (b ? 1 : 0))) as number[][]
+	floodMap[r2.oxygenSystemPosition[1]][r2.oxygenSystemPosition[0]] = 2
+	console.log(floodMap.map(row => row.join('')).join('\n'))
+	// floodFill(r2.map, r2.oxygenSystemPosition)
 }
 
 main()
