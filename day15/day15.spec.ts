@@ -32,6 +32,6 @@ describe('Day 15: Part 2', () => {
 			Tile.FLOODED
 		const iterations = await floodFill(floodMap)
 		expect(iterations).toEqual(376)
-		console.log(await drawFloodMap(floodMap, iterations))
+		await drawFloodMap(floodMap, iterations)
 	})
 })
