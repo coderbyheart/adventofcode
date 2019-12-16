@@ -1,6 +1,7 @@
 import { fileToArray } from '../utils/fileToArray'
-import { repairRobot, findOxygenSystem, drawMap } from './repairRobot'
-import { floodFill, Tile } from './floodFill'
+import { findOxygenSystem, drawMap } from './repairRobot'
+import { floodFill, Tile, drawMap as drawFloodMap } from './floodFill'
+import { findShortestPath } from './findShortesPath'
 
 const program = fileToArray('day15/input.txt', s =>
 	s.split(',').map(s => parseInt(s, 10)),
@@ -8,13 +9,16 @@ const program = fileToArray('day15/input.txt', s =>
 
 describe('Day 15: Part 1', () => {
 	it('should find the solution', async () => {
-		expect(await repairRobot([...program])).toEqual(246)
+		const { start, oxygenSystemPosition, map } = await findOxygenSystem(program)
+		console.log(`Oxygen System is at position`, oxygenSystemPosition)
+		console.log(`Start`, start)
+		const path = findShortestPath(map, start, oxygenSystemPosition)
+		expect(path.length).toEqual(246)
 	})
 })
 
 describe('Day 15: Part 2', () => {
 	it('should find the solution', async () => {
-		expect(await repairRobot([...program])).toEqual(246)
 		const r1 = await findOxygenSystem([...program])
 		// Because the implementation favours unvisited fields, this maze will be fully explored
 		const r2 = await findOxygenSystem([...program], r1.usedMap)
@@ -24,6 +28,8 @@ describe('Day 15: Part 2', () => {
 		) as number[][]
 		floodMap[r2.oxygenSystemPosition[1]][r2.oxygenSystemPosition[0]] =
 			Tile.FLOODED
-		expect(await floodFill(floodMap)).toEqual(376)
+		const iterations = await floodFill(floodMap)
+		expect(iterations).toEqual(376)
+		console.log(await drawFloodMap(floodMap, iterations))
 	})
 })

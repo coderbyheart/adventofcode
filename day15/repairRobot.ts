@@ -1,5 +1,4 @@
 import { compute } from '../intcode/intcode'
-import { findShortestPath } from './findShortesPath'
 
 enum STATUS {
 	HIT_WALL = 0,
@@ -314,12 +313,3 @@ export const findOxygenSystem = async (
 			},
 		})
 	})
-
-export const repairRobot = async (program: number[]): Promise<number> => {
-	const { start, oxygenSystemPosition, map } = await findOxygenSystem(program)
-	console.log(`Oxygen System is at position`, oxygenSystemPosition)
-	console.log(`Start`, start)
-	const path = findShortestPath(map, start, oxygenSystemPosition)
-	console.log(`Shortest path: ${path.length}`)
-	return path.length
-}
