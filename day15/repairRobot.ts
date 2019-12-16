@@ -197,16 +197,19 @@ const getArrow = (direction: DIRECTION) => {
 	}
 }
 
-const findOxygenSystem = async (program: number[]) =>
+export const findOxygenSystem = async (
+	program: number[],
+	map = [] as string[][],
+) =>
 	new Promise<{
 		start: [number, number]
 		oxygenSystemPosition: [number, number]
 		map: boolean[][]
+		usedMap: string[][]
 		// eslint-disable-next-line no-async-promise-executor
 	}>(async resolve => {
 		let currentDirection = randomDirection()
 		const direction = inputGenerator([randomDirection()])
-		const map = [] as string[][]
 		const start = Math.floor(Number.MAX_SAFE_INTEGER / 2)
 		const pos = [start, start] as [number, number]
 		let oxygenSystemPosition = undefined
@@ -293,7 +296,7 @@ const findOxygenSystem = async (program: number[]) =>
 								break
 						}
 						map[oxygenSystemPosition[1]][oxygenSystemPosition[0]] = 'x'
-						await drawMap(map)
+						// await drawMap(map)
 						;(({ yOffset, xOffset }) => {
 							const x = [
 								oxygenSystemPosition[0] - xOffset,
@@ -303,6 +306,7 @@ const findOxygenSystem = async (program: number[]) =>
 								start: [start - xOffset, start - yOffset],
 								oxygenSystemPosition: x,
 								map: toBitMap(map, x),
+								usedMap: map,
 							})
 						})(getOffsets(map))
 						return
