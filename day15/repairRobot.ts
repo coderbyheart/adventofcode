@@ -20,6 +20,8 @@ const directions = [
 	DIRECTION.EAST,
 ]
 
+export type Position = [number, number]
+
 const randomDirection = () =>
 	directions[Math.floor(Math.random() * directions.length)]
 
@@ -80,7 +82,7 @@ export const drawMap = async (map: string[][]): Promise<void> => {
 
 export const toBitMap = (
 	map: string[][],
-	oxygenSystemPosition: [number, number],
+	oxygenSystemPosition: Position,
 ): boolean[][] => {
 	const { xOffset, yOffset, minX, maxX, minY, maxY } = getOffsets(map)
 
@@ -124,7 +126,7 @@ const inputGenerator = (inp: number[], takers: Taker[] = []) => ({
 
 const WALL = '▒'
 
-const isUnknown = (map: string[][], pos: [number, number], dir: DIRECTION) => {
+const isUnknown = (map: string[][], pos: Position, dir: DIRECTION) => {
 	switch (dir) {
 		case DIRECTION.NORTH:
 			return (
@@ -141,7 +143,7 @@ const isUnknown = (map: string[][], pos: [number, number], dir: DIRECTION) => {
 	}
 }
 
-const isValid = (map: string[][], pos: [number, number], dir: DIRECTION) => {
+const isValid = (map: string[][], pos: Position, dir: DIRECTION) => {
 	switch (dir) {
 		case DIRECTION.NORTH:
 			return (
@@ -170,7 +172,7 @@ const isValid = (map: string[][], pos: [number, number], dir: DIRECTION) => {
 	}
 }
 
-const getNewDirection = (map: string[][], pos: [number, number]) => {
+const getNewDirection = (map: string[][], pos: Position) => {
 	// Prefer unknown locations
 	const unknownDirection = directions.find(direction =>
 		isUnknown(map, pos, direction),
@@ -201,8 +203,8 @@ export const findOxygenSystem = async (
 	map = [] as string[][],
 ) =>
 	new Promise<{
-		start: [number, number]
-		oxygenSystemPosition: [number, number]
+		start: Position
+		oxygenSystemPosition: Position
 		map: boolean[][]
 		usedMap: string[][]
 		// eslint-disable-next-line no-async-promise-executor
@@ -210,7 +212,7 @@ export const findOxygenSystem = async (
 		let currentDirection = randomDirection()
 		const direction = inputGenerator([randomDirection()])
 		const start = Math.floor(Number.MAX_SAFE_INTEGER / 2)
-		const pos = [start, start] as [number, number]
+		const pos = [start, start] as Position
 		let oxygenSystemPosition = undefined
 		await compute({
 			program,
@@ -300,7 +302,7 @@ export const findOxygenSystem = async (
 							const x = [
 								oxygenSystemPosition[0] - xOffset,
 								oxygenSystemPosition[1] - yOffset,
-							] as [number, number]
+							] as Position
 							resolve({
 								start: [start - xOffset, start - yOffset],
 								oxygenSystemPosition: x,

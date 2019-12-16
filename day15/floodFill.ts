@@ -1,4 +1,5 @@
 import * as chalk from 'chalk'
+import { Position } from './repairRobot'
 
 export enum Tile {
 	WALL = 0,
@@ -9,8 +10,8 @@ export enum Tile {
 const isFloodableThisIteration = (
 	map: Tile[][],
 	flooded: boolean[][],
-	[fromX, fromY]: [number, number],
-) => ([x, y]: [number, number]) =>
+	[fromX, fromY]: Position,
+) => ([x, y]: Position) =>
 	map[y][x] === Tile.FLOODABLE &&
 	flooded[y][x] === false &&
 	flooded[fromY][fromX] === false

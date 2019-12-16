@@ -1,10 +1,7 @@
 import { DIRECTION } from '../day11/paintRobot'
+import { Position } from './repairRobot'
 
-const isSafe = (
-	map: boolean[][],
-	visited: boolean[][],
-	pos: [number, number],
-) => {
+const isSafe = (map: boolean[][], visited: boolean[][], pos: Position) => {
 	if (map[pos[1]] === undefined) return false
 	if (map[pos[1]][pos[0]] === undefined) return false
 	if (!map[pos[1]][pos[0]]) return false
@@ -12,20 +9,19 @@ const isSafe = (
 	return true
 }
 
-const equals = (a: [number, number], b: [number, number]) =>
-	a[0] === b[0] && a[1] === b[1]
+const equals = (a: Position, b: Position) => a[0] === b[0] && a[1] === b[1]
 
 type Location = {
-	pos: [number, number]
-	path: [number, number][]
+	pos: Position
+	path: Position[]
 	status: 'Start' | 'Valid' | 'Blocked' | 'Target'
 }
 
 const status = (
 	map: boolean[][],
 	visited: boolean[][],
-	to: [number, number],
-	location: [number, number],
+	to: Position,
+	location: Position,
 ) => {
 	if (!isSafe(map, visited, location)) return 'Blocked'
 	if (equals(location, to)) return 'Target'
@@ -35,9 +31,9 @@ const status = (
 const createLocation = (
 	map: boolean[][],
 	visited: boolean[][],
-	to: [number, number],
+	to: Position,
 	location: Location,
-) => (pos: [number, number]): Location => ({
+) => (pos: Position): Location => ({
 	pos: pos,
 	path: [...location.path, location.pos],
 	status: status(map, visited, to, pos),
@@ -46,7 +42,7 @@ const createLocation = (
 const exploreInDirection = (
 	map: boolean[][],
 	visited: boolean[][],
-	to: [number, number],
+	to: Position,
 	location: Location,
 	direction: DIRECTION,
 ): Location => {
@@ -88,8 +84,8 @@ const exploreInDirection = (
 
 export const findShortestPath = (
 	map: boolean[][],
-	from: [number, number],
-	to: [number, number],
+	from: Position,
+	to: Position,
 ) => {
 	const visited = [] as boolean[][]
 	for (let y = 0; y < map.length; y++) {
