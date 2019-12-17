@@ -2,6 +2,7 @@ import { compute } from '../intcode/intcode'
 import { fileToArray } from '../utils/fileToArray'
 import { Map, Tile } from './findIntersections'
 import { findAligmentParameters } from './findAligmentParameters'
+import { manualSolution } from './visitAllRobots.manual'
 
 const program = fileToArray('day17/input.txt', s =>
 	s.split(',').map(s => parseInt(s, 10)),
@@ -31,5 +32,11 @@ describe('Day 17: Part 1', () => {
 		})
 
 		expect(findAligmentParameters(map)).toEqual(4220)
+	})
+})
+
+describe('Day 17: Part 2', () => {
+	it('verify the manual solution', async () => {
+		expect(await manualSolution([...program])).toEqual(809736)
 	})
 })

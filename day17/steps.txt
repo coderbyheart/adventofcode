@@ -1,0 +1,5 @@
+A,B,B,C,B,C,B,C,A,A
+
+A = L6,R8,L4,R8,L12
+B = L12,R10,L4
+C = L12,L6,L4,L4

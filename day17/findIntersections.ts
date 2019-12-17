@@ -1,5 +1,7 @@
 export type Position = [number, number]
 
+export const c = (s: string) => s.charCodeAt(0)
+
 export enum Tile {
 	SCAFFOLDING = '#',
 	SPACE = '.',
@@ -7,7 +9,15 @@ export enum Tile {
 	BOT_DOWN = 'v',
 	BOT_LEFT = '<',
 	BOT_RIGHT = '>',
-	INTERSECTION = 'O',
+}
+
+export const tiles = {
+	[c(Tile.SCAFFOLDING)]: Tile.SCAFFOLDING,
+	[c(Tile.SPACE)]: Tile.SPACE,
+	[c(Tile.BOT_UP)]: Tile.BOT_UP,
+	[c(Tile.BOT_DOWN)]: Tile.BOT_DOWN,
+	[c(Tile.BOT_LEFT)]: Tile.BOT_LEFT,
+	[c(Tile.BOT_RIGHT)]: Tile.BOT_RIGHT,
 }
 
 export type Map = Tile[][]
