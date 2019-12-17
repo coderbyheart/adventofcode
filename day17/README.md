@@ -20,7 +20,7 @@ using permutations.
 
 Eventually the result will be
 
-A = L6,R8,L4,R8,L12 B = L12,R10,L4 C = L12,L6,L4,L4
+A = L6 R8 L4 R8 L12 B = L12 R10 L4 C = L12 L6 L4 L4
 
 And the sequence is
 
