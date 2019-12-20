@@ -13,7 +13,6 @@ export type Location = {
 export enum Tile {
 	PATH = '.',
 	WALL = '#',
-	PORTAL = '@',
 }
 
 export enum DIRECTION {
@@ -97,19 +96,16 @@ const exploreInDirection = (
 		visited[newLocation.level][
 			newLocation.pos.y * maze.width + newLocation.pos.x
 		] = true
+
 		// Is this a portal?
 		const portal = portals.find(({ pos }) => equals(pos, newLocation.pos))
 		if (portal) {
+			// Find the other side of the portal
 			const pair = portals.find(
 				p => p !== portal && p.label === portal.label,
 			) as Portal
+
 			if (recursive) {
-				// When you enter the maze, you are at the outermost level (0);
-				// when at the outermost level, only the outer labels AA and ZZ
-				// function (as the start and end, respectively); all other outer
-				// labeled tiles are effectively walls. At any other level,
-				// AA and ZZ count as walls, but the other outer labeled tiles
-				// bring you one level outward.
 				if (location.level === 0) {
 					// Outermost level
 					if (portal.label === END) {
@@ -125,23 +121,22 @@ const exploreInDirection = (
 							...newLocation,
 							status: 'Blocked',
 						}
-					} else {
-						// Inner portal takes you one level deeper
-						if (visited[newLocation.level + 1] === undefined) {
-							visited[newLocation.level + 1] = []
-						}
-						visited[newLocation.level + 1][
-							pair.pos.y * maze.width + pair.pos.x
-						] = true
-						return {
-							pos: pair.pos,
-							path: [...location.path, location.pos, portal.pos],
-							status: 'Valid',
-							level: newLocation.level + 1,
-						}
+					}
+					// Inner portal takes you one level deeper
+					if (visited[newLocation.level + 1] === undefined) {
+						visited[newLocation.level + 1] = []
+					}
+					visited[newLocation.level + 1][
+						pair.pos.y * maze.width + pair.pos.x
+					] = true
+					return {
+						pos: pair.pos,
+						path: [...location.path, location.pos, portal.pos],
+						status: 'Valid',
+						level: newLocation.level + 1,
 					}
 				} else {
-					// Other level
+					// Other levels
 					if ([START, END].includes(portal.label)) {
 						// Start and end are not accessible
 						return {
@@ -160,20 +155,19 @@ const exploreInDirection = (
 							status: 'Valid',
 							level: newLocation.level - 1,
 						}
-					} else {
-						// Inner portal takes you one level deeper
-						if (visited[newLocation.level + 1] === undefined) {
-							visited[newLocation.level + 1] = []
-						}
-						visited[newLocation.level + 1][
-							pair.pos.y * maze.width + pair.pos.x
-						] = true
-						return {
-							pos: pair.pos,
-							path: [...location.path, location.pos, portal.pos],
-							status: 'Valid',
-							level: newLocation.level + 1,
-						}
+					}
+					// Inner portal takes you one level deeper
+					if (visited[newLocation.level + 1] === undefined) {
+						visited[newLocation.level + 1] = []
+					}
+					visited[newLocation.level + 1][
+						pair.pos.y * maze.width + pair.pos.x
+					] = true
+					return {
+						pos: pair.pos,
+						path: [...location.path, location.pos, portal.pos],
+						status: 'Valid',
+						level: newLocation.level + 1,
 					}
 				}
 			} else {
@@ -203,19 +197,41 @@ export type MazeString = {
 	width: number
 }
 
+/**
+ * Solves the maze using a depth-first search.
+ *
+ * First all portals are detected, then the solver starts at the tile labeled
+ * with AA, and tries to find a way to ZZ. Portals are used to jump between
+ * tiles.
+ *
+ * In recursive mode, the recursive rules apply to portals:
+ * When you enter the maze, you are at the outermost level (0); when at the
+ * outermost level, only the outer labels AA and ZZ function (as the start and
+ * end, respectively); all other outer labeled tiles are effectively walls. At
+ * any other level AA and ZZ count as walls, but the other outer labeled tiles
+ * bring you one level outward.
+ */
 export const transportingMazeSolver = (
 	maze: string,
 	recursive = false,
 ): Location | undefined => {
+	// Input is a string with maze rows separated by newlines,
+	// we assume that all lines are even spaced
 	const width = maze.indexOf('\n')
+	// In this solution we operate on one long string
 	const mazeString: MazeString = {
 		width,
 		maze: maze.trimEnd().replace(/\n/g, ''),
 	}
-	const portals = findPortals(maze)
+
+	// Find all the portals in the maze
+	const portals = findPortals(mazeString)
+
+	// We need to track visited postions for every level, starting at level 0
 	const visited = [] as Visited
 	visited[0] = []
 
+	// Find the start positing (the tile with the label 'AA')
 	const startPos = portals.find(({ label }) => label === START) as Portal
 	const queue = [
 		{
@@ -227,6 +243,7 @@ export const transportingMazeSolver = (
 	] as Location[]
 	visited[0][startPos.pos.y * width + startPos.pos.x] = true
 
+	// Now explore all possible directions until all options are exhausted or the target is found
 	while (queue.length > 0) {
 		const location = queue.shift() as Location
 		const e = exploreInDirection(
@@ -271,25 +288,4 @@ export const transportingMazeSolver = (
 	}
 
 	return undefined
-}
-
-const split = (s: string, length: number) => {
-	const ret = []
-	for (let offset = 0, strLen = s.length; offset < strLen; offset += length) {
-		ret.push(s.slice(offset, length + offset))
-	}
-	return ret
-}
-
-export const drawSolution = (maze: string, finalLocation: Location) => {
-	const width = maze.indexOf('\n')
-	const mapAsString = maze.trimEnd().replace(/\n/g, '')
-	let solution = mapAsString
-	finalLocation.path.forEach(p => {
-		solution =
-			solution.substr(0, p.y * width + p.x) +
-			'@' +
-			solution.substr(p.y * width + p.x + 1)
-	})
-	console.log(split(solution, width).join('\n'))
 }

@@ -4,30 +4,28 @@ import * as path from 'path'
 
 describe('Find the portals', () => {
 	it('should find all portals in the map', () => {
-		const portals = findPortals(
-			fs.readFileSync(
-				path.resolve(process.cwd(), 'day20/example1.txt'),
-				'utf-8',
-			),
+		const example = fs.readFileSync(
+			path.resolve(process.cwd(), 'day20/example1.txt'),
+			'utf-8',
 		)
+		const portals = findPortals({ maze: example, width: example.indexOf('\n') })
 		expect(portals).toHaveLength(8)
 	})
 	it('should find the VT portal in the second example', () => {
-		const portals = findPortals(
-			fs.readFileSync(
-				path.resolve(process.cwd(), 'day20/example2.txt'),
-				'utf-8',
-			),
+		const example = fs.readFileSync(
+			path.resolve(process.cwd(), 'day20/example2.txt'),
+			'utf-8',
 		)
+		const portals = findPortals({ maze: example, width: example.indexOf('\n') })
 		expect(portals.filter(({ label }) => label === 'VT')).toHaveLength(2)
 	})
 	it('should detect inner and outer portals', () => {
-		const portals = findPortals(
-			fs.readFileSync(
-				path.resolve(process.cwd(), 'day20/example2.txt'),
-				'utf-8',
-			),
+		const example = fs.readFileSync(
+			path.resolve(process.cwd(), 'day20/example2.txt'),
+			'utf-8',
 		)
+
+		const portals = findPortals({ maze: example, width: example.indexOf('\n') })
 		const aa = portals.find(({ label }) => label === 'AA')
 		const zz = portals.find(({ label }) => label === 'ZZ')
 		const cpOuter = portals.find(

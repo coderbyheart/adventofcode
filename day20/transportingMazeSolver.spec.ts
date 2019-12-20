@@ -1,10 +1,7 @@
-import {
-	transportingMazeSolver,
-	drawSolution,
-	Location,
-} from './transportingMazeSolver'
+import { transportingMazeSolver, Location } from './transportingMazeSolver'
 import * as fs from 'fs'
 import * as path from 'path'
+import { drawSolution } from './drawSolution'
 
 describe('Transporting maze solver', () => {
 	it('should solve the first example', () => {

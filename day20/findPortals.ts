@@ -9,6 +9,9 @@ export type Portal = {
 
 type PortalPart = { pos: Position; letter: string; isPortalFor?: Position }
 
+/**
+ * Detects outer portal, they are located on the outside of the map
+ */
 const isOuterPortal = (maze: MazeString, pos: Position): boolean => {
 	// Outside left
 	if (pos.x === 2) return true
@@ -22,7 +25,7 @@ const isOuterPortal = (maze: MazeString, pos: Position): boolean => {
 }
 
 /**
- * Determins if a coordinate is the entry of a portal,
+ * Determines if a coordinate is the entry of a portal,
  * because it has a path tile ('.') as neighbour
  */
 const isPortalEntry = (
@@ -46,26 +49,23 @@ const isPortalEntry = (
 	return 0
 }
 
-export const findPortals = (maze: string): Portal[] => {
-	const width = maze.indexOf('\n')
-	const mapAsString = maze.trimEnd().replace(/\n/g, '')
-
+export const findPortals = (maze: MazeString): Portal[] => {
 	// Find all the letters in the map
-	const letters = mapAsString.split('').reduce((letters, p, i) => {
+	const letters = maze.maze.split('').reduce((letters, p, i) => {
 		if (/[A-Z]/.test(p)) {
-			const y = Math.floor(i / width)
-			const entry = isPortalEntry(mapAsString, width, i % width, y)
+			const y = Math.floor(i / maze.width)
+			const entry = isPortalEntry(maze.maze, maze.width, i % maze.width, y)
 			letters.push({
 				pos: {
-					x: i % width,
+					x: i % maze.width,
 					y,
 				},
 				letter: p,
 				isPortalFor:
 					entry !== 0
 						? ({
-								x: entry % width,
-								y: Math.floor(entry / width),
+								x: entry % maze.width,
+								y: Math.floor(entry / maze.width),
 						  } as Position)
 						: undefined,
 			})
@@ -80,6 +80,7 @@ export const findPortals = (maze: string): Portal[] => {
 			const pair = letters.find(
 				l => distanceTo(letter.pos, l.pos) === 1,
 			) as PortalPart
+			// Figure out the label based on the relative position of the pair
 			let label = ''
 			if (pair.pos.x < letter.pos.x) {
 				label = `${pair.letter}${letter.letter}`
@@ -93,10 +94,7 @@ export const findPortals = (maze: string): Portal[] => {
 			portals.push({
 				label,
 				pos: letter.isPortalFor as Position,
-				isOuter: isOuterPortal(
-					{ maze: mapAsString, width },
-					letter.isPortalFor as Position,
-				),
+				isOuter: isOuterPortal(maze, letter.isPortalFor as Position),
 			})
 			return portals
 		}, [] as Portal[])
