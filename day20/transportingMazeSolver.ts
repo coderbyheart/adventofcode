@@ -127,8 +127,8 @@ const exploreInDirection = (
 						}
 					} else {
 						// Inner portal takes you one level deeper
-						if (visited[newLocation.level] === undefined) {
-							visited[newLocation.level] = []
+						if (visited[newLocation.level + 1] === undefined) {
+							visited[newLocation.level + 1] = []
 						}
 						visited[newLocation.level + 1][
 							pair.pos.y * maze.width + pair.pos.x
@@ -142,8 +142,8 @@ const exploreInDirection = (
 					}
 				} else {
 					// Other level
-					if (portal.label === END) {
-						// ZZ is not accessible
+					if ([START, END].includes(portal.label)) {
+						// Start and end are not accessible
 						return {
 							...newLocation,
 							status: 'Blocked',
@@ -162,6 +162,9 @@ const exploreInDirection = (
 						}
 					} else {
 						// Inner portal takes you one level deeper
+						if (visited[newLocation.level + 1] === undefined) {
+							visited[newLocation.level + 1] = []
+						}
 						visited[newLocation.level + 1][
 							pair.pos.y * maze.width + pair.pos.x
 						] = true

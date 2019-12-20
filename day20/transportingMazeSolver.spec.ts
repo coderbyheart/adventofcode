@@ -26,4 +26,15 @@ describe('Transporting maze solver', () => {
 		expect(res?.path).toHaveLength(58)
 		drawSolution(example, res as Location)
 	})
+
+	it('should recursively solve the third example', () => {
+		const example = fs.readFileSync(
+			path.resolve(process.cwd(), 'day20/example-part2.txt'),
+			'utf-8',
+		)
+
+		const res = transportingMazeSolver(example, true)
+		expect(res?.path).toHaveLength(396)
+		drawSolution(example, res as Location)
+	})
 })
