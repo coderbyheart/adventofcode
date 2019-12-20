@@ -17,3 +17,14 @@ describe('Day 20: Part 1', () => {
 		drawSolution(input, res as Location)
 	})
 })
+
+describe('Day 20: Part 1', () => {
+	it('should recursively solve the puzzle', () => {
+		const input = fs.readFileSync(
+			path.resolve(process.cwd(), 'day20/input.txt'),
+			'utf-8',
+		)
+		const res = transportingMazeSolver(input, true)
+		expect(res?.path).toHaveLength(4986)
+	})
+})
