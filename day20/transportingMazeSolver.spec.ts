@@ -1,4 +1,8 @@
-import { transportingMazeSolver } from './transportingMazeSolver'
+import {
+	transportingMazeSolver,
+	drawSolution,
+	Location,
+} from './transportingMazeSolver'
 import * as fs from 'fs'
 import * as path from 'path'
 
@@ -8,6 +12,8 @@ describe('Transporting maze solver', () => {
 			path.resolve(process.cwd(), 'day20/example1.txt'),
 			'utf-8',
 		)
-		expect(transportingMazeSolver(example)?.path).toHaveLength(23)
+		const res = transportingMazeSolver(example)
+		expect(res?.path).toHaveLength(23)
+		drawSolution(example, res as Location)
 	})
 })

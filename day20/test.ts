@@ -1,12 +1,11 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import { transportingMazeSolver } from './transportingMazeSolver'
+import { transportingMazeSolver, drawSolution } from './transportingMazeSolver'
 
 const example = fs.readFileSync(
-	path.resolve(process.cwd(), 'day20/example1.txt'),
+	path.resolve(process.cwd(), 'day20/example2.txt'),
 	'utf-8',
 )
 
 const res = transportingMazeSolver(example)
-console.log(res)
-console.log(res?.path.length)
+if (res) drawSolution(example, res)

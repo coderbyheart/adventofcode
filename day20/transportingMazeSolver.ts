@@ -3,7 +3,7 @@ import { findPortals, Portal } from './findPortals'
 export type Position = { x: number; y: number }
 
 type LocationStatus = 'Start' | 'Valid' | 'Blocked' | 'Target'
-type Location = {
+export type Location = {
 	pos: Position
 	path: Position[]
 	status: LocationStatus
@@ -92,8 +92,8 @@ const exploreInDirection = (
 			visited[pair.pos.y * maze.width + pair.pos.x] = true
 			return {
 				pos: pair.pos,
-				path: [...location.path, location.pos],
-				status: status(maze, visited, pair.pos),
+				path: [...location.path, location.pos, portal.pos],
+				status: 'Valid',
 			}
 		}
 	}
@@ -163,4 +163,17 @@ export const transportingMazeSolver = (maze: string): Location | undefined => {
 	}
 
 	return undefined
+}
+
+export const drawSolution = (maze: string, finalLocation: Location) => {
+	const width = maze.indexOf('\n')
+	const mapAsString = maze.trimEnd().replace(/\n/g, '')
+	let solution = mapAsString
+	finalLocation.path.map(p => {
+		solution =
+			solution.substr(0, p.y * width + p.x) +
+			'@' +
+			solution.substr(p.y * width + p.x + 1)
+	})
+	console.log(new RegExp(`.{${width}}`, 'g').exec(solution)?.join('\n'))
 }
