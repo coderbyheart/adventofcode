@@ -1,4 +1,5 @@
-import { Location } from './transportingMazeSolver'
+import { Location, Tile } from './transportingMazeSolver'
+import * as chalk from 'chalk'
 
 const split = (s: string, length: number) => {
 	const ret = []
@@ -6,6 +7,22 @@ const split = (s: string, length: number) => {
 		ret.push(s.slice(offset, length + offset))
 	}
 	return ret
+}
+
+const colorTile = (s: string) => {
+	if (/[A-Z]/.test(s)) {
+		return chalk.blueBright(s)
+	}
+	switch (s) {
+		case Tile.WALL:
+			return chalk.gray('▒')
+		case Tile.PATH:
+			return ' '
+		case '@':
+			return chalk.green('█')
+		default:
+			return s
+	}
 }
 
 export const drawSolution = (maze: string, finalLocation: Location) => {
@@ -18,5 +35,14 @@ export const drawSolution = (maze: string, finalLocation: Location) => {
 			'@' +
 			solution.substr(p.y * width + p.x + 1)
 	})
-	console.log(split(solution, width).join('\n'))
+	console.log(
+		split(solution, width)
+			.map(line =>
+				line
+					.split('')
+					.map(colorTile)
+					.join(''),
+			)
+			.join('\n'),
+	)
 }
