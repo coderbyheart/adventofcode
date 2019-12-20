@@ -8,7 +8,11 @@ describe('Find the portals', () => {
 			path.resolve(process.cwd(), 'day20/example1.txt'),
 			'utf-8',
 		)
-		const portals = findPortals({ maze: example, width: example.indexOf('\n') })
+		const portals = findPortals({
+			maze: example.trimEnd().replace(/\n/g, ''),
+			width: example.indexOf('\n'),
+		})
+		console.log(portals)
 		expect(portals).toHaveLength(8)
 	})
 	it('should find the VT portal in the second example', () => {
@@ -16,7 +20,10 @@ describe('Find the portals', () => {
 			path.resolve(process.cwd(), 'day20/example2.txt'),
 			'utf-8',
 		)
-		const portals = findPortals({ maze: example, width: example.indexOf('\n') })
+		const portals = findPortals({
+			maze: example.trimEnd().replace(/\n/g, ''),
+			width: example.indexOf('\n'),
+		})
 		expect(portals.filter(({ label }) => label === 'VT')).toHaveLength(2)
 	})
 	it('should detect inner and outer portals', () => {
@@ -25,7 +32,10 @@ describe('Find the portals', () => {
 			'utf-8',
 		)
 
-		const portals = findPortals({ maze: example, width: example.indexOf('\n') })
+		const portals = findPortals({
+			maze: example.trimEnd().replace(/\n/g, ''),
+			width: example.indexOf('\n'),
+		})
 		const aa = portals.find(({ label }) => label === 'AA')
 		const zz = portals.find(({ label }) => label === 'ZZ')
 		const cpOuter = portals.find(
