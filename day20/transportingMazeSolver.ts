@@ -22,6 +22,9 @@ export enum DIRECTION {
 	RIGHT,
 }
 
+const START = 'AA'
+const END = 'ZZ'
+
 const isSafe = (maze: MazeString, visited: boolean[], pos: Position) => {
 	const p = pos.y * maze.width + pos.x
 	if (maze.maze[p] === undefined) return false
@@ -56,7 +59,6 @@ const exploreInDirection = (
 	visited: boolean[],
 	portals: Portal[],
 	location: Location,
-	end: string,
 ) => (direction: DIRECTION): Location => {
 	let newLocation: Location
 	const cl = createLocation(maze, visited, location)
@@ -81,7 +83,7 @@ const exploreInDirection = (
 		const portal = portals.find(({ pos }) => equals(pos, newLocation.pos))
 		if (portal) {
 			// Is this the last portal
-			if (portal.label === end) {
+			if (portal.label === END) {
 				return {
 					...newLocation,
 					status: 'Target',
@@ -107,9 +109,6 @@ export type MazeString = {
 	width: number
 }
 
-const START = 'AA'
-const END = 'ZZ'
-
 export const transportingMazeSolver = (maze: string): Location | undefined => {
 	const width = maze.indexOf('\n')
 	const mazeString: MazeString = {
@@ -131,7 +130,7 @@ export const transportingMazeSolver = (maze: string): Location | undefined => {
 
 	while (queue.length > 0) {
 		const location = queue.shift() as Location
-		const e = exploreInDirection(mazeString, visited, portals, location, END)
+		const e = exploreInDirection(mazeString, visited, portals, location)
 
 		// Up
 		const up = e(DIRECTION.UP)
