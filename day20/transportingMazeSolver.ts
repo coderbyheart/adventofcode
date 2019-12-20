@@ -56,6 +56,7 @@ const exploreInDirection = (
 	visited: boolean[],
 	portals: Portal[],
 	location: Location,
+	end: string,
 ) => (direction: DIRECTION): Location => {
 	let newLocation: Location
 	const cl = createLocation(maze, visited, location)
@@ -80,7 +81,7 @@ const exploreInDirection = (
 		const portal = portals.find(({ pos }) => equals(pos, newLocation.pos))
 		if (portal) {
 			// Is this the last portal
-			if (portal.label === 'ZZ') {
+			if (portal.label === end) {
 				return {
 					...newLocation,
 					status: 'Target',
@@ -106,7 +107,10 @@ type MazeString = {
 	width: number
 }
 
-export const transportingMazeSolver = (maze: string): Location | undefined => {
+export const transportingMazeSolver = (
+	maze: string,
+	{ start, end }: { start: string; end: string },
+): Location | undefined => {
 	const width = maze.indexOf('\n')
 	const mazeString: MazeString = {
 		width,
@@ -115,7 +119,7 @@ export const transportingMazeSolver = (maze: string): Location | undefined => {
 	const portals = findPortals(maze)
 	const visited = [] as boolean[]
 
-	const startPos = portals.find(({ label }) => label === 'AA') as Portal
+	const startPos = portals.find(({ label }) => label === start) as Portal
 	const queue = [
 		{
 			path: [],
@@ -127,7 +131,7 @@ export const transportingMazeSolver = (maze: string): Location | undefined => {
 
 	while (queue.length > 0) {
 		const location = queue.shift() as Location
-		const e = exploreInDirection(mazeString, visited, portals, location)
+		const e = exploreInDirection(mazeString, visited, portals, location, end)
 
 		// Up
 		const up = e(DIRECTION.UP)
