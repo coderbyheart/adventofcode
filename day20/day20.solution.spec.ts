@@ -12,7 +12,7 @@ describe('Day 20: Part 1', () => {
 			path.resolve(process.cwd(), 'day20/input.txt'),
 			'utf-8',
 		)
-		const res = transportingMazeSolver(input, { start: 'ZZ', end: 'AA' })
+		const res = transportingMazeSolver(input)
 		expect(res?.path).toHaveLength(400)
 		drawSolution(input, res as Location)
 	})

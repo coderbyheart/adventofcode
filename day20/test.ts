@@ -7,6 +7,6 @@ const example = fs.readFileSync(
 	'utf-8',
 )
 
-const res = transportingMazeSolver(example, { start: 'ZZ', end: 'AA' })
+const res = transportingMazeSolver(example)
 if (res) drawSolution(example, res)
 console.log(res?.path.length)

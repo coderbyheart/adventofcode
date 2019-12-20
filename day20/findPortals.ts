@@ -1,12 +1,25 @@
-import { Position, Tile } from './transportingMazeSolver'
+import { Position, Tile, MazeString } from './transportingMazeSolver'
 import { distanceTo } from './distanceTo'
 
 export type Portal = {
 	label: string
 	pos: Position
+	isOuter: boolean
 }
 
 type PortalPart = { pos: Position; letter: string; isPortalFor?: Position }
+
+const isOuterPortal = (maze: MazeString, pos: Position): boolean => {
+	// Outside left
+	if (pos.x === 2) return true
+	// Outside right
+	if (pos.x === maze.width - 3) return true
+	// Outside top
+	if (pos.y === 2) return true
+	// Outside bottom
+	if (pos.y === Math.floor(maze.maze.length / maze.width) - 2) return true
+	return false
+}
 
 /**
  * Determins if a coordinate is the entry of a portal,
@@ -67,11 +80,23 @@ export const findPortals = (maze: string): Portal[] => {
 			const pair = letters.find(
 				l => distanceTo(letter.pos, l.pos) === 1,
 			) as PortalPart
+			let label = ''
+			if (pair.pos.x < letter.pos.x) {
+				label = `${pair.letter}${letter.letter}`
+			} else if (pair.pos.x > letter.pos.x) {
+				label = `${letter.letter}${pair.letter}`
+			} else if (pair.pos.y < letter.pos.y) {
+				label = `${pair.letter}${letter.letter}`
+			} else if (pair.pos.y > letter.pos.y) {
+				label = `${letter.letter}${pair.letter}`
+			}
 			portals.push({
-				label: [letter.letter, pair.letter]
-					.sort((a, b) => a.localeCompare(b))
-					.join(''),
+				label,
 				pos: letter.isPortalFor as Position,
+				isOuter: isOuterPortal(
+					{ maze: mapAsString, width },
+					letter.isPortalFor as Position,
+				),
 			})
 			return portals
 		}, [] as Portal[])
