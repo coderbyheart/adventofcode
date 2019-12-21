@@ -41,8 +41,9 @@ export enum DIRECTION {
 
 const isSafe = (map: Maze, visited: boolean[], pos: Position) => {
 	const p = pos.y * map.width + pos.x
-	if (map.maze[p] === undefined) return false
-	if (map.maze[p] === Tile.WALL) return false
+	const t = map.maze[p]
+	if (t === undefined) return false
+	if (t === Tile.WALL) return false
 	if (visited[p]) return false
 	return true
 }
@@ -58,8 +59,8 @@ const createLocation = (map: Maze, visited: boolean[], location: Location) => (
 	const p = pos.y * map.width + pos.x
 	const t = map.maze[p]
 	const pois = [...location.pois]
-	if (/[A-Z]/i.test(t)) {
-		// Door/Key?
+	if (/[A-Z]/.test(t)) {
+		// Door on the way?
 		pois.push({
 			letter: t,
 			pos,
@@ -99,7 +100,8 @@ const exploreInDirection = (
 
 	if (newLocation.status === 'Valid') {
 		const p = newLocation.pos.y * map.width + newLocation.pos.x
-		if (map.maze[p] === target.letter) {
+		const t = map.maze[p]
+		if (t === target.letter) {
 			return {
 				...newLocation,
 				status: 'Target',
@@ -118,14 +120,15 @@ type POIPath = {
 	path: Location[]
 }
 
-const shortestPathToFinalKey = (
+const shortestPathToCollectAllKeys = (
 	map: Maze,
 	start: POIPath,
-	target: POI,
+	keys: string[],
 	connections: Connection[],
 	collectedKeys: string[] = [],
 ): POIPath | undefined => {
-	if (start.poi.letter === target.letter) {
+	const missingKeys = keys.filter(key => !collectedKeys.includes(key))
+	if (missingKeys.length === 0) {
 		return start
 	}
 
@@ -144,19 +147,19 @@ const shortestPathToFinalKey = (
 		})
 		.sort(
 			({ path: p1 }, { path: p2 }) =>
-				(p1?.distance ?? Number.MAX_SAFE_INTEGER) -
-				(p2?.distance ?? Number.MAX_SAFE_INTEGER),
+				(p2?.distance ?? Number.MAX_SAFE_INTEGER) -
+				(p1?.distance ?? Number.MAX_SAFE_INTEGER),
 		)
 
 	const nextKey = reachableKeys.shift()
 	if (nextKey) {
-		return shortestPathToFinalKey(
+		return shortestPathToCollectAllKeys(
 			map,
 			{
 				poi: nextKey.to as POI,
 				path: [...start.path, nextKey.path as Location],
 			},
-			target,
+			keys,
 			connections,
 			[...collectedKeys, nextKey?.to?.letter as string],
 		)
@@ -271,16 +274,14 @@ const solveDoorMaze2 = (maze: string) => {
 	}, [] as POI[])
 
 	// Calculate distances between start and keys
-	const startToKeys = keys
-		.filter(({ letter }) => /[a-z]/.test(letter))
-		.map(
-			key =>
-				({
-					from: start,
-					to: key,
-					path: findShortestPath(map, start, key),
-				} as Connection),
-		)
+	const startToKeys = keys.map(
+		key =>
+			({
+				from: start,
+				to: key,
+				path: findShortestPath(map, start, key),
+			} as Connection),
+	)
 
 	// Calculate distances between keys
 	const keysToKeys = keys
@@ -297,20 +298,15 @@ const solveDoorMaze2 = (maze: string) => {
 				),
 		)
 		.flat()
+		.filter(({ path }) => path) as { from: POI; to: POI }[]
 
-	const doorLetters = mazeString.split('').filter(s => /[A-Z]/.test(s))
-
-	const finalKey = keys
-		.filter(({ letter }) => /[a-z]/.test(letter))
-		.find(({ letter }) => !doorLetters.includes(letter)) as POI
-
-	const res = shortestPathToFinalKey(
+	const res = shortestPathToCollectAllKeys(
 		map,
 		{
 			poi: start,
 			path: [],
 		},
-		finalKey,
+		keys.map(({ letter }) => letter),
 		[...startToKeys, ...keysToKeys],
 	)
 
@@ -319,20 +315,25 @@ const solveDoorMaze2 = (maze: string) => {
 }
 
 /*
-solveDoorMaze2(
-    `
+const p1 = `
 #########
 #b.A.@.a#
 #########
-`)
+` // 8
+
+const p2 = `########################
+#f.D.E.e.C.b.A.@.a.B.c.#
+######################.#
+#d.....................#
+########################` // 86
 */
 
-solveDoorMaze2(
-	`
-    ########################
-    #f.D.E.e.C.b.A.@.a.B.c.#
-    ######################.#
-    #d.....................#
-    ########################
-`,
-)
+const p3 = `
+########################
+#...............b.C.D.f#
+#.######################
+#.....@.a.B.c.d.A.e.F.g#
+########################
+` // 132
+
+solveDoorMaze2(p3)
