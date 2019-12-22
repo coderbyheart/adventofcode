@@ -1,4 +1,4 @@
-import { dealIntoNewStack, cut } from './cardshuffle'
+import { dealIntoNewStack, cut, deal } from './cardshuffle'
 
 const testDeck = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
@@ -22,5 +22,8 @@ describe('Card Shuffle', () => {
 	})
 	test('cut -4', () => {
 		expect(cut(-4)([...testDeck])).toEqual([6, 7, 8, 9, 0, 1, 2, 3, 4, 5])
+	})
+	test('deal with increment 3', () => {
+		expect(deal(3)([...testDeck])).toEqual([0, 7, 4, 1, 8, 5, 2, 9, 6, 3])
 	})
 })
