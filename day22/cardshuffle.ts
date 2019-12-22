@@ -22,3 +22,7 @@ export const deal = (increment: number) => (deck: Deck): Deck => {
 	}
 	return dealed
 }
+
+export const cardShuffle = (actions: ((deck: Deck) => Deck)[]) => (
+	deck: Deck,
+): Deck => actions.reduce((deck, action) => action(deck), deck)
