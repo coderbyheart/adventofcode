@@ -3,7 +3,7 @@ import {
 	parseActions,
 	deckOf,
 	positionInDeck,
-} from './cardshuffle'
+} from './cardshuffle.list'
 import * as fs from 'fs'
 import * as path from 'path'
 
@@ -16,6 +16,6 @@ describe('Day 22: Part 1', () => {
 	it('should solve the puzzle', () => {
 		const deck = deckOf(10007)
 		const shuffled = cardShuffle(parseActions(actions))(deck)
-		expect(positionInDeck(shuffled)(2019)).toEqual(3749)
+		expect(positionInDeck(2019)(shuffled)).toEqual(3749)
 	})
 })

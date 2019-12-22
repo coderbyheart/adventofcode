@@ -113,3 +113,16 @@ export const parseActions = (actions: string): CardAction[] =>
 			if (dealMatch) return deal(parseInt(dealMatch[1], 10))
 			return pass
 		})
+
+export const positionInDeck = (id: number) => (
+	deck: Deck,
+): number | undefined => {
+	let i = 0
+	let current: Card | undefined = deck.first
+	do {
+		if (current.id === id) return i
+		current = current.next
+		i++
+	} while (current)
+	return undefined
+}
