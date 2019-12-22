@@ -47,3 +47,9 @@ export const parseActions = (actions: string): CardAction[] =>
 
 export const cardShuffle = (actions: CardAction[]) => (deck: Deck): Deck =>
 	actions.reduce((deck, action) => action(deck), deck)
+
+export const deckOf = (length: number): number[] =>
+	[...Array(length)].map((_, i) => i)
+
+export const positionInDeck = (deck: Deck) => (card: number) =>
+	deck.indexOf(card)
