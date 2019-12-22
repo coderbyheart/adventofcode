@@ -1,4 +1,10 @@
-import { dealIntoNewStack, cut, deal, cardShuffle } from './cardshuffle'
+import {
+	dealIntoNewStack,
+	cut,
+	deal,
+	cardShuffle,
+	parseActions,
+} from './cardshuffle'
 
 const testDeck = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
@@ -64,6 +70,24 @@ describe('Card Shuffle', () => {
 				deal(3),
 				cut(-1),
 			])([...testDeck]),
+		).toEqual([9, 2, 5, 8, 1, 4, 7, 0, 3, 6])
+	})
+	test('Example 4 (Text)', () => {
+		expect(
+			cardShuffle(
+				parseActions(`
+                deal into new stack
+                cut -2
+                deal with increment 7
+                cut 8
+                cut -4
+                deal with increment 7
+                cut 3
+                deal with increment 9
+                deal with increment 3
+                cut -1
+            `),
+			)([...testDeck]),
 		).toEqual([9, 2, 5, 8, 1, 4, 7, 0, 3, 6])
 	})
 })
