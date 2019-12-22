@@ -31,4 +31,39 @@ describe('Card Shuffle', () => {
 			cardShuffle([deal(7), dealIntoNewStack, dealIntoNewStack])([...testDeck]),
 		).toEqual([0, 3, 6, 9, 2, 5, 8, 1, 4, 7])
 	})
+	test('Example 2', () => {
+		expect(
+			cardShuffle([cut(6), deal(7), dealIntoNewStack])([...testDeck]),
+		).toEqual([3, 0, 7, 4, 1, 8, 5, 2, 9, 6])
+	})
+	test('Example 3', () => {
+		expect(cardShuffle([deal(7), deal(9), cut(-2)])([...testDeck])).toEqual([
+			6,
+			3,
+			0,
+			7,
+			4,
+			1,
+			8,
+			5,
+			2,
+			9,
+		])
+	})
+	test('Example 4', () => {
+		expect(
+			cardShuffle([
+				dealIntoNewStack,
+				cut(-2),
+				deal(7),
+				cut(8),
+				cut(-4),
+				deal(7),
+				cut(3),
+				deal(9),
+				deal(3),
+				cut(-1),
+			])([...testDeck]),
+		).toEqual([9, 2, 5, 8, 1, 4, 7, 0, 3, 6])
+	})
 })
