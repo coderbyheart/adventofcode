@@ -1,5 +1,5 @@
 import { fileToArray } from '../utils/fileToArray'
-import { springDroid } from './test'
+import { springDroid } from './springDroid'
 
 const program = fileToArray('day21/input.txt', s =>
 	s.split(',').map(s => parseInt(s, 10)),
