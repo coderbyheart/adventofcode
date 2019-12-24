@@ -5,12 +5,12 @@ describe('Day 23: Part 1', () => {
 		expect(
 			simulateBacteriasOnSurface({
 				surface: toSurface(`
-            .#..#
-            .#.#.
-            #..##
-            .#.##
-            ##..#
-        `),
+                    .#..#
+                    .#.#.
+                    #..##
+                    .#.##
+                    ##..#
+                `),
 				width: 5,
 			}),
 		).toEqual(10282017)

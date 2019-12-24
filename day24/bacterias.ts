@@ -69,6 +69,7 @@ export const simulateBacteriasOnSurface = (world: World): number => {
 	const seenBds = [] as number[]
 	let bd = -1
 	while (!seenBds.includes(bd)) {
+		seenBds.push(bd)
 		const u = updateLocation({
 			surface: updated,
 			width: world.width,
@@ -80,7 +81,6 @@ export const simulateBacteriasOnSurface = (world: World): number => {
 			surface: updated,
 			width: world.width,
 		})
-		seenBds.push(bd)
 	}
 	return bd
 }
