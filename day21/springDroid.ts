@@ -1,11 +1,5 @@
 import { compute, toInput } from '../intcode/intcode'
-
-const NEWLINE = 10
-
-const ascii = (instructions: string[]): number[] =>
-	instructions
-		.map(s => [...s.split('').map(s => s.charCodeAt(0)), NEWLINE])
-		.flat()
+import { ascii } from '../ascii/ascii'
 
 export const springDroid = async (
 	program: number[],

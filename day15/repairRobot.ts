@@ -1,4 +1,5 @@
 import { compute } from '../intcode/intcode'
+import { inputGenerator } from '../intcode/inputGenerator'
 
 enum STATUS {
 	HIT_WALL = 0,
@@ -101,28 +102,6 @@ export const toBitMap = (
 
 	return bitMap
 }
-
-type Taker = (value: number) => void
-const inputGenerator = (inp: number[], takers: Taker[] = []) => ({
-	take: async () => {
-		const i = inp.shift()
-		if (i !== undefined) {
-			return Promise.resolve(i)
-		}
-		return new Promise<number>(resolve => {
-			takers.push(resolve)
-		})
-	},
-	push: (value: number) => {
-		const taker = takers.shift()
-		if (taker) {
-			taker(value)
-		} else {
-			inp.push(value)
-		}
-	},
-	inputs: inp,
-})
 
 const WALL = '▒'
 
