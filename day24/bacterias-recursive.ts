@@ -13,14 +13,11 @@ type Position = {
 	y: number
 }
 
-const newGrid = (world: World): Grid => [
-	...new Array((world.levels[0].length / world.width) * world.width).fill(
-		false,
-	),
+const newGrid = (width: number, length: number): Grid => [
+	...new Array((length / width) * width).fill(false),
 ]
 
 enum Edge {
-	None,
 	Left,
 	Right,
 	Top,
@@ -122,49 +119,53 @@ const isBugThisIterationRecursive = (
 		if (edge === Edge.Left) {
 			// Collect info from right cells of grid
 			for (let y = 0; y < Math.floor(grid.length / world.width); y++) {
-				adjacentInfected += downInfected(
+				const downRightColInfected = downInfected(
 					{
-						x: world.width,
-						y: y * world.width,
+						x: world.width - 1,
+						y: y,
 					},
 					edge,
 				)
+				adjacentInfected += downRightColInfected
 			}
 		}
 		if (edge === Edge.Right) {
 			// Collect info from left cells of grid
 			for (let y = 0; y < Math.floor(grid.length / world.width); y++) {
-				adjacentInfected += downInfected(
+				const downLeftColInfected = downInfected(
 					{
 						x: 0,
-						y: y * world.width,
+						y: y,
 					},
 					edge,
 				)
+				adjacentInfected += downLeftColInfected
 			}
 		}
 		if (edge === Edge.Bottom) {
 			// Collect info from top row of grid
 			for (let x = 0; x < world.width; x++) {
-				adjacentInfected += downInfected(
+				const downTopRowInfected = downInfected(
 					{
 						x,
 						y: 0,
 					},
 					edge,
 				)
+				adjacentInfected += downTopRowInfected
 			}
 		}
 		if (edge === Edge.Top) {
 			// Collect info from bottom row of grid
 			for (let x = 0; x < world.width; x++) {
-				adjacentInfected += downInfected(
+				const downBottomRowInfected = downInfected(
 					{
 						x,
-						y: Math.floor(grid.length / world.width),
+						y: Math.floor(grid.length / world.width) - 1,
 					},
 					edge,
 				)
+				adjacentInfected += downBottomRowInfected
 			}
 		}
 		return adjacentInfected
@@ -183,25 +184,17 @@ const updateLocation = (world: World, level: number, grid: Grid) => ({
 	) {
 		return false
 	}
+	const isInfested = grid[y * world.width + x]
 	let numAdjacent = 0
-	const isBug = isBugThisIterationRecursive(world, level, grid)
-	const isInfested = isBug({ x, y }, Edge.None)
+	const countInfested = isBugThisIterationRecursive(world, level, grid)
 	// top
-	if (isBug({ x, y: y - 1 }, Edge.Top)) {
-		numAdjacent++
-	}
+	numAdjacent += countInfested({ x, y: y - 1 }, Edge.Top)
 	// right
-	if (isBug({ x: x + 1, y }, Edge.Right)) {
-		numAdjacent++
-	}
+	numAdjacent += countInfested({ x: x + 1, y }, Edge.Right)
 	// bottom
-	if (isBug({ x, y: y + 1 }, Edge.Bottom)) {
-		numAdjacent++
-	}
+	numAdjacent += countInfested({ x, y: y + 1 }, Edge.Bottom)
 	// left
-	if (isBug({ x: x - 1, y }, Edge.Left)) {
-		numAdjacent++
-	}
+	numAdjacent += countInfested({ x: x - 1, y }, Edge.Left)
 	if (isInfested) {
 		return numAdjacent === 1
 	} else {
@@ -209,16 +202,31 @@ const updateLocation = (world: World, level: number, grid: Grid) => ({
 	}
 }
 
-export const drawLevel = (world: World, grid: Grid, level: number) => {
-	for (let i = 0; i < grid.length / world.width; i++) {
-		console.log(
-			grid
-				.slice(i * world.width, i * world.width + world.width)
-				.map(b => (b ? chalk.red('█') : chalk.gray('▒')))
-				.join(''),
-		)
+const countBacterias = (grid: Grid) =>
+	grid.reduce((count, b) => count + (b ? 1 : 0), 0)
+
+export const drawWorld = (world: World, time: number): void => {
+	const screen = [] as string[][]
+	for (let y = 0; y < Math.floor(world.levels[0].length / world.width); y++) {
+		screen[y] = []
+		for (let l = 0; l < world.levels.length; l++) {
+			for (let x = 0; x < world.width; x++) {
+				screen[y][x + (l * world.width + l * 1)] = world.levels[l][
+					y * world.width + x
+				]
+					? chalk.red('█')
+					: chalk.gray.dim('▒')
+			}
+			screen[y][world.width + (l * world.width + l * 1)] = chalk.black('▒')
+		}
 	}
-	console.log(`${level}`)
+	console.log(
+		`Minute ${time}. Bacterias: ${world.levels.reduce(
+			(sum, level) => sum + countBacterias(level),
+			0,
+		)}`,
+	)
+	console.log(screen.map(row => row.join('')).join('\n'))
 }
 
 const updateGrid = (world: World, level: number, grid: Grid): Grid => {
@@ -228,41 +236,32 @@ const updateGrid = (world: World, level: number, grid: Grid): Grid => {
 	)
 }
 
-const countBacterias = (grid: Grid) =>
-	grid.reduce((count, b) => count + (b ? 1 : 0), 0)
-
 export const simulateBacteriasOnSurface = (world: World): void => {
-	console.log(`Time: 0`)
-	world.levels.filter(countBacterias).forEach((level, i) => {
-		drawLevel(world, level, i)
-	})
-	for (let i = 0; i < 2; i++) {
+	drawWorld(world, 1)
+	for (let i = 0; i < 10; i++) {
 		const levels = []
 		for (let k = 0; k < world.levels.length; k++) {
 			levels[k] = updateGrid(world, k, world.levels[k])
 		}
 		if (countBacterias(levels[0]) > 0) {
-			levels.unshift(newGrid(world))
+			levels.unshift(newGrid(world.width, world.levels[0].length))
 		}
 		if (countBacterias(levels[levels.length - 1]) > 0) {
-			levels.push(newGrid(world))
+			levels.push(newGrid(world.width, world.levels[0].length))
 		}
-		console.log(`Time: ${i + 1}`)
 		world.levels = levels
-		world.levels.filter(countBacterias).forEach((level, i) => {
-			drawLevel(world, level, i)
-		})
+		drawWorld(world, i + 2)
 	}
-	console.log(
-		`Bacterias: ${world.levels.reduce(
-			(sum, level) => sum + countBacterias(level),
-			0,
-		)}`,
-	)
 }
 
 simulateBacteriasOnSurface({
 	levels: [
+		newGrid(5, 25),
+		newGrid(5, 25),
+		newGrid(5, 25),
+		newGrid(5, 25),
+		newGrid(5, 25),
+		newGrid(5, 25),
 		toSurface(`
 			....#
 			#..#.
@@ -270,6 +269,12 @@ simulateBacteriasOnSurface({
 			..#..
 			#....
 		`),
+		newGrid(5, 25),
+		newGrid(5, 25),
+		newGrid(5, 25),
+		newGrid(5, 25),
+		newGrid(5, 25),
+		newGrid(5, 25),
 	],
 	width: 5,
 })
