@@ -237,7 +237,7 @@ const updateGrid = (world: World, level: number, grid: Grid): Grid => {
 }
 
 export const simulateBacteriasOnSurface = (world: World): void => {
-	drawWorld(world, 1)
+	drawWorld(world, 0)
 	for (let i = 0; i < 10; i++) {
 		const levels = []
 		for (let k = 0; k < world.levels.length; k++) {
@@ -250,7 +250,7 @@ export const simulateBacteriasOnSurface = (world: World): void => {
 			levels.push(newGrid(world.width, world.levels[0].length))
 		}
 		world.levels = levels
-		drawWorld(world, i + 2)
+		drawWorld(world, i + 1)
 	}
 }
 
