@@ -1,5 +1,4 @@
 import * as chalk from 'chalk'
-import { toSurface } from './bacterias'
 
 type Grid = boolean[]
 
@@ -236,9 +235,16 @@ const updateGrid = (world: World, level: number, grid: Grid): Grid => {
 	)
 }
 
-export const simulateBacteriasOnSurface = (world: World): void => {
-	drawWorld(world, 0)
-	for (let i = 0; i < 10; i++) {
+export const simulateBacteriasOnSurface = (
+	grid: Grid,
+	width: number,
+	minutes = 10,
+): number => {
+	const world = {
+		levels: [newGrid(width, grid.length), grid, newGrid(width, grid.length)],
+		width,
+	}
+	for (let i = 0; i < minutes; i++) {
 		const levels = []
 		for (let k = 0; k < world.levels.length; k++) {
 			levels[k] = updateGrid(world, k, world.levels[k])
@@ -250,31 +256,7 @@ export const simulateBacteriasOnSurface = (world: World): void => {
 			levels.push(newGrid(world.width, world.levels[0].length))
 		}
 		world.levels = levels
-		drawWorld(world, i + 1)
 	}
+	drawWorld(world, minutes)
+	return world.levels.reduce((sum, level) => sum + countBacterias(level), 0)
 }
-
-simulateBacteriasOnSurface({
-	levels: [
-		newGrid(5, 25),
-		newGrid(5, 25),
-		newGrid(5, 25),
-		newGrid(5, 25),
-		newGrid(5, 25),
-		newGrid(5, 25),
-		toSurface(`
-			....#
-			#..#.
-			#.?##
-			..#..
-			#....
-		`),
-		newGrid(5, 25),
-		newGrid(5, 25),
-		newGrid(5, 25),
-		newGrid(5, 25),
-		newGrid(5, 25),
-		newGrid(5, 25),
-	],
-	width: 5,
-})
