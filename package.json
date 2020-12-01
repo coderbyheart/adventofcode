@@ -7,12 +7,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/coderbyheart/aoc.git"
+    "url": "git+https://github.com/coderbyheart/adventofcode.git"
   },
   "bugs": {
-    "url": "https://github.com/coderbyheart/aoc/issues"
+    "url": "https://github.com/coderbyheart/adventofcode/issues"
   },
-  "homepage": "https://github.com/coderbyheart/aoc",
+  "homepage": "https://github.com/coderbyheart/adventofcode",
   "keywords": [
     "Advent of Code",
     "TypeScript",
