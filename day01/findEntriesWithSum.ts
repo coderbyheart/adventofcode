@@ -1,11 +1,10 @@
-export const findEntriesWithSum = (
+import { combine } from '../lib/combine'
+
+const sum = (total: number, n: number) => n + total
+
+export const findEntriesWithSum = (numEntries: number) => (
 	entries: number[],
 	expectedSum: number,
-): number[] => {
-	for (const i of entries) {
-		for (const j of entries) {
-			if (i + j === expectedSum) return [i, j]
-		}
-	}
-	return []
-}
+): number[] =>
+	combine(entries, numEntries).find((e) => e.reduce(sum, 0) === expectedSum) ??
+	[]
