@@ -8,7 +8,7 @@ const input = load('input')
 const toInt = (s: string) => parseInt(s, 10)
 const mul = (total: number, n: number) => n * total
 
-describe('Day 01: Expenses Report', () => {
+describe('Day 1: Report Repair', () => {
 	describe('Part 1', () => {
 		it('should solve the sample', () => {
 			expect(
