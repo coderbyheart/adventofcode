@@ -1,29 +1,31 @@
 const policyAndPasswordsLine = new RegExp(
-	/^(?<minChars>[0-9]+)-(?<maxChars>[0-9]+) (?<char>[a-z]): (?<password>[a-z]+)$/,
+	/^(?<n1>[0-9]+)-(?<n2>[0-9]+) (?<letter>[a-z]): (?<password>[a-z]+)$/,
 )
 
-const containsChar = (
+type PasswordChecker = (
+	password: string,
+	letter: string,
+	n1: number,
+	n2: number,
+) => boolean
+
+export const oldPasswordChecker: PasswordChecker = (
 	s: string,
 	char: string,
 	min: number,
 	max: number,
-): boolean => {
-	const numChars = s.split('').filter((s) => s === char).length
-	return numChars >= min && numChars <= max
-}
+): boolean =>
+	((numChars: number) => numChars >= min && numChars <= max)(
+		s.split('').filter((s) => s === char).length,
+	)
 
-export const findValidPasswords = (policyAndPasswords: string[]): number =>
+export const findValidPasswords = (passwordChecker: PasswordChecker) => (
+	policyAndPasswords: string[],
+): number =>
 	policyAndPasswords.reduce((count, s) => {
-		const { minChars, maxChars, char, password } =
+		const { n1, n2, letter, password } =
 			policyAndPasswordsLine.exec(s)?.groups ?? {}
-		if (
-			containsChar(
-				password,
-				char,
-				parseInt(minChars, 10),
-				parseInt(maxChars, 10),
-			)
-		)
+		if (passwordChecker(password, letter, parseInt(n1, 10), parseInt(n2, 10)))
 			return count + 1
 		return count
 	}, 0)
