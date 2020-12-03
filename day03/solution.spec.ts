@@ -14,14 +14,24 @@ describe('Day 3: Toboggan Trajectory', () => {
 			expect(countTrees({ down: 1, right: 3 })(input)).toEqual(274)
 		})
 	})
-	/*
 	describe('Part 2', () => {
+		const slopes = [
+			{ right: 1, down: 1 },
+			{ right: 3, down: 1 },
+			{ right: 5, down: 1 },
+			{ right: 7, down: 1 },
+			{ right: 1, down: 2 },
+		]
+		const mul = (prod: number, n: number) => prod * n
 		it('should solve the sample', () => {
-			expect(countTrees(3,1)(sample)).toEqual(1)
+			expect(slopes.map((s) => countTrees(s)(sample)).reduce(mul, 1)).toEqual(
+				336,
+			)
 		})
 		it('should solve', () => {
-			expect(countTrees(3,1)(input)).toEqual(747)
+			expect(slopes.map((s) => countTrees(s)(input)).reduce(mul, 1)).toEqual(
+				6050183040,
+			)
 		})
 	})
-	*/
 })
