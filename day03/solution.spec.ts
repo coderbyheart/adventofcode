@@ -10,11 +10,9 @@ describe('Day 3: Toboggan Trajectory', () => {
 		it('should solve the sample', () => {
 			expect(countTrees({ down: 1, right: 3 })(sample)).toEqual(7)
 		})
-		/*
 		it('should solve', () => {
-			expect(countTrees(3,1)(input)).toEqual(424)
+			expect(countTrees({ down: 1, right: 3 })(input)).toEqual(274)
 		})
-		*/
 	})
 	/*
 	describe('Part 2', () => {
