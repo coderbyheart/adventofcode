@@ -29,10 +29,11 @@ export const validatePassportStrict = (p: Record<string, string>): boolean => {
 	const hgt = /^([0-9]+)(cm|in)$/.exec(p.hgt)
 	if (hgt === null) return false
 	const hgtValue = parseInt(hgt[1], 10)
+	const hgtUnit = hgt[2]
 	// If cm, the number must be at least 150 and at most 193.
-	if (hgt[2] === 'cm' && (hgtValue < 150 || hgtValue > 193)) return false
+	if (hgtUnit === 'cm' && (hgtValue < 150 || hgtValue > 193)) return false
 	// If in, the number must be at least 59 and at most 76.
-	if (hgt[2] === 'in' && (hgtValue < 59 || hgtValue > 76)) return false
+	if (hgtUnit === 'in' && (hgtValue < 59 || hgtValue > 76)) return false
 	// hcl (Hair Color) - a # followed by exactly six characters 0-9 or a-f.
 	if (!/^#[0-9a-f]{6}$/.test(p.hcl)) return false
 	// ecl (Eye Color) - exactly one of: amb blu brn gry grn hzl oth.
