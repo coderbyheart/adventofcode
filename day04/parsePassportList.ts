@@ -4,13 +4,14 @@ export const parsePassportList = (input: string[]): Record<string, string>[] =>
 			if (line.length === 0) list.push({})
 			list[list.length - 1] = {
 				...list[list.length - 1],
-				...line.split(' ').reduce(
-					(props, entry) => ({
+				...line.split(' ').reduce((props, entry) => {
+					const [k, v] = entry.split(':')
+					if (v === undefined) return props
+					return {
 						...props,
-						[entry.split(':')[0]]: entry.split(':')[1],
-					}),
-					{},
-				),
+						[k]: v,
+					}
+				}, {}),
 			}
 			return list
 		},
