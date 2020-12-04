@@ -51,40 +51,6 @@ describe('Day 4: Passport Processing', () => {
 			).toHaveLength(4)
 		})
 
-		it.each([
-			[{ byr: '2002' }, true],
-			[{ byr: '2003' }, false],
-			[{ hgt: '60in' }, true],
-			[{ hgt: '190cm' }, true],
-			[{ hgt: '190in' }, false],
-			[{ hgt: '190' }, false],
-			[{ hcl: '#123abc' }, true],
-			[{ hcl: '#123abz' }, false],
-			[{ hcl: '123abc' }, false],
-			[{ ecl: 'brn' }, true],
-			[{ ecl: 'wat' }, false],
-			[{ pid: '000000001' }, true],
-			[{ pid: '0123456789' }, false],
-		])(`should pass sample properties %s %s`, (props, isValid) => {
-			const valid = {
-				eyr: '2024',
-				pid: '662406624',
-				hcl: '#cfa07d',
-				byr: '1947',
-				iyr: '2015',
-				ecl: 'amb',
-				hgt: '150cm',
-			}
-
-			expect(validatePassportStrict(valid)).toEqual(true)
-			expect(
-				validatePassportStrict({
-					...valid,
-					...props,
-				}),
-			).toEqual(isValid)
-		})
-
 		it('should solve', () => {
 			const v = parsePassportList(input).filter(validatePassportStrict)
 			expect(v).toHaveLength(158)
