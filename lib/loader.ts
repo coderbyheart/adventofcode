@@ -11,6 +11,6 @@ export const loader = (day: number) => (file: string): string[] =>
 			),
 			'utf-8',
 		)
+		.trim()
 		.split('\n')
 		.map((s) => s.trim())
-		.filter((s) => s.length > 0)
