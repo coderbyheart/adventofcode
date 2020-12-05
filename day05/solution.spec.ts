@@ -1,5 +1,5 @@
 import { loader } from '../lib/loader'
-import { locateSeat } from './locateSeat'
+import { Instructions, locateSeat } from './locateSeat'
 
 const load = loader(5)
 const input = load('input')
@@ -14,7 +14,7 @@ describe('Day 5: Binary Boarding', () => {
 			['FFFBBBFRRR', 14, 7],
 			['BBFFBBFRLL', 102, 4],
 		])('should solve the sample: %s is row %d, col %d', (passId, row, col) => {
-			expect(l(passId)).toEqual({
+			expect(l(passId.split('') as Instructions)).toEqual({
 				row,
 				col,
 			})
@@ -23,7 +23,7 @@ describe('Day 5: Binary Boarding', () => {
 			const l = locateSeat({ rows: 128, cols: 8 })
 			expect(
 				input
-					.map((passId) => l(passId))
+					.map((passId) => l(passId.split('') as Instructions))
 					.map(({ row, col }) => row * 8 + col)
 					.sort((a, b) => a - b)
 					.pop(),
@@ -32,8 +32,8 @@ describe('Day 5: Binary Boarding', () => {
 	})
 	describe('Part 2', () => {
 		expect(
-			input
-				.map((passId) => l(passId))
+			(input
+				.map((passId) => l(passId.split('') as Instructions))
 				.map(({ row, col }) => row * 8 + col)
 				.sort((a, b) => a - b)
 				.find((id, k, arr) => {
@@ -41,7 +41,7 @@ describe('Day 5: Binary Boarding', () => {
 					if (arr[k + 1] === undefined) return false
 					if (id - arr[k - 1] == 2) return true
 					return false
-				}) - 1,
+				}) ?? 0) - 1,
 		).toEqual(653)
 	})
 })
