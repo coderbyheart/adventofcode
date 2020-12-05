@@ -39,7 +39,7 @@ describe('Day 5: Binary Boarding', () => {
 				.find((id, k, arr) => {
 					if (arr[k - 1] === undefined) return false
 					if (arr[k + 1] === undefined) return false
-					if (id - arr[k - 1] > 1) return true
+					if (id - arr[k - 1] == 2) return true
 					return false
 				}) - 1,
 		).toEqual(653)
