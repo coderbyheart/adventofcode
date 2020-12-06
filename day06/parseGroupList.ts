@@ -1,3 +1,6 @@
+/**
+ * Group the list of answers. A blank line denotes a new group.
+ */
 export const parseGroupList = (input: string[]): string[][] =>
 	input.reduce(
 		(list, line) => {

@@ -1,6 +1,12 @@
+export type Answers = Record<string, number>
+
+/**
+ * Creates a record that counts how often a specific answer has been given
+ * in a list of forms (AKA a group's answers)
+ */
 export const collectAnswers = (
 	forms: string[],
-): { answers: Record<string, number>; n: number } =>
+): { answers: Answers; n: number } =>
 	forms.reduce(
 		(answered, form) =>
 			form.split('').reduce(
@@ -15,6 +21,6 @@ export const collectAnswers = (
 			),
 		{
 			n: forms.length,
-			answers: {} as Record<string, number>,
+			answers: {} as Answers,
 		},
 	)
