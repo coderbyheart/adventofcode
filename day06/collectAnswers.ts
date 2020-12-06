@@ -1,12 +1,20 @@
-export const collectAnswers = (forms: string[]): Record<string, number> =>
+export const collectAnswers = (
+	forms: string[],
+): { answers: Record<string, number>; n: number } =>
 	forms.reduce(
 		(answered, form) =>
 			form.split('').reduce(
 				(answered, a) => ({
 					...answered,
-					[a]: (answered?.[a] ?? 0) + 1,
+					answers: {
+						...answered.answers,
+						[a]: (answered.answers?.[a] ?? 0) + 1,
+					},
 				}),
 				answered,
 			),
-		{} as Record<string, number>,
+		{
+			n: forms.length,
+			answers: {} as Record<string, number>,
+		},
 	)
