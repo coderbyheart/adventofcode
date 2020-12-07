@@ -8,9 +8,13 @@ const findContainingBag = (bags: Bags) => (bag: Bag): string[] => {
 	const parents = Object.values(bags).filter(
 		({ children }) => children?.[bag.color] !== undefined,
 	)
+	// No one contains this bag, so it's just that
 	if (parents.length === 0) return [bag.color]
+
 	return [
+		// Return the parents
 		...parents.map(({ color }) => color),
+		// and the parents of the parents
 		...parents.map(findContainingBag(bags)).flat(),
 	].filter(unique)
 }

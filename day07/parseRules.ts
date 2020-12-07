@@ -8,14 +8,19 @@ export type Bags = Record<string, Bag>
 const ruleDef = /^(?<color>[a-z ]+) bags contain (?<contents>.+)/
 const contentsRuleDef = /^(?<amount>[0-9]+) (?<color>[a-z ]+) bags?/
 
+/**
+ * Parses a single rule line
+ */
 export const parseRuleLine = (rule: string): Bag | undefined => {
 	const match = ruleDef.exec(rule)
 	if (match?.groups === undefined) return
 	const children = match.groups.contents
+		// children counts are separated by comma
 		.split(',')
 		.map((s) => s.trim())
-		.filter((s) => s !== undefined)
+		// handle special case of no children
 		.filter((s) => !s.includes('no other bags'))
+		// parse the child rule
 		.map((s) => contentsRuleDef.exec(s))
 		.reduce((children, child) => {
 			if (child?.groups === undefined) return children
@@ -30,6 +35,9 @@ export const parseRuleLine = (rule: string): Bag | undefined => {
 	}
 }
 
+/**
+ * Parse the bag in a record with the color as key
+ */
 export const parseRules = (rules: string[]): Bags =>
 	rules.reduce((bags, rule) => {
 		const bag = parseRuleLine(rule)
