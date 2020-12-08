@@ -1,4 +1,4 @@
-export const boot = (bootCode: string[]): number => {
+export const boot = (bootCode: string[]): [number, number] => {
 	const bootInstructions = bootCode
 		.map((s) => s.split(' '))
 		.map(([i, a]) => [i, parseInt(a, 10)])
@@ -7,11 +7,11 @@ export const boot = (bootCode: string[]): number => {
 	const lineExecutions = {} as Record<number, boolean>
 	let ins, arg
 	do {
-		if (lineExecutions[ptr] !== undefined) return acc
+		if (lineExecutions[ptr] !== undefined) return [-1, acc]
 		lineExecutions[ptr] = true
 		ins = bootInstructions[ptr]?.[0]
 		arg = bootInstructions[ptr]?.[1]
-		if (ins === undefined) return acc // normal termination
+		if (ins === undefined) return [0, acc] // normal termination
 		switch (ins) {
 			case 'nop':
 				ptr++
@@ -28,5 +28,5 @@ export const boot = (bootCode: string[]): number => {
 				ptr++
 		}
 	} while (ins !== undefined)
-	return acc
+	return [-1, acc]
 }
