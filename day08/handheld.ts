@@ -1,4 +1,10 @@
+/**
+ * Run the boot program with loop protection
+ * and return an exit code (-1 on error) and
+ * the value of the accumulator.
+ */
 export const boot = (bootCode: string[]): [number, number] => {
+	// Parse the instructions
 	const bootInstructions = bootCode
 		.map((s) => s.split(' '))
 		.map(([i, a]) => [i, parseInt(a, 10)])
@@ -8,7 +14,7 @@ export const boot = (bootCode: string[]): [number, number] => {
 	let ins, arg
 	do {
 		if (lineExecutions[ptr] !== undefined) return [-1, acc]
-		lineExecutions[ptr] = true
+		lineExecutions[ptr] = true // Record line executions
 		ins = bootInstructions[ptr]?.[0]
 		arg = bootInstructions[ptr]?.[1]
 		if (ins === undefined) return [0, acc] // normal termination
@@ -25,8 +31,8 @@ export const boot = (bootCode: string[]): [number, number] => {
 				break
 			default:
 				console.warn(`Unknown instruction: ${ins} ${arg}`)
-				ptr++
+				return [-2, acc]
 		}
 	} while (ins !== undefined)
-	return [-1, acc]
+	return [-3, acc]
 }
