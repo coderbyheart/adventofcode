@@ -35,10 +35,10 @@ describe('Day 9: Encoding Error', () => {
 	})
 	describe('Part 2', () => {
 		it('should solve the sample', () => {
-			expect(findSet(127)(sample)).toEqual([15, 25, 47, 40])
+			expect(findSet(sample, 127)).toEqual([15, 25, 47, 40])
 		})
 		it('should solve', () => {
-			const set = findSet(25918798)(input)
+			const set = findSet(input, 25918798)
 			set.sort((a, b) => a - b)
 			expect(set[0] + set[set.length - 1]).toEqual(3340942)
 		})
