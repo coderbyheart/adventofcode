@@ -1,6 +1,7 @@
 import { uniqueCombinations } from '../lib/uniqueCombinations'
 
-const sum = (numbers: number[]) => numbers.reduce((total, n) => total + n, 0)
+export const sum = (numbers: number[]): number =>
+	numbers.reduce((total, n) => total + n, 0)
 
 export const findInvalidNumber = (preambleLength: number) => (
 	input: number[],

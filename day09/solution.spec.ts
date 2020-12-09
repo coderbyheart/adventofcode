@@ -1,5 +1,6 @@
 import { loader, loadString } from '../lib/loader'
 import { findInvalidNumber } from './findInvalidNumber'
+import { findSet } from './findSet'
 
 const toInt = (s: string) => parseInt(s, 10)
 const load = loader(9)
@@ -31,5 +32,15 @@ describe('Day 9: Encoding Error', () => {
 			expect(findInvalidNumber(5)(sample)).toEqual(127))
 		it('should solve', () =>
 			expect(findInvalidNumber(25)(input)).toEqual(25918798))
+	})
+	describe('Part 2', () => {
+		it('should solve the sample', () => {
+			expect(findSet(127)(sample)).toEqual([15, 25, 47, 40])
+		})
+		it('should solve', () => {
+			const set = findSet(25918798)(input)
+			set.sort((a, b) => a - b)
+			expect(set[0] + set[set.length - 1]).toEqual(3340942)
+		})
 	})
 })
