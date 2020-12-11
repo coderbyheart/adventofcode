@@ -1,5 +1,5 @@
 import { loader } from '../lib/loader'
-import { render } from './seatingSimulator'
+import { occupied, part1rules, part2rules } from './seatingSimulator'
 import { seatingSimulator } from './seatingSimulator'
 
 const load = loader(11)
@@ -20,20 +20,22 @@ const input = load('input')
 describe('Day 11: Seating System', () => {
 	describe('Part 1', () => {
 		it('should solve the sample', () => {
-			const stable = seatingSimulator(sample)
-			expect(
-				render(stable)
-					.split('')
-					.filter((s) => s === '#').length,
-			).toEqual(37)
+			const stable = seatingSimulator(sample, part1rules)
+			expect(occupied(stable)).toEqual(37)
 		})
 		it('should solve the sample', () => {
-			const stable = seatingSimulator(input.join('\n'))
-			expect(
-				render(stable)
-					.split('')
-					.filter((s) => s === '#').length,
-			).toEqual(2164)
+			const stable = seatingSimulator(input.join('\n'), part1rules)
+			expect(occupied(stable)).toEqual(2164)
+		})
+	})
+	describe('Part 2', () => {
+		it('should solve the sample', () => {
+			const stable = seatingSimulator(sample, part2rules)
+			expect(occupied(stable)).toEqual(26)
+		})
+		it('should solve the sample', () => {
+			const stable = seatingSimulator(input.join('\n'), part2rules)
+			expect(occupied(stable)).toEqual(1974)
 		})
 	})
 })
