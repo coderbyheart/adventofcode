@@ -1,5 +1,6 @@
 import { loadString } from '../lib/loader'
 import { findShuttle } from './findShuttle'
+import { findTime } from './findTime'
 
 const sample = `939
 7,13,x,x,59,x,31,19`
@@ -16,5 +17,11 @@ describe('Day 13: Shuttle Search', () => {
 			const { bus, waitTime } = findShuttle(loadString(input))
 			expect(bus * waitTime).toEqual(3997)
 		})
+	})
+	describe('Part 2', () => {
+		it('should solve the sample', () =>
+			expect(findTime(loadString(sample)[1])).toEqual(1068781))
+		it('should solve', () =>
+			expect(findTime(loadString(input)[1])).toEqual(500033211739354))
 	})
 })
