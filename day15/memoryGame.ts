@@ -10,7 +10,6 @@ export const memoryGame = (numbers: number[], iterations: number): number => {
 			speak = numbers[turn]
 		} else {
 			// Now, consider the last number spoken
-
 			const lastSpokenTurn = spokenTurn[lastSpoken as number] as
 				| number
 				| undefined

@@ -21,4 +21,9 @@ describe('Day 15: Rambunctious Recitation', () => {
 		it('should solve', () =>
 			expect(memoryGame([0, 5, 4, 1, 10, 14, 7], 2020)).toEqual(203))
 	})
+	describe('Part 2', () => {
+		// This takes 5 minutes
+		it.skip('should solve', () =>
+			expect(memoryGame([0, 5, 4, 1, 10, 14, 7], 2020)).toEqual(9007186))
+	})
 })
