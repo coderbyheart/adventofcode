@@ -1,4 +1,4 @@
-export type Rules = Record<string, [number, number][]>
+export type Rules = Record<string, [[number, number], [number, number]]>
 
 export const parseRules = (rules: string[]): Rules =>
 	rules.reduce((rules, rule) => {

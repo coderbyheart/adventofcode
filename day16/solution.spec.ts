@@ -87,12 +87,5 @@ describe('Day 16: Ticket Translation', () => {
 				'seat',
 			])
 		})
-		it.skip('should solve', () => {
-			expect(
-				solveFields(parseRules(rules))(
-					tickets.map((s) => s.split(',').map((s) => parseInt(s, 10))),
-				),
-			).toEqual(['row', 'class', 'seat'])
-		})
 	})
 })
