@@ -1,6 +1,6 @@
 import { loader, loadString } from '../lib/loader'
 import { findInvalidNumbers, parseRules } from './isValidTicket'
-import { solveFields } from './solveFields'
+import { findMatchingRules } from './findMatchingRules'
 
 const sampleRules = loadString(`class: 1-3 or 5-7
 row: 6-11 or 33-44
@@ -81,10 +81,40 @@ describe('Day 16: Ticket Translation', () => {
 			)
 			expect(validTickets).toHaveLength(3)
 
-			expect(solveFields(sample2Rules)(step2sampleTickets)).toEqual([
+			expect(findMatchingRules(step2sampleTickets, sample2Rules)).toEqual([
 				'row',
 				'class',
 				'seat',
+			])
+		})
+		it('should solve', () => {
+			const r = parseRules(rules)
+			const f = findInvalidNumbers(r)
+			const validTickets = tickets
+				.map((s) => s.split(',').map((s) => parseInt(s, 10)))
+				.filter((ticket) => f(ticket).length === 0)
+			const res = findMatchingRules(validTickets, r)
+			expect(res).toEqual([
+				'route',
+				'arrival track',
+				'departure location',
+				'type',
+				'arrival station',
+				'duration',
+				'arrival platform',
+				'departure platform',
+				'train',
+				'row',
+				'arrival location',
+				'wagon',
+				'seat',
+				'departure time',
+				'departure station',
+				'class',
+				'departure date',
+				'price',
+				'zone',
+				'departure track',
 			])
 		})
 	})
