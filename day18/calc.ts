@@ -1,10 +1,10 @@
-const isNumber = (s: string): boolean => /^[0-9]$/.test(s)
-const isSpace = (s: string): boolean => /^ $/.test(s)
-const isOperator = (s: string): boolean => /^[+*]$/.test(s)
-const isOpeningParenthesis = (s: string): boolean => /^\($/.test(s)
-const isClosingParenthesis = (s: string): boolean => /^\)$/.test(s)
+export const isNumber = (s: string): boolean => /^[0-9]$/.test(s)
+export const isSpace = (s: string): boolean => /^ $/.test(s)
+export const isOperator = (s: string): boolean => /^[+*]$/.test(s)
+export const isOpeningParenthesis = (s: string): boolean => /^\($/.test(s)
+export const isClosingParenthesis = (s: string): boolean => /^\)$/.test(s)
 
-const findClosing = (expr: string, start: number) => {
+export const findClosing = (expr: string, start: number): number => {
 	let level = 0
 	for (let i = start; i < expr.length; i++) {
 		if (isOpeningParenthesis(expr[i])) level++
@@ -16,6 +16,9 @@ const findClosing = (expr: string, start: number) => {
 	)
 }
 
+/**
+ * @deprecated see calcToken
+ */
 export const calc = (expr: string): number => {
 	let a = 0
 	let op = ''
