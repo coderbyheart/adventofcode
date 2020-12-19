@@ -1,6 +1,6 @@
 import { Token, tokenize } from './tokenize'
 
-const calc = (token: Token): number => {
+export const calc = (token: Token): number => {
 	switch (token.type) {
 		case 'op':
 			switch (token.op) {

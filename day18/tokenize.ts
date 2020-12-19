@@ -12,13 +12,20 @@ export type Group = { type: 'group'; group: Token }
 export type Op = { type: 'op'; op: '+' | '*'; left: Token; right: Token }
 export type Token = Noop | Value | Op | Group
 
-const findNextToken = (expression: string): Token => {
+const findNextToken = (expression: string, groupAdditions: boolean): Token => {
 	let i = 0
 	let token: Token = { type: 'noop' }
 	while (i < expression.length) {
 		const c = expression[i]
 		if (isNumber(c)) {
-			if (token.type === 'op') {
+			if (
+				groupAdditions &&
+				token.type === 'group' &&
+				token.group.type === 'op' &&
+				token.group.op === '+'
+			) {
+				token.group.right = { type: 'value', value: parseInt(c, 10) }
+			} else if (token.type === 'op') {
 				token.right = { type: 'value', value: parseInt(c, 10) }
 			} else {
 				token = { type: 'value', value: parseInt(c, 10) }
@@ -28,11 +35,36 @@ const findNextToken = (expression: string): Token => {
 			// pass
 			i++
 		} else if (isOperator(c)) {
-			token = {
-				type: 'op',
-				op: c as '+' | '*',
-				left: token,
-				right: { type: 'noop' },
+			if (groupAdditions && c === '+') {
+				console.dir(token)
+				if (token.type === 'op' && token.right.type === 'value') {
+					token.right = {
+						type: 'group',
+						group: {
+							type: 'op',
+							op: '+',
+							left: token.right,
+							right: token,
+						},
+					}
+				} else {
+					token = {
+						type: 'group',
+						group: {
+							type: 'op',
+							op: '+',
+							left: token,
+							right: { type: 'noop' },
+						},
+					}
+				}
+			} else {
+				token = {
+					type: 'op',
+					op: c as '+' | '*',
+					left: token,
+					right: { type: 'noop' },
+				}
 			}
 			i++
 		} else if (isOpeningParenthesis(c)) {
@@ -40,12 +72,18 @@ const findNextToken = (expression: string): Token => {
 			if (token.type === 'op') {
 				token.right = {
 					type: 'group',
-					group: findNextToken(expression.substr(i + 1, closing - i - 1)),
+					group: findNextToken(
+						expression.substr(i + 1, closing - i - 1),
+						groupAdditions,
+					),
 				}
 			} else {
 				token = {
 					type: 'group',
-					group: findNextToken(expression.substr(i + 1, closing - i - 1)),
+					group: findNextToken(
+						expression.substr(i + 1, closing - i - 1),
+						groupAdditions,
+					),
 				}
 			}
 
@@ -57,7 +95,7 @@ const findNextToken = (expression: string): Token => {
 	return token
 }
 
-export const tokenize = (expression: string): Token => {
-	const nextToken = findNextToken(expression)
+export const tokenize = (expression: string, groupAdditions = false): Token => {
+	const nextToken = findNextToken(expression, groupAdditions)
 	return nextToken
 }

@@ -1,5 +1,6 @@
 import { loader } from '../lib/loader'
-import { calcTokens } from './calcTokens'
+import { calc, calcTokens } from './calcTokens'
+import { tokenize } from './tokenize'
 
 const load = loader(18)
 const input = load('input')
@@ -43,7 +44,7 @@ describe('Day 18: Operation Order', () => {
 				['5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))', 669060],
 				['((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2', 23340],
 			])('%s = %d', (expression, expected) =>
-				expect(calcTokens(expression)).toEqual(expected),
+				expect(calc(tokenize(expression))).toEqual(expected),
 			)
 		})
 	})
