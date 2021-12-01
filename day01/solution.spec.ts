@@ -1,5 +1,6 @@
 import { loader } from '../lib/loader'
-import { depthChanges, slidingDepthChanges } from './depthChanges'
+import { depthChanges } from './depthChanges'
+import { slidingDepthChanges } from './slidingDepthChanges'
 
 const input = loader(1)('input').map((s) => parseInt(s, 10))
 
