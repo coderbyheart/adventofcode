@@ -1,4 +1,4 @@
-# Advent of Code 2020 solutions in TypeScript
+# Advent of Code 2021 solutions in TypeScript
 
 [![GitHub Actions](https://github.com/coderbyheart/adventofcode/workflows/Test/badge.svg)](https://github.com/coderbyheart/adventofcode/actions)
 [![Known Vulnerabilities](https://snyk.io/test/github/coderbyheart/adventofcode/badge.svg)](https://snyk.io/test/github/coderbyheart/adventofcode)
