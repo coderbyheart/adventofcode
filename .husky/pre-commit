@@ -1,4 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npx lint-staged && npm test && npx tsc
+npx lint-staged && npm exec -- jest --onlyChanged && npx tsc
