@@ -3,7 +3,7 @@ export type Command = {
 	amount: number
 }
 
-type Position = {
+export type Position = {
 	horizontal: number
 	depth: number
 }
