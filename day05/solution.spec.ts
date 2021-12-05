@@ -19,25 +19,44 @@ const example = [
 	'3,4 -> 1,4',
 	'0,0 -> 8,8',
 	'5,5 -> 8,2',
-]
-	.map(toLine)
-	// For now, only consider horizontal and vertical lines: lines where either x1 = x2 or y1 = y2.
+].map(toLine)
+
+const examplePart1 = example
+	// Only consider horizontal and vertical lines: lines where either x1 = x2 or y1 = y2.
 	.filter(onlyHorizontal)
 
-const input = loader(5)('input').map(toLine).filter(onlyHorizontal)
+const input = loader(5)('input').map(toLine)
+const inputPart1 = input.filter(onlyHorizontal)
 
 describe('Day 5: Hydrothermal Venture', () => {
-	it('should solve the example', () => {
-		const lines = drawLines(example)
-		const diagram = drawDiagram(lines)
-		console.log(render(diagram))
-		const overlaps = linesOverlap(2, diagram)
-		expect(overlaps).toHaveLength(5)
+	describe('Part 1: only horizontal and vertical', () => {
+		it('should solve the example', () => {
+			const lines = drawLines(examplePart1)
+			const diagram = drawDiagram(lines)
+			console.log(render(diagram))
+			const overlaps = linesOverlap(2, diagram)
+			expect(overlaps).toHaveLength(5)
+		})
+		it('should solve the puzzle', () => {
+			const lines = drawLines(inputPart1)
+			const diagram = drawDiagram(lines)
+			const overlaps = linesOverlap(2, diagram)
+			expect(overlaps).toHaveLength(7468)
+		})
 	})
-	it('should solve the puzzle', () => {
-		const lines = drawLines(input)
-		const diagram = drawDiagram(lines)
-		const overlaps = linesOverlap(2, diagram)
-		expect(overlaps).toHaveLength(7468)
+	describe('Part 2: all directions', () => {
+		it('should solve the example', () => {
+			const lines = drawLines(example)
+			const diagram = drawDiagram(lines)
+			console.log(render(diagram))
+			const overlaps = linesOverlap(2, diagram)
+			expect(overlaps).toHaveLength(12)
+		})
+		it('should solve the puzzle', () => {
+			const lines = drawLines(input)
+			const diagram = drawDiagram(lines)
+			const overlaps = linesOverlap(2, diagram)
+			expect(overlaps).toHaveLength(22364)
+		})
 	})
 })
