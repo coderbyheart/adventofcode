@@ -37,4 +37,20 @@ describe('Day 6: Lanternfish', () => {
 			expect(countFish(population)).toEqual(372984)
 		})
 	})
+	describe('Part 2', () => {
+		it('should solve the example', () => {
+			let population = toPopulation(example)
+			for (let day = 1; day <= 256; day++) {
+				population = progressDay(population)
+			}
+			expect(countFish(population)).toEqual(26984457539)
+		})
+		it('should solve the puzzle', () => {
+			let population = toPopulation(input)
+			for (let day = 1; day <= 256; day++) {
+				population = progressDay(population)
+			}
+			expect(countFish(population)).toEqual(1681503251694)
+		})
+	})
 })
