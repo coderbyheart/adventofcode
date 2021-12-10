@@ -26,8 +26,8 @@ export const parseProgram = (
 	program: string,
 	index = 0,
 	stack: Chunk[] = [],
-): void => {
-	if (index >= program.length) return
+): Chunk[] => {
+	if (index >= program.length) return stack
 	const chunk = program[index]
 	if (!braces.includes(chunk))
 		throw new Error(`Unexpected chunk ${chunk} at ${index}`)
