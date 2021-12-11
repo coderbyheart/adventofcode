@@ -23,7 +23,7 @@ export const render = (generation: Generation): string =>
  */
 export const step = (
 	generation: Generation,
-	onFlash?: (_: [x: number, y: number]) => void,
+	onFlashes?: (_: number) => void,
 ): Generation => {
 	const flashing: boolean[][] = []
 	const nextGeneration: Generation = []
@@ -99,13 +99,15 @@ export const step = (
 		})()
 	)
 	// Finally, any octopus that flashed during this step has its energy level set to 0, as it used all of its energy to flash.
+	let flashes = 0
 	for (let y = 0; y < nextGeneration.length; y++) {
 		for (let x = 0; x < nextGeneration[y].length; x++) {
 			if (flashing[y][x]) {
 				nextGeneration[y][x] = 0
-				onFlash?.([x, y])
+				flashes++
 			}
 		}
 	}
+	onFlashes?.(flashes)
 	return nextGeneration
 }

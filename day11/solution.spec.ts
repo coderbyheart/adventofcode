@@ -1,4 +1,4 @@
-import { countFlashes } from './countFlashes'
+import { allFlash, countFlashes } from './countFlashes'
 import { generation } from './game'
 
 describe('Day 11: Dumbo Octopus', () => {
@@ -41,6 +41,45 @@ describe('Day 11: Dumbo Octopus', () => {
 					100,
 				),
 			).toEqual(1627)
+		})
+	})
+	describe('Part 2', () => {
+		it('should solve the example', () => {
+			// the first time all octopuses flash simultaneously is step 195
+			expect(
+				allFlash(
+					generation(
+						`5483143223
+                2745854711
+                5264556173
+                6141336146
+                6357385478
+                4167524645
+                2176841721
+                6882881134
+                4846848554
+                5283751526`,
+					),
+				),
+			).toEqual(195)
+		})
+		it('should solve the puzzle', () => {
+			expect(
+				allFlash(
+					generation(
+						`3265255276
+                        1537412665
+                        7335746422
+                        6426325658
+                        3854434364
+                        8717377486
+                        4522286326
+                        6337772845
+                        8824387665
+                        6351586484`,
+					),
+				),
+			).toEqual(329)
 		})
 	})
 })
