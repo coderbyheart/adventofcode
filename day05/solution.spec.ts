@@ -3,7 +3,6 @@ import { drawDiagram } from './drawDiagram'
 import { drawLines } from './drawLines'
 import { Line, toLine } from './line'
 import { linesOverlap } from './linesOverlap'
-import { render } from './render'
 
 const onlyHorizontal = ([[x1, y1], [x2, y2]]: Line): boolean =>
 	x1 === x2 || y1 === y2
@@ -33,7 +32,6 @@ describe('Day 5: Hydrothermal Venture', () => {
 		it('should solve the example', () => {
 			const lines = drawLines(examplePart1)
 			const diagram = drawDiagram(lines)
-			console.log(render(diagram))
 			const overlaps = linesOverlap(2, diagram)
 			expect(overlaps).toHaveLength(5)
 		})
@@ -48,7 +46,6 @@ describe('Day 5: Hydrothermal Venture', () => {
 		it('should solve the example', () => {
 			const lines = drawLines(example)
 			const diagram = drawDiagram(lines)
-			console.log(render(diagram))
 			const overlaps = linesOverlap(2, diagram)
 			expect(overlaps).toHaveLength(12)
 		})
