@@ -94,7 +94,7 @@ describe('Day 13: Transparent Origami', () => {
 			for (const foldstep of input.folds) {
 				folded = fold(folded ?? { coordinates: input.coordinates }, foldstep)
 			}
-			console.log(render(folded as Sheet)) // CJHAZHKU
+			console.log(render(folded as Sheet, ' ')) // CJHAZHKU
 			expect(folded?.coordinates).toHaveLength(97)
 		})
 	})
