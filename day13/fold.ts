@@ -1,6 +1,12 @@
 import { flip } from './flip'
 import { Fold, Position } from './parseInstructions'
 
+export type Sheet = {
+	coordinates: Position[]
+	maxX: number
+	maxY: number
+}
+
 export const fold = (
 	{
 		coordinates,
@@ -12,11 +18,7 @@ export const fold = (
 		maxY?: number
 	},
 	fold: Fold,
-): {
-	coordinates: Position[]
-	maxX: number
-	maxY: number
-} => {
+): Sheet => {
 	const folded: Position[] = []
 	maxX = maxX ?? coordinates.reduce((maxX, [x]) => (x > maxX ? x : maxX), 0)
 	maxY = maxY ?? coordinates.reduce((maxY, [, y]) => (y > maxY ? y : maxY), 0)
