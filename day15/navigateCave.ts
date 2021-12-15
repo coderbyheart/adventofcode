@@ -23,21 +23,25 @@ const navigateCave = (
 		const [x, y] = current
 		const currentDistance = distance[y][x]
 
-		if (cave[y - 1]?.[x] !== undefined && unvisited[y - 1][x]) {
-			const upDistance = cave[y - 1][x] + currentDistance
-			distance[y - 1][x] = Math.min(upDistance, distance[y - 1][x])
-		}
-		if (cave[y + 1]?.[x] !== undefined && unvisited[y + 1][x]) {
-			const downDistance = cave[y + 1][x] + currentDistance
-			distance[y + 1][x] = Math.min(downDistance, distance[y + 1][x])
-		}
-		if (cave[y][x - 1] !== undefined && unvisited[y][x - 1]) {
-			const leftDistance = cave[y][x - 1] + currentDistance
-			distance[y][x - 1] = Math.min(distance[y][x - 1], leftDistance)
-		}
-		if (cave[y][x + 1] !== undefined && unvisited[y][x + 1]) {
-			const rightDistance = cave[y][x + 1] + currentDistance
-			distance[y][x + 1] = Math.min(distance[y][x + 1], rightDistance)
+		const neighbors = [
+			// up
+			[y - 1, x],
+			// down
+			[y + 1, x],
+			// right
+			[y, x - 1],
+			// left
+			[y, x + 1],
+		]
+		for (const [nY, nX] of neighbors) {
+			if (cave[nY]?.[nX] !== undefined && unvisited[nY][nX]) {
+				const nDistance = cave[nY][nX] + currentDistance
+				if (nDistance < distance[nY][nX]) {
+					distance[nY][nX] = nDistance
+					// Add to queue, but punish using manhattan distance
+					queue.push([nX, nY, nDistance])
+				}
+			}
 		}
 		unvisited[y][x] = false
 
