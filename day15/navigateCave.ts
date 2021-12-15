@@ -18,8 +18,12 @@ const navigateCave = (
 		}
 	}
 	distance[0][0] = 0
-	let current: [x: number, y: number] | undefined = [0, 0]
-	while (current !== undefined) {
+
+	const queue: [x: number, y: number, prio: number][] = [[0, 0, 0]]
+	let current: [x: number, y: number, prio: number] | undefined = undefined
+	while (
+		(current = queue.sort(([, , prio0], [, , prio1]) => prio1 - prio0).pop())
+	) {
 		const [x, y] = current
 		const currentDistance = distance[y][x]
 
@@ -38,7 +42,7 @@ const navigateCave = (
 				const nDistance = cave[nY][nX] + currentDistance
 				if (nDistance < distance[nY][nX]) {
 					distance[nY][nX] = nDistance
-					// Add to queue, but punish using manhattan distance
+					// Add to queue, if a better distance was found
 					queue.push([nX, nY, nDistance])
 				}
 			}
@@ -48,20 +52,6 @@ const navigateCave = (
 		if (y === cave.length - 1 && x === cave[y].length - 1) {
 			onEnd(currentDistance)
 		}
-
-		const caveDistances = []
-		for (let y = 0; y < cave.length; y++) {
-			for (let x = 0; x < cave[y].length; x++) {
-				if (unvisited[y][x])
-					caveDistances.push({
-						position: [x, y] as [x: number, y: number],
-						distance: distance[y][x],
-					})
-			}
-		}
-		current = caveDistances
-			.sort(({ distance: d1 }, { distance: d2 }) => d2 - d1)
-			.pop()?.position
 	}
 }
 

@@ -27,7 +27,7 @@ describe('Day 15: Chiton', () => {
 	describe('Part 2', () => {
 		it('should solve the example', () =>
 			expect(lowestRisk(wrap(example))).toEqual(315))
-		it.skip('should solve the puzzle', () =>
+		it('should solve the puzzle', () =>
 			expect(lowestRisk(wrap(input))).toEqual(3045))
 	})
 })
