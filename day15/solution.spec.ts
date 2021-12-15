@@ -1,5 +1,5 @@
 import { loader } from '../lib/loader'
-import { lowestRiskPath } from './navigateCave'
+import { lowestRisk } from './navigateCave'
 
 const example = [
 	'1163751742',
@@ -21,8 +21,7 @@ const input = loader(15)('input').map((s) =>
 describe('Day 15: Chiton', () => {
 	describe('Part 1', () => {
 		it('should solve the example', () =>
-			expect(lowestRiskPath(example)).toEqual(40))
-		it.skip('should solve the puzzle', () =>
-			expect(lowestRiskPath(input)).toEqual(40))
+			expect(lowestRisk(example)).toEqual(40))
+		it('should solve the puzzle', () => expect(lowestRisk(input)).toEqual(748))
 	})
 })
