@@ -27,7 +27,7 @@
     "@commitlint/config-angular": "15.0.0",
     "@nordicsemiconductor/asset-tracker-cloud-code-style": "9.2.33",
     "@types/jest": "27.0.3",
-    "@types/node": "16.11.13",
+    "@types/node": "17.0.0",
     "eslint": "8.4.1",
     "husky": "7.0.4",
     "jest": "27.4.5",
