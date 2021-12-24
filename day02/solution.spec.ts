@@ -1,7 +1,6 @@
 import { loader } from '../lib/loader'
 import { dive } from './dive'
-import { AimedPosition } from './diveAim'
-import { diveAim } from './diveAim'
+import { AimedPosition, diveAim } from './diveAim'
 import { parseCommand } from './parseCommand'
 
 const course = loader(2)('course').map(parseCommand)

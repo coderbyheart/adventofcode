@@ -1,4 +1,4 @@
-import { Target, Point } from './probeLauncher'
+import { Point, Target } from './probeLauncher'
 
 const shootAt = (targetArea: Target) => {
 	const targetStartY = Math.min(targetArea.from.y, targetArea.to.y)
