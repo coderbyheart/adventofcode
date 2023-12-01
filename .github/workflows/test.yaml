@@ -13,4 +13,4 @@ jobs:
         with:
           deno-version: v1.x
 
-      - run: deno test --allow-read *_test.ts
+      - run: deno test --allow-read ./*

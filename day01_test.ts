@@ -6,14 +6,17 @@ const sum = (numbers: Array<number>): number =>
 
 Deno.test("Day 1: Trebuchet?!", async (t) => {
   await t.step("calibrationValue()", async (t) => {
-    for (const [line, expectedValue] of [
-      ["1abc2", 12],
-      ["pqr3stu8vwx", 38],
-      ["a1b2c3d4e5f", 15],
-      ["treb7uchet", 77],
-    ] as [string, number][]) {
-      await t.step(`from line ${line} calculate ${expectedValue}`, () =>
-        assertEquals(calibrationValue(line), expectedValue)
+    for (
+      const [line, expectedValue] of [
+        ["1abc2", 12],
+        ["pqr3stu8vwx", 38],
+        ["a1b2c3d4e5f", 15],
+        ["treb7uchet", 77],
+      ] as [string, number][]
+    ) {
+      await t.step(
+        `from line ${line} calculate ${expectedValue}`,
+        () => assertEquals(calibrationValue(line), expectedValue),
       );
     }
   });
@@ -23,53 +26,56 @@ Deno.test("Day 1: Trebuchet?!", async (t) => {
       assertEquals(
         sum(
           ["1abc2", "pqr3stu8vwx", "a1b2c3d4e5f", "treb7uchet"].map(
-            calibrationValue
-          )
+            calibrationValue,
+          ),
         ),
-        142
-      )
-    );
+        142,
+      ));
 
     await t.step("it should solve", async () =>
       assertEquals(
         sum(
           (await Deno.readTextFile("./input/day01.1.txt"))
             .split("\n")
-            .map(calibrationValue)
+            .map(calibrationValue),
         ),
-        55971
-      )
-    );
+        55971,
+      ));
   });
 
   await t.step("Part 2", async (t) => {
     await t.step("twoNumbers()", async (t) => {
-      for (const [line, expectedLine] of [
-        ["two1nine", "29"],
-        ["eightwothree", "83"],
-        ["abcone2threexyz", "13"],
-        ["xtwone3four", "24"],
-        ["4nineeightseven2", "42"],
-        ["zoneight234", "14"],
-        ["7pqrstsixteen", "76"],
-      ]) {
-        await t.step(`it should convert ${line} to ${expectedLine}`, () =>
-          assertEquals(twoNumbers(line), expectedLine)
+      for (
+        const [line, expectedLine] of [
+          ["two1nine", "29"],
+          ["eightwothree", "83"],
+          ["abcone2threexyz", "13"],
+          ["xtwone3four", "24"],
+          ["4nineeightseven2", "42"],
+          ["zoneight234", "14"],
+          ["7pqrstsixteen", "76"],
+        ]
+      ) {
+        await t.step(
+          `it should convert ${line} to ${expectedLine}`,
+          () => assertEquals(twoNumbers(line), expectedLine),
         );
       }
 
-      for (const [line, expectedValue] of [
-        ["two1nine", 29],
-        ["eightwothree", 83],
-        ["abcone2threexyz", 13],
-        ["xtwone3four", 24],
-        ["4nineeightseven2", 42],
-        ["zoneight234", 14],
-        ["7pqrstsixteen", 76],
-      ] as [string, number][]) {
+      for (
+        const [line, expectedValue] of [
+          ["two1nine", 29],
+          ["eightwothree", 83],
+          ["abcone2threexyz", 13],
+          ["xtwone3four", 24],
+          ["4nineeightseven2", 42],
+          ["zoneight234", 14],
+          ["7pqrstsixteen", 76],
+        ] as [string, number][]
+      ) {
         await t.step(
           `it should find in ${line} the real first and last digit ${expectedValue}`,
-          () => assertEquals(calibrationValue(twoNumbers(line)), expectedValue)
+          () => assertEquals(calibrationValue(twoNumbers(line)), expectedValue),
         );
       }
     });
@@ -87,11 +93,10 @@ Deno.test("Day 1: Trebuchet?!", async (t) => {
             "7pqrstsixteen",
           ]
             .map(twoNumbers)
-            .map(calibrationValue)
+            .map(calibrationValue),
         ),
-        281
-      )
-    );
+        281,
+      ));
 
     await t.step("it should solve", async () =>
       assertEquals(
@@ -99,10 +104,9 @@ Deno.test("Day 1: Trebuchet?!", async (t) => {
           (await Deno.readTextFile("./input/day01.1.txt"))
             .split("\n")
             .map(twoNumbers)
-            .map(calibrationValue)
+            .map(calibrationValue),
         ),
-        54719
-      )
-    );
+        54719,
+      ));
   });
 });

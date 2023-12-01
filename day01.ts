@@ -1,3 +1,5 @@
+import { reverseString } from "./util/reverseString.ts";
+
 /**
  * the calibration value can be found by combining the first digit and the last digit (in that order) to form a single two-digit number.
  */
@@ -30,7 +32,7 @@ const findFirstNumber = (line: string, reverse = false): string | undefined =>
     // Find number words
     ...Object.entries(numberMap).map<[string, number]>(([search]) => [
       numberMap[search as keyof typeof numberMap],
-      line.indexOf(reverse ? search.split("").reverse().join("") : search),
+      line.indexOf(reverse ? reverseString(search) : search),
     ]),
     // Find real numbers
     ...line
@@ -39,8 +41,8 @@ const findFirstNumber = (line: string, reverse = false): string | undefined =>
   ]
     .filter(([, index]) => index > -1)
     .sort(([, index1], [, index2]) => index1 - index2)[0]?.[0] as
-    | keyof typeof numberMap
-    | undefined;
+      | keyof typeof numberMap
+      | undefined;
 
 /**
  * Find a number at the beginning and at the end of the line.
@@ -48,6 +50,6 @@ const findFirstNumber = (line: string, reverse = false): string | undefined =>
  */
 export const twoNumbers = (line: string): string => {
   const firstNumber = findFirstNumber(line);
-  const lastNumber = findFirstNumber(line.split("").reverse().join(""), true);
+  const lastNumber = findFirstNumber(reverseString(line), true);
   return `${firstNumber ?? ""}${lastNumber ?? ""}`;
 };
