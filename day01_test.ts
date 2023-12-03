@@ -1,8 +1,6 @@
 import { assertEquals } from "https://deno.land/std@0.208.0/assert/mod.ts";
 import { calibrationValue, twoNumbers } from "./day01.ts";
-
-const sum = (numbers: Array<number>): number =>
-  numbers.reduce((sum, number) => sum + number);
+import { sum } from "./util/sum.ts";
 
 Deno.test("Day 1: Trebuchet?!", async (t) => {
   await t.step("calibrationValue()", async (t) => {
@@ -35,7 +33,7 @@ Deno.test("Day 1: Trebuchet?!", async (t) => {
     await t.step("it should solve", async () =>
       assertEquals(
         sum(
-          (await Deno.readTextFile("./input/day01.1.txt"))
+          (await Deno.readTextFile("./input/day01.txt"))
             .split("\n")
             .map(calibrationValue),
         ),
@@ -101,7 +99,7 @@ Deno.test("Day 1: Trebuchet?!", async (t) => {
     await t.step("it should solve", async () =>
       assertEquals(
         sum(
-          (await Deno.readTextFile("./input/day01.1.txt"))
+          (await Deno.readTextFile("./input/day01.txt"))
             .split("\n")
             .map(twoNumbers)
             .map(calibrationValue),
