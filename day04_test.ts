@@ -52,16 +52,14 @@ Deno.test("Day 4: Scratchcards", async (t) => {
 
   await t.step("Part 2", async (t) => {
     await t.step("Example", () =>
-      assertEquals(play([card1, card2, card3, card4, card5, card6]).length, 30)
+      assertEquals(play([card1, card2, card3, card4, card5, card6]), 30)
     );
-    /*
     await t.step("Solution", async () =>
       assertEquals(
-        play((await Deno.readTextFile("./input/day04.txt")).split("\n")).length,
-        28538
+        play((await Deno.readTextFile("./input/day04.txt")).split("\n")),
+        9425061
       )
     );
-    */
   });
 
   await t.step("parseCard()", () =>
@@ -107,22 +105,46 @@ const parseCard = (cardInfo: string): CardInfo => {
   ];
 };
 
-const play = (pile: Array<string>): number[] => {
-  const processed: number[] = [];
-  const queue: number[] = pile.map((_, i) => i);
-  do {
-    const cardId = queue.shift() as number;
-    // Add the current card to the process pile
-    processed.push(cardId);
-    // Add the card copies to the queue
-    const winners = winningNumbers(pile.at(cardId) as string);
-    for (let i = 0; i < winners.size; i++) {
-      const nextCardId = cardId + i + 1;
-      if (pile.at(nextCardId) !== undefined) {
-        queue.push(nextCardId);
+const play = (pile: Array<string>): number => {
+  // Prepare the processed pile
+  const processedPile: Record<
+    string,
+    {
+      instances: number;
+      unprocessed: number;
+      winners: Set<number>;
+    }
+  > = pile.reduce(
+    (queue, card, i) => ({
+      ...queue,
+      [i]: {
+        instances: 0,
+        unprocessed: 1,
+        winners: winningNumbers(card),
+      },
+    }),
+    {}
+  );
+  // We only need to go over this once, because winners will never be added to
+  // the current or previous card
+  for (const [cardId, card] of Object.entries(processedPile)) {
+    // Mark as processed
+    card.instances = card.unprocessed;
+    const unprocessed = card.unprocessed;
+    card.unprocessed = 0;
+    // Add the card copies based on the number of winners to the unprocessed
+    // count of the following cards
+    for (let j = 0; j < card.winners.size; j++) {
+      const nextCardId = parseInt(cardId) + j + 1;
+      if (processedPile[nextCardId] !== undefined) {
+        processedPile[nextCardId].unprocessed += unprocessed;
       }
     }
-  } while (queue.length > 0);
+  }
 
-  return processed;
+  // Sum up all the card instances
+  return Object.values(processedPile).reduce(
+    (total, { instances }) => total + instances,
+    0
+  );
 };
