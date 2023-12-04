@@ -50,6 +50,20 @@ Deno.test("Day 4: Scratchcards", async (t) => {
     );
   });
 
+  await t.step("Part 2", async (t) => {
+    await t.step("Example", () =>
+      assertEquals(play([card1, card2, card3, card4, card5, card6]).length, 30)
+    );
+    /*
+    await t.step("Solution", async () =>
+      assertEquals(
+        play((await Deno.readTextFile("./input/day04.txt")).split("\n")).length,
+        28538
+      )
+    );
+    */
+  });
+
   await t.step("parseCard()", () =>
     assertEquals(parseCard(card3), [
       new Set([1, 21, 53, 59, 44]),
@@ -71,7 +85,8 @@ const cardScore = (cardInfo: string): number =>
     ? 0
     : (1 * Math.pow(2, winningNumbers(cardInfo).size)) / 2;
 
-const parseCard = (cardInfo: string): [Set<number>, Set<number>] => {
+type CardInfo = [Set<number>, Set<number>];
+const parseCard = (cardInfo: string): CardInfo => {
   const [, winningNumbers, cardNumbers] =
     /^Card +\d+: ([\d ]+)+ \| ([\d ]+)+/.exec(cardInfo) ?? [];
   return [
@@ -90,4 +105,24 @@ const parseCard = (cardInfo: string): [Set<number>, Set<number>] => {
         .map((s) => parseInt(s, 10))
     ),
   ];
+};
+
+const play = (pile: Array<string>): number[] => {
+  const processed: number[] = [];
+  const queue: number[] = pile.map((_, i) => i);
+  do {
+    const cardId = queue.shift() as number;
+    // Add the current card to the process pile
+    processed.push(cardId);
+    // Add the card copies to the queue
+    const winners = winningNumbers(pile.at(cardId) as string);
+    for (let i = 0; i < winners.size; i++) {
+      const nextCardId = cardId + i + 1;
+      if (pile.at(nextCardId) !== undefined) {
+        queue.push(nextCardId);
+      }
+    }
+  } while (queue.length > 0);
+
+  return processed;
 };
