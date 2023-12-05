@@ -20,42 +20,29 @@ const schematics = [
 Deno.test("Day 3: Gear Ratios", async (t) => {
   await t.step("Part 1", async (t) => {
     await t.step("Example", async (t) => {
-      await t.step(
-        "findPartNumbers()",
-        () =>
-          assertEquals(findPartNumbers(schematics), [
-            { n: 467, s: [{ s: "*", col: 3, row: 1 }] },
-            { n: 35, s: [{ s: "*", col: 3, row: 1 }] },
-            { n: 633, s: [{ s: "#", col: 6, row: 3 }] },
-            { n: 617, s: [{ s: "*", col: 3, row: 4 }] },
-            { n: 592, s: [{ s: "+", col: 5, row: 5 }] },
-            { n: 755, s: [{ s: "*", col: 5, row: 8 }] },
-            { n: 664, s: [{ s: "$", col: 3, row: 8 }] },
-            { n: 598, s: [{ s: "*", col: 5, row: 8 }] },
-          ]),
+      await t.step("findPartNumbers()", () =>
+        assertEquals(findPartNumbers(schematics), [
+          { n: 467, s: [{ s: "*", col: 3, row: 1 }] },
+          { n: 35, s: [{ s: "*", col: 3, row: 1 }] },
+          { n: 633, s: [{ s: "#", col: 6, row: 3 }] },
+          { n: 617, s: [{ s: "*", col: 3, row: 4 }] },
+          { n: 592, s: [{ s: "+", col: 5, row: 5 }] },
+          { n: 755, s: [{ s: "*", col: 5, row: 8 }] },
+          { n: 664, s: [{ s: "$", col: 3, row: 8 }] },
+          { n: 598, s: [{ s: "*", col: 5, row: 8 }] },
+        ])
       );
 
       await t.step(`Calculate the example solution`, () =>
-        assertEquals(
-          sum(
-            findPartNumbers(schematics)
-              .map(({ n }) => n),
-          ),
-          4361,
-        ));
+        assertEquals(sum(findPartNumbers(schematics).map(({ n }) => n)), 4361)
+      );
     });
 
     await t.step("Solution", async () => {
       const numbers = findPartNumbers(
-        (await Deno.readTextFile("./input/day03.txt")).split("\n"),
+        (await Deno.readTextFile("./input/day03.txt")).split("\n")
       );
-      assertEquals(
-        sum(
-          numbers
-            .map(({ n }) => n),
-        ),
-        529618,
-      );
+      assertEquals(sum(numbers.map(({ n }) => n)), 529618);
     });
   });
 
@@ -72,21 +59,21 @@ Deno.test("Day 3: Gear Ratios", async (t) => {
   await t.step("Part 2", async (t) => {
     await t.step(`Solve example`, () =>
       assertEquals(
-        sum(
-          findGears(schematics).map(([g1, g2]) => g1 * g2),
-        ),
-        467835,
-      ));
+        sum(findGears(schematics).map(([g1, g2]) => g1 * g2)),
+        467835
+      )
+    );
 
     await t.step("Solution", async () =>
       assertEquals(
         sum(
           findGears(
-            (await Deno.readTextFile("./input/day03.txt")).split("\n"),
-          ).map(([g1, g2]) => g1 * g2),
+            (await Deno.readTextFile("./input/day03.txt")).split("\n")
+          ).map(([g1, g2]) => g1 * g2)
         ),
-        77509019,
-      ));
+        77509019
+      )
+    );
   });
 });
 
@@ -96,7 +83,7 @@ Deno.test("Day 3: Gear Ratios", async (t) => {
  * TODO: refactor to search for symbols first and then numbers. This will make the code work better for part 2.
  */
 const findPartNumbers = (
-  schematics: string[],
+  schematics: string[]
 ): { n: number; s: Symbol[] }[] => {
   const numbers: { n: number; s: Symbol[] }[] = [];
   let currentNumber: string[] = [];
@@ -106,7 +93,7 @@ const findPartNumbers = (
   const addNumber = () => {
     if (currentNumber.length > 0) {
       numbers.push({
-        n: parseInt(currentNumber.join("")),
+        n: parseInt(currentNumber.join(""), 10),
         s: adjacentSymbols
           // Remove duplicate symbols
           .reduce<Symbol[]>(uniqueSymbols, []),
@@ -119,7 +106,8 @@ const findPartNumbers = (
   for (let row = 0; row < schematics.length; row++) {
     for (let col = 0; col < schematics[row].length; col++) {
       const c = schematics[row][col];
-      if (/\d/.test(c)) { // Current symbol is a number
+      if (/\d/.test(c)) {
+        // Current symbol is a number
         currentNumber.push(c);
         const s = findAdjacentSymbols(schematics, row, col);
         if (s !== undefined) adjacentSymbols.push(...s);
@@ -140,7 +128,7 @@ type Symbol = { s: string; col: number; row: number };
 const findAdjacentSymbols = (
   schematics: string[],
   row: number,
-  col: number,
+  col: number
 ): Symbol[] =>
   [
     findSymbolAt(schematics, row, col - 1), // left
@@ -159,7 +147,7 @@ const findAdjacentSymbols = (
 const findSymbolAt = (
   schematics: string[],
   row: number,
-  col: number,
+  col: number
 ): Symbol | undefined => {
   if (col < 0) return undefined; // Outside of schematics
   if (row < 0) return undefined; // Outside of schematics
@@ -176,18 +164,16 @@ const findSymbolAt = (
 const findGears = (schematics: string[]) => {
   const parts = findPartNumbers(schematics);
   // From the known part numbers
-  return parts
-    // ... find the symbols with "*"
-    .filter(({ s }) => s.find(({ s }) => s === "*"))
-    // ... and extract the symbol
-    .map(
-      ({ s }) => s,
-    )
-    .flat()
-    // Remove duplicates
-    .reduce<Symbol[]>(uniqueSymbols, [])
-    .reduce<Array<[number, number]>>(
-      (gears, symbol) => {
+  return (
+    parts
+      // ... find the symbols with "*"
+      .filter(({ s }) => s.find(({ s }) => s === "*"))
+      // ... and extract the symbol
+      .map(({ s }) => s)
+      .flat()
+      // Remove duplicates
+      .reduce<Symbol[]>(uniqueSymbols, [])
+      .reduce<Array<[number, number]>>((gears, symbol) => {
         // Find the part numbers with this symbol
         const matchingParts = parts.filter(({ s }) =>
           s.find(({ col, row }) => col === symbol.col && row === symbol.row)
@@ -195,15 +181,14 @@ const findGears = (schematics: string[]) => {
         return matchingParts.length === 2
           ? [...gears, matchingParts.map(({ n }) => n) as [number, number]]
           : gears;
-      },
-      [],
-    );
+      }, [])
+  );
 };
 
 const uniqueSymbols = (symbols: Symbol[], symbol: Symbol) => {
   if (
     symbols.find(({ col, row }) => col === symbol.col && row === symbol.row) ===
-      undefined
+    undefined
   ) {
     return [...symbols, symbol];
   }

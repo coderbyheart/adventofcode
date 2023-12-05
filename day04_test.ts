@@ -1,5 +1,6 @@
 import { assertEquals } from "https://deno.land/std@0.208.0/assert/assert_equals.ts";
 import { sum } from "./util/sum.ts";
+import { toNumber } from "./util/toNumber.ts";
 
 const card1 = `Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53`;
 const card2 = `Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19`;
@@ -88,20 +89,8 @@ const parseCard = (cardInfo: string): CardInfo => {
   const [, winningNumbers, cardNumbers] =
     /^Card +\d+: ([\d ]+)+ \| ([\d ]+)+/.exec(cardInfo) ?? [];
   return [
-    new Set(
-      winningNumbers
-        .trim()
-        .replace(/ +/g, " ")
-        .split(" ")
-        .map((s) => parseInt(s, 10))
-    ),
-    new Set(
-      cardNumbers
-        .trim()
-        .replace(/ +/g, " ")
-        .split(" ")
-        .map((s) => parseInt(s, 10))
-    ),
+    new Set(winningNumbers.trim().replace(/ +/g, " ").split(" ").map(toNumber)),
+    new Set(cardNumbers.trim().replace(/ +/g, " ").split(" ").map(toNumber)),
   ];
 };
 
