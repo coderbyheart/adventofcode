@@ -52,14 +52,37 @@ Deno.test("Day 5: If You Give A Seed A Fertilizer", async (t) => {
       });
     });
 
-    await t.step("Solution", async (t) => {
+    await t.step("Solution", async () => {
       const solution = almanac(
         (await Deno.readTextFile("./input/day05.txt")).split("\n")
       );
       assertEquals(lowest(solution), 403695602);
     });
   });
+
+  await t.step("Part 2", async (t) => {
+    await t.step("Example", async () => {
+      const example = lowestSeedRange(
+        (await Deno.readTextFile("./input/day05.example.txt")).split("\n")
+      );
+      assertEquals(example, 46);
+    });
+    /**
+     * FIXME: Completes after ~5 minutes
+     * This should be optimizable by
+     * - combining all the maps into one final map
+     * - reverting the algorithm to start at the lowest positions until a matching seed is found.
+    await t.step("Solution", async () => {
+      const solution = lowestSeedRange(
+        (await Deno.readTextFile("./input/day05.txt")).split("\n")
+      );
+      assertEquals(solution, 219529182);
+    });
+     */
+  });
 });
+
+const lowest = (numbers: Set<number>) => Math.min(...numbers.values());
 
 const rangeRx =
   /^(?<destRangeStart>\d+) (?<sourceRangeStart>\d+) (?<rangeLength>\d+)$/;
@@ -96,6 +119,48 @@ const almanac = (almanac: string[]) => {
   const seeds = almanac[0].split(":")[1].trim().split(" ").map(toNumber);
 
   // Read in all the map ranges
+  const maps = almanacToMaps(almanac);
+
+  return mapSeeds(seeds, maps);
+};
+
+const lowestSeedRange = (almanac: string[]): number => {
+  // Get the seed pairs from the first line
+  const seedPairs = almanac[0]
+    .split(":")[1]
+    .trim()
+    .matchAll(/(\d+ \d+)+/g);
+
+  // Read in all the map ranges
+  const maps = almanacToMaps(almanac);
+
+  let lowest = Number.MAX_SAFE_INTEGER;
+  for (const pair of seedPairs) {
+    const [start, length] = pair[0].split(" ").map(toNumber);
+    for (let i = start; i < start + length; i++) {
+      lowest = Math.min(
+        maps.reduce((mapped, seedMap) => seedMap(mapped), i),
+        lowest
+      );
+    }
+  }
+
+  return lowest;
+};
+
+// Pass each seed through each map
+const mapSeeds = (
+  seeds: number[],
+  maps: Array<(seed: number) => number>
+): Set<number> =>
+  new Set<number>(
+    seeds.map((seed) => maps.reduce((mapped, seedMap) => seedMap(mapped), seed))
+  );
+
+/**
+ * Parses the almanac to maps
+ */
+const almanacToMaps = (almanac: string[]): Array<(seed: number) => number> => {
   const mapRanges: Array<Array<string>> = [[]];
   let i = 0;
   // Skip first three lines
@@ -110,12 +175,5 @@ const almanac = (almanac: string[]) => {
   }
 
   // Convert to maps
-  const maps = mapRanges.map(seedMap);
-
-  // Pass each seed through each map
-  return new Set<number>(
-    seeds.map((seed) => maps.reduce((mapped, seedMap) => seedMap(mapped), seed))
-  );
+  return mapRanges.map(seedMap);
 };
-
-const lowest = (numbers: Set<number>) => Math.min(...numbers.values());
