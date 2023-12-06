@@ -24,6 +24,14 @@ Deno.test("Day 6: Wait For It", async (t) => {
       )
     );
   });
+  await t.step("Part 2", async (t) => {
+    await t.step(`Solve the example`, () =>
+      assertEquals(waysToWin([[71530, 940200]]), 71503)
+    );
+    await t.step(`Solve`, () =>
+      assertEquals(waysToWin([[47707566, 282107911471062]]), 33875953)
+    );
+  });
 });
 
 const waysToWin = (races: Array<[number, number]>): number => {
