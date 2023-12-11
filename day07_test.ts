@@ -10,8 +10,9 @@ const example = [
 
 Deno.test("Day 7: Camel Cards", async (t) => {
   await t.step("Example", async (t) => {
-    await t.step("it should solve the example", () =>
-      assertEquals(totalWinnings(example), 6440)
+    await t.step(
+      "it should solve the example",
+      () => assertEquals(totalWinnings(example), 6440),
     );
   });
 
@@ -19,30 +20,32 @@ Deno.test("Day 7: Camel Cards", async (t) => {
     await t.step("it should solve", async (t) =>
       assertEquals(
         totalWinnings(
-          (await Deno.readTextFile("./input/day07.txt")).split("\n")
+          (await Deno.readTextFile("./input/day07.txt")).split("\n"),
         ),
-        251545216
-      )
-    );
+        251545216,
+      ));
   });
 
   await t.step("handType()", async (t) => {
-    for (const [hand, expectedType] of [
-      ["AAAAA", HandType.FiveOfAKind],
-      ["AA8AA", HandType.FourOfAKind],
-      ["23332", HandType.FullHouse],
-      ["TTT98", HandType.ThreeOfAKind],
-      ["23432", HandType.TwoPair],
-      ["A23A4", HandType.OnePair],
-      ["23456", HandType.HighCard],
-      [`32T3K`, HandType.OnePair],
-      [`KTJJT`, HandType.TwoPair],
-      [`KK677`, HandType.TwoPair],
-      [`T55J5`, HandType.ThreeOfAKind],
-      [`QQQJA`, HandType.ThreeOfAKind],
-    ] as Array<[string, HandType]>) {
-      await t.step(`${hand} should be type ${expectedType}`, () =>
-        assertEquals(getHandType(hand), expectedType)
+    for (
+      const [hand, expectedType] of [
+        ["AAAAA", HandType.FiveOfAKind],
+        ["AA8AA", HandType.FourOfAKind],
+        ["23332", HandType.FullHouse],
+        ["TTT98", HandType.ThreeOfAKind],
+        ["23432", HandType.TwoPair],
+        ["A23A4", HandType.OnePair],
+        ["23456", HandType.HighCard],
+        [`32T3K`, HandType.OnePair],
+        [`KTJJT`, HandType.TwoPair],
+        [`KK677`, HandType.TwoPair],
+        [`T55J5`, HandType.ThreeOfAKind],
+        [`QQQJA`, HandType.ThreeOfAKind],
+      ] as Array<[string, HandType]>
+    ) {
+      await t.step(
+        `${hand} should be type ${expectedType}`,
+        () => assertEquals(getHandType(hand), expectedType),
       );
     }
   });
@@ -50,19 +53,19 @@ Deno.test("Day 7: Camel Cards", async (t) => {
   await t.step("compare()", async (t) => {
     await t.step(
       `33332 and 2AAAA are both four of a kind hands, but 33332 is stronger because its first card is stronger`,
-      () => assertEquals(compareByCards("33332", "2AAAA"), 1)
+      () => assertEquals(compareByCards("33332", "2AAAA"), 1),
     );
     await t.step(
       `77888 and 77788 are both a full house, but 77888 is stronger because its third card is stronger (and both hands have the same first and second card)`,
-      () => assertEquals(compareByCards("77788", "77888"), -1)
+      () => assertEquals(compareByCards("77788", "77888"), -1),
     );
     await t.step(
       `T55J5 and QQQJA are both three of a kind. QQQJA has a stronger first card`,
-      () => assertEquals(compareByCards("QQQJA", "T55J5"), 1)
+      () => assertEquals(compareByCards("QQQJA", "T55J5"), 1),
     );
     await t.step(
       `KK677 and KTJJT are both two pair. Their first cards both have the same label, but the second card of KK677 is stronger (K vs T)`,
-      () => assertEquals(compareByCards("KTJJT", "KK677"), -1)
+      () => assertEquals(compareByCards("KTJJT", "KK677"), -1),
     );
   });
 
@@ -76,8 +79,7 @@ Deno.test("Day 7: Camel Cards", async (t) => {
       // T55J5 and QQQJA are both three of a kind. QQQJA has a stronger first card, so it gets rank 5 and T55J5 gets rank 4.
       `T55J5 684`,
       `QQQJA 483`,
-    ])
-  );
+    ]));
 });
 
 const totalWinnings = (hands: string[]): number => {
@@ -87,7 +89,7 @@ const totalWinnings = (hands: string[]): number => {
     .reduce(
       (total, [hand, bidAmount]) =>
         total + (rankedHands.indexOf(`${hand} ${bidAmount}`) + 1) * bidAmount,
-      0
+      0,
     );
 };
 

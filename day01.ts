@@ -41,8 +41,8 @@ const findFirstNumber = (line: string, reverse = false): string | undefined =>
   ]
     .filter(([, index]) => index > -1)
     .sort(([, index1], [, index2]) => index1 - index2)[0]?.[0] as
-    | keyof typeof numberMap
-    | undefined;
+      | keyof typeof numberMap
+      | undefined;
 
 /**
  * Find a number at the beginning and at the end of the line.

@@ -9,9 +9,8 @@ Deno.test("Day 6: Wait For It", async (t) => {
           [15, 40],
           [30, 200],
         ]),
-        288
-      )
-    );
+        288,
+      ));
     await t.step(`Solve`, () =>
       assertEquals(
         waysToWin([
@@ -20,16 +19,17 @@ Deno.test("Day 6: Wait For It", async (t) => {
           [75, 1147],
           [66, 1062],
         ]),
-        281600
-      )
-    );
+        281600,
+      ));
   });
   await t.step("Part 2", async (t) => {
-    await t.step(`Solve the example`, () =>
-      assertEquals(waysToWin([[71530, 940200]]), 71503)
+    await t.step(
+      `Solve the example`,
+      () => assertEquals(waysToWin([[71530, 940200]]), 71503),
     );
-    await t.step(`Solve`, () =>
-      assertEquals(waysToWin([[47707566, 282107911471062]]), 33875953)
+    await t.step(
+      `Solve`,
+      () => assertEquals(waysToWin([[47707566, 282107911471062]]), 33875953),
     );
   });
 });

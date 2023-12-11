@@ -12,34 +12,36 @@ Deno.test("Day 5: If You Give A Seed A Fertilizer", async (t) => {
             */
           `50 98 2`,
           /*
-            The second line means that the source range starts at 50 and contains 48 values: 50, 51, ..., 96, 97. This corresponds to a destination range starting at 52 and also containing 48 values: 52, 53, ..., 98, 99. 
+            The second line means that the source range starts at 50 and contains 48 values: 50, 51, ..., 96, 97. This corresponds to a destination range starting at 52 and also containing 48 values: 52, 53, ..., 98, 99.
             */
           `52 50 48`,
         ]);
-        for (const [seed, soil] of [
-          // With this information, you know that seed number 98 corresponds to soil number 50 and that seed number 99 corresponds to soil number 51.
-          [98, 50],
-          [99, 51],
-          // So, seed number 53 corresponds to soil number 55.
-          [53, 55],
-          // Any source numbers that aren't mapped correspond to the same destination number. So, seed number 10 corresponds to soil number 10.
-          [10, 10],
-          // With this map, you can look up the soil number required for each initial seed number:
-          [79, 81],
-          [14, 14],
-          [55, 57],
-          [13, 13],
-        ]) {
+        for (
+          const [seed, soil] of [
+            // With this information, you know that seed number 98 corresponds to soil number 50 and that seed number 99 corresponds to soil number 51.
+            [98, 50],
+            [99, 51],
+            // So, seed number 53 corresponds to soil number 55.
+            [53, 55],
+            // Any source numbers that aren't mapped correspond to the same destination number. So, seed number 10 corresponds to soil number 10.
+            [10, 10],
+            // With this map, you can look up the soil number required for each initial seed number:
+            [79, 81],
+            [14, 14],
+            [55, 57],
+            [13, 13],
+          ]
+        ) {
           await t.step(
             `Seed number ${seed} corresponds to soil number ${soil}`,
-            () => assertEquals(seedToSoil(seed), soil)
+            () => assertEquals(seedToSoil(seed), soil),
           );
         }
       });
 
       await t.step("Almanac example", async () => {
         const example = almanac(
-          (await Deno.readTextFile("./input/day05.example.txt")).split("\n")
+          (await Deno.readTextFile("./input/day05.example.txt")).split("\n"),
         );
 
         /*
@@ -54,7 +56,7 @@ Deno.test("Day 5: If You Give A Seed A Fertilizer", async (t) => {
 
     await t.step("Solution", async () => {
       const solution = almanac(
-        (await Deno.readTextFile("./input/day05.txt")).split("\n")
+        (await Deno.readTextFile("./input/day05.txt")).split("\n"),
       );
       assertEquals(lowest(solution), 403695602);
     });
@@ -63,7 +65,7 @@ Deno.test("Day 5: If You Give A Seed A Fertilizer", async (t) => {
   await t.step("Part 2", async (t) => {
     await t.step("Example", async () => {
       const example = lowestSeedRange(
-        (await Deno.readTextFile("./input/day05.example.txt")).split("\n")
+        (await Deno.readTextFile("./input/day05.example.txt")).split("\n"),
       );
       assertEquals(example, 46);
     });
@@ -94,7 +96,7 @@ const seedMap = (ranges: string[]) => {
       (range) =>
         Object.values(rangeRx.exec(range)?.groups ?? {}).map((s) =>
           parseInt(s, 10)
-        ) as [number, number, number]
+        ) as [number, number, number],
     )
     .map(([destRangeStart, sourceRangeStart, rangeLength]) => ({
       destRangeStart,
@@ -107,7 +109,7 @@ const seedMap = (ranges: string[]) => {
     // find a matching range
     const range = r.find(
       ({ sourceRangeStart, sourceRangeEnd }) =>
-        sourceRangeStart <= seed && sourceRangeEnd >= seed
+        sourceRangeStart <= seed && sourceRangeEnd >= seed,
     );
     if (range === undefined) return seed;
     return seed + range.destRangeStart - range.sourceRangeStart;
@@ -140,7 +142,7 @@ const lowestSeedRange = (almanac: string[]): number => {
     for (let i = start; i < start + length; i++) {
       lowest = Math.min(
         maps.reduce((mapped, seedMap) => seedMap(mapped), i),
-        lowest
+        lowest,
       );
     }
   }
@@ -151,10 +153,12 @@ const lowestSeedRange = (almanac: string[]): number => {
 // Pass each seed through each map
 const mapSeeds = (
   seeds: number[],
-  maps: Array<(seed: number) => number>
+  maps: Array<(seed: number) => number>,
 ): Set<number> =>
   new Set<number>(
-    seeds.map((seed) => maps.reduce((mapped, seedMap) => seedMap(mapped), seed))
+    seeds.map((seed) =>
+      maps.reduce((mapped, seedMap) => seedMap(mapped), seed)
+    ),
   );
 
 /**
