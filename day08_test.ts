@@ -23,20 +23,21 @@ const example2 = [
 Deno.test("Day 8: Haunted Wasteland", async (t) => {
   await t.step("Part 1", async (t) => {
     await t.step("Example", async (t) => {
-      await t.step("it should solve the first example", () =>
-        assertEquals(navigate(example1), 2)
+      await t.step(
+        "it should solve the first example",
+        () => assertEquals(navigate(example1), 2),
       );
-      await t.step("it should solve the second example", () =>
-        assertEquals(navigate(example2), 6)
+      await t.step(
+        "it should solve the second example",
+        () => assertEquals(navigate(example2), 6),
       );
     });
 
     await t.step("it should solve", async () =>
       assertEquals(
         navigate((await Deno.readTextFile("./input/day08.txt")).split("\n")),
-        12599
-      )
-    );
+        12599,
+      ));
   });
 
   await t.step("Part 2", async (t) => {
@@ -55,19 +56,17 @@ Deno.test("Day 8: Haunted Wasteland", async (t) => {
             `22Z = (22B, 22B)`,
             `XXX = (XXX, XXX)`,
           ]),
-          6
-        )
-      );
+          6,
+        ));
     });
 
     await t.step("it should solve", async () =>
       assertEquals(
         ghostNavigate(
-          (await Deno.readTextFile("./input/day08.txt")).split("\n")
+          (await Deno.readTextFile("./input/day08.txt")).split("\n"),
         ),
-        8245452805243
-      )
-    );
+        8245452805243,
+      ));
   });
 });
 
@@ -102,13 +101,13 @@ const navigate = (map: string[]): number => {
 };
 
 const parseMap = (
-  map: string[]
+  map: string[],
 ): [string, Record<string, [string, string]>] => [
   map[0],
   map.slice(2).reduce((network, node) => {
     const { nodeId, left, right } =
       /^(?<nodeId>\w+) = \((?<left>\w+), (?<right>\w+)\)$/.exec(node)?.groups ??
-      {};
+        {};
     return {
       ...network,
       [nodeId]: [left, right],
