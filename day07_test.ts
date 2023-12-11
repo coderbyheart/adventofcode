@@ -9,81 +9,164 @@ const example = [
 ];
 
 Deno.test("Day 7: Camel Cards", async (t) => {
-  await t.step("Example", async (t) => {
+  await t.step("Part 1", async (t) => {
+    const cardStrengths = [
+      "A",
+      "K",
+      "Q",
+      "J",
+      "T",
+      "9",
+      "8",
+      "7",
+      "6",
+      "5",
+      "4",
+      "3",
+      "2",
+    ];
+
+    await t.step("Example", async (t) => {
+      await t.step(
+        "it should solve the example",
+        () => assertEquals(totalWinnings(cardStrengths, example), 6440),
+      );
+    });
+
+    await t.step("Solution", async (t) => {
+      await t.step("it should solve", async () =>
+        assertEquals(
+          totalWinnings(
+            cardStrengths,
+            (await Deno.readTextFile("./input/day07.txt")).split("\n"),
+          ),
+          251545216,
+        ));
+    });
+
+    await t.step("handType()", async (t) => {
+      for (
+        const [hand, expectedType] of [
+          ["AAAAA", HandType.FiveOfAKind],
+          ["AA8AA", HandType.FourOfAKind],
+          ["23332", HandType.FullHouse],
+          ["TTT98", HandType.ThreeOfAKind],
+          ["23432", HandType.TwoPair],
+          ["A23A4", HandType.OnePair],
+          ["23456", HandType.HighCard],
+          [`32T3K`, HandType.OnePair],
+          [`KTJJT`, HandType.TwoPair],
+          [`KK677`, HandType.TwoPair],
+          [`T55J5`, HandType.ThreeOfAKind],
+          [`QQQJA`, HandType.ThreeOfAKind],
+        ] as Array<[string, HandType]>
+      ) {
+        await t.step(
+          `${hand} should be type ${expectedType}`,
+          () => assertEquals(getHandType(hand), expectedType),
+        );
+      }
+    });
+
+    await t.step("compare()", async (t) => {
+      await t.step(
+        `33332 and 2AAAA are both four of a kind hands, but 33332 is stronger because its first card is stronger`,
+        () => assertEquals(compareByCards(cardStrengths)("33332", "2AAAA"), 1),
+      );
+      await t.step(
+        `77888 and 77788 are both a full house, but 77888 is stronger because its third card is stronger (and both hands have the same first and second card)`,
+        () => assertEquals(compareByCards(cardStrengths)("77788", "77888"), -1),
+      );
+      await t.step(
+        `T55J5 and QQQJA are both three of a kind. QQQJA has a stronger first card`,
+        () => assertEquals(compareByCards(cardStrengths)("QQQJA", "T55J5"), 1),
+      );
+      await t.step(
+        `KK677 and KTJJT are both two pair. Their first cards both have the same label, but the second card of KK677 is stronger (K vs T)`,
+        () => assertEquals(compareByCards(cardStrengths)("KTJJT", "KK677"), -1),
+      );
+    });
+
     await t.step(
-      "it should solve the example",
-      () => assertEquals(totalWinnings(example), 6440),
+      "rank()",
+      () =>
+        assertEquals(example.sort(byRankAndCards(cardStrengths)), [
+          // 32T3K is the only one pair and the other hands are all a stronger type, so it gets rank 1.
+          `32T3K 765`,
+          // KK677 and KTJJT are both two pair. Their first cards both have the same label, but the second card of KK677 is stronger (K vs T), so KTJJT gets rank 2 and KK677 gets rank 3.
+          `KTJJT 220`,
+          `KK677 28`,
+          // T55J5 and QQQJA are both three of a kind. QQQJA has a stronger first card, so it gets rank 5 and T55J5 gets rank 4.
+          `T55J5 684`,
+          `QQQJA 483`,
+        ]),
     );
   });
 
-  await t.step("Solution", async (t) => {
-    await t.step("it should solve", async (t) =>
+  await t.step("Part 2", async (t) => {
+    const cardStrengths = [
+      "A",
+      "K",
+      "Q",
+      "T",
+      "9",
+      "8",
+      "7",
+      "6",
+      "5",
+      "4",
+      "3",
+      "2",
+      "J",
+    ];
+
+    await t.step("Example", async (t) => {
+      await t.step(
+        "it should solve the example",
+        () =>
+          assertEquals(totalWinningsWithJoker(cardStrengths, example), 5905),
+      );
+    });
+
+    await t.step("it should solve", async () =>
       assertEquals(
-        totalWinnings(
+        totalWinningsWithJoker(
+          cardStrengths,
           (await Deno.readTextFile("./input/day07.txt")).split("\n"),
         ),
-        251545216,
+        250384185,
       ));
   });
-
-  await t.step("handType()", async (t) => {
-    for (
-      const [hand, expectedType] of [
-        ["AAAAA", HandType.FiveOfAKind],
-        ["AA8AA", HandType.FourOfAKind],
-        ["23332", HandType.FullHouse],
-        ["TTT98", HandType.ThreeOfAKind],
-        ["23432", HandType.TwoPair],
-        ["A23A4", HandType.OnePair],
-        ["23456", HandType.HighCard],
-        [`32T3K`, HandType.OnePair],
-        [`KTJJT`, HandType.TwoPair],
-        [`KK677`, HandType.TwoPair],
-        [`T55J5`, HandType.ThreeOfAKind],
-        [`QQQJA`, HandType.ThreeOfAKind],
-      ] as Array<[string, HandType]>
-    ) {
-      await t.step(
-        `${hand} should be type ${expectedType}`,
-        () => assertEquals(getHandType(hand), expectedType),
-      );
-    }
-  });
-
-  await t.step("compare()", async (t) => {
-    await t.step(
-      `33332 and 2AAAA are both four of a kind hands, but 33332 is stronger because its first card is stronger`,
-      () => assertEquals(compareByCards("33332", "2AAAA"), 1),
-    );
-    await t.step(
-      `77888 and 77788 are both a full house, but 77888 is stronger because its third card is stronger (and both hands have the same first and second card)`,
-      () => assertEquals(compareByCards("77788", "77888"), -1),
-    );
-    await t.step(
-      `T55J5 and QQQJA are both three of a kind. QQQJA has a stronger first card`,
-      () => assertEquals(compareByCards("QQQJA", "T55J5"), 1),
-    );
-    await t.step(
-      `KK677 and KTJJT are both two pair. Their first cards both have the same label, but the second card of KK677 is stronger (K vs T)`,
-      () => assertEquals(compareByCards("KTJJT", "KK677"), -1),
-    );
-  });
-
-  await t.step("rank()", () =>
-    assertEquals(example.sort(byRankAndCards), [
-      // 32T3K is the only one pair and the other hands are all a stronger type, so it gets rank 1.
-      `32T3K 765`,
-      // KK677 and KTJJT are both two pair. Their first cards both have the same label, but the second card of KK677 is stronger (K vs T), so KTJJT gets rank 2 and KK677 gets rank 3.
-      `KTJJT 220`,
-      `KK677 28`,
-      // T55J5 and QQQJA are both three of a kind. QQQJA has a stronger first card, so it gets rank 5 and T55J5 gets rank 4.
-      `T55J5 684`,
-      `QQQJA 483`,
-    ]));
 });
 
-const totalWinnings = (hands: string[]): number => {
-  const rankedHands = hands.sort(byRankAndCards);
+const totalWinnings = (cardStrengths: string[], hands: string[]): number => {
+  const rankedHands = hands.sort(byRankAndCards(cardStrengths));
+  return hands
+    .map(parseHandBids)
+    .reduce(
+      (total, [hand, bidAmount]) =>
+        total + (rankedHands.indexOf(`${hand} ${bidAmount}`) + 1) * bidAmount,
+      0,
+    );
+};
+
+const totalWinningsWithJoker = (
+  cardStrengths: string[],
+  hands: string[],
+): number => {
+  const rankedHands = hands.sort(
+    byRankAndCards(cardStrengths, (hand: string) => {
+      let type = getHandType(hand);
+      const s = new Set(hand);
+      if (!s.has("J")) return type; // No Jokers
+      // Find the best possible hand
+      for (const card of [...s.values()].filter((c) => c !== "J")) {
+        let newType = getHandType(hand.replaceAll("J", card));
+        type = newType < type ? newType : type;
+      }
+      return type;
+    }),
+  );
   return hands
     .map(parseHandBids)
     .reduce(
@@ -98,30 +181,20 @@ const parseHandBids = (handBid: string): [string, number] => {
   return [hand, parseInt(bid, 10)];
 };
 
-const cardStrength = [
-  "A",
-  "K",
-  "Q",
-  "J",
-  "T",
-  "9",
-  "8",
-  "7",
-  "6",
-  "5",
-  "4",
-  "3",
-  "2",
-];
-
-const byRankAndCards = (handBid1: string, handBid2: string) => {
-  const [hand1] = parseHandBids(handBid1);
-  const [hand2] = parseHandBids(handBid2);
-  const handType1 = getHandType(hand1);
-  const handType2 = getHandType(hand2);
-  if (handType1 < handType2) return 1;
-  if (handType1 > handType2) return -1;
-  return compareByCards(hand1, hand2);
+const byRankAndCards = (
+  cardStrengths: string[],
+  getHandTypeFN?: typeof getHandType,
+) => {
+  const compareStrength = compareByCards(cardStrengths);
+  return (handBid1: string, handBid2: string) => {
+    const [hand1] = parseHandBids(handBid1);
+    const [hand2] = parseHandBids(handBid2);
+    const handType1 = (getHandTypeFN ?? getHandType)(hand1);
+    const handType2 = (getHandTypeFN ?? getHandType)(hand2);
+    if (handType1 < handType2) return 1;
+    if (handType1 > handType2) return -1;
+    return compareStrength(hand1, hand2);
+  };
 };
 
 /**
@@ -186,17 +259,22 @@ const cardsInSets = (hand: string): number[] => {
   return [...new Set(hand).values()].map(count).sort(desc);
 };
 
-const compareByCards = (hand1: string, hand2: string): number => {
-  for (let i = 0; i < hand1.length; i++) {
-    const c1 = hand1[i];
-    const c2 = hand2[i];
-    if (c1 === c2) continue;
-    return compareCard(c1, c2);
-  }
-  return 0;
-};
+const compareByCards =
+  (cardStrength: string[]) => (hand1: string, hand2: string): number => {
+    for (let i = 0; i < hand1.length; i++) {
+      const c1 = hand1[i];
+      const c2 = hand2[i];
+      if (c1 === c2) continue;
+      return compareCard(cardStrength, c1, c2);
+    }
+    return 0;
+  };
 
-const compareCard = (card1: string, card2: string): number => {
+const compareCard = (
+  cardStrength: string[],
+  card1: string,
+  card2: string,
+): number => {
   if (cardStrength.indexOf(card1) < cardStrength.indexOf(card2)) return 1;
   if (cardStrength.indexOf(card1) > cardStrength.indexOf(card2)) return -1;
   return 0;
