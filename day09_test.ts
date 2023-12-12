@@ -22,14 +22,43 @@ Deno.test("Day 9: Mirage Maintenance", async (t) => {
       )
     );
   });
+
+  await t.step("Part 2", async (t) => {
+    await t.step("Example", async (t) => {
+      await t.step("it should solve the example", () =>
+        assertEquals(sum(example.map(predictHistory)), 2)
+      );
+    });
+    await t.step("it should solve", async () =>
+      assertEquals(
+        sum(
+          (await Deno.readTextFile("./input/day09.txt"))
+            .split("\n")
+            .map(predictHistory)
+        ),
+        905
+      )
+    );
+  });
 });
+
+const predictHistory = (report: string): number => {
+  // Calculate the sequences until all are 0
+  const sequences = toSequences(report);
+  // Predict by filling up from the bottom
+  sequences[sequences.length - 1].push(0); // Add 0 to bottom
+  for (let i = sequences.length - 2; i >= 0; i--) {
+    const sequence = sequences[i];
+    const first = sequence[0];
+    const below = sequences[i + 1][0];
+    sequences[i].unshift(first - below);
+  }
+  return sequences[0][0] as number;
+};
 
 const predict = (report: string): number => {
   // Calculate the sequences until all are 0
-  const sequences: Array<Array<number>> = [report.split(" ").map(toNumber)];
-  do {
-    sequences.push(diff(sequences[sequences.length - 1]));
-  } while (!allZero(sequences[sequences.length - 1]));
+  const sequences = toSequences(report);
   // Predict by filling up from the bottom
   sequences[sequences.length - 1].push(0); // Add 0 to bottom
   for (let i = sequences.length - 2; i >= 0; i--) {
@@ -48,3 +77,11 @@ const allZero = (readings: Array<number>): boolean => {
 
 const diff = (readings: Array<number>): Array<number> =>
   readings.slice(1).map((r, i) => r - readings[i]);
+
+const toSequences = (report: string): number[][] => {
+  const sequences: Array<Array<number>> = [report.split(" ").map(toNumber)];
+  do {
+    sequences.push(diff(sequences[sequences.length - 1]));
+  } while (!allZero(sequences[sequences.length - 1]));
+  return sequences;
+};
