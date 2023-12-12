@@ -7,8 +7,9 @@ const example = [`0 3 6 9 12 15`, `1 3 6 10 15 21`, `10 13 16 21 30 45`];
 Deno.test("Day 9: Mirage Maintenance", async (t) => {
   await t.step("Part 1", async (t) => {
     await t.step("Example", async (t) => {
-      await t.step("it should solve the example", () =>
-        assertEquals(sum(example.map(predict)), 114)
+      await t.step(
+        "it should solve the example",
+        () => assertEquals(sum(example.map(predict)), 114),
       );
     });
     await t.step("it should solve", async () =>
@@ -16,17 +17,17 @@ Deno.test("Day 9: Mirage Maintenance", async (t) => {
         sum(
           (await Deno.readTextFile("./input/day09.txt"))
             .split("\n")
-            .map(predict)
+            .map(predict),
         ),
-        1901217887
-      )
-    );
+        1901217887,
+      ));
   });
 
   await t.step("Part 2", async (t) => {
     await t.step("Example", async (t) => {
-      await t.step("it should solve the example", () =>
-        assertEquals(sum(example.map(predictHistory)), 2)
+      await t.step(
+        "it should solve the example",
+        () => assertEquals(sum(example.map(predictHistory)), 2),
       );
     });
     await t.step("it should solve", async () =>
@@ -34,11 +35,10 @@ Deno.test("Day 9: Mirage Maintenance", async (t) => {
         sum(
           (await Deno.readTextFile("./input/day09.txt"))
             .split("\n")
-            .map(predictHistory)
+            .map(predictHistory),
         ),
-        905
-      )
-    );
+        905,
+      ));
   });
 });
 
