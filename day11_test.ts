@@ -21,13 +21,12 @@ Deno.test("Day 11: Cosmic Expansion", async (t) => {
                 `..........`,
                 `.......#..`,
                 `#...#.....`,
-              ])
-            )
-          ).map(([, , length]) => length)
+              ]),
+            ),
+          ).map(([, , length]) => length),
         ),
-        374
-      )
-    );
+        374,
+      ));
 
     await t.step("it should solve", async () =>
       assertEquals(
@@ -35,14 +34,13 @@ Deno.test("Day 11: Cosmic Expansion", async (t) => {
           galaxyPathes(
             expandPositions(
               galaxyPositions(
-                (await Deno.readTextFile("./input/day11.txt")).split("\n")
-              )
-            )
-          ).map(([, , length]) => length)
+                (await Deno.readTextFile("./input/day11.txt")).split("\n"),
+              ),
+            ),
+          ).map(([, , length]) => length),
         ),
-        10165598
-      )
-    );
+        10165598,
+      ));
   });
 
   await t.step("Part 2", async (t) => {
@@ -63,13 +61,12 @@ Deno.test("Day 11: Cosmic Expansion", async (t) => {
                 `.......#..`,
                 `#...#.....`,
               ]),
-              10
-            )
-          ).map(([, , length]) => length)
+              10,
+            ),
+          ).map(([, , length]) => length),
         ),
-        1030
-      )
-    );
+        1030,
+      ));
 
     await t.step("Example 2", () =>
       assertEquals(
@@ -88,13 +85,12 @@ Deno.test("Day 11: Cosmic Expansion", async (t) => {
                 `.......#..`,
                 `#...#.....`,
               ]),
-              100
-            )
-          ).map(([, , length]) => length)
+              100,
+            ),
+          ).map(([, , length]) => length),
         ),
-        8410
-      )
-    );
+        8410,
+      ));
 
     await t.step("it should solve", async () =>
       assertEquals(
@@ -102,15 +98,14 @@ Deno.test("Day 11: Cosmic Expansion", async (t) => {
           galaxyPathes(
             expandPositions(
               galaxyPositions(
-                (await Deno.readTextFile("./input/day11.txt")).split("\n")
+                (await Deno.readTextFile("./input/day11.txt")).split("\n"),
               ),
-              1000000
-            )
-          ).map(([, , length]) => length)
+              1000000,
+            ),
+          ).map(([, , length]) => length),
         ),
-        678728808158
-      )
-    );
+        678728808158,
+      ));
   });
 
   await t.step("galaxyPositions()", () =>
@@ -137,9 +132,8 @@ Deno.test("Day 11: Cosmic Expansion", async (t) => {
         [8, 7],
         [9, 0],
         [9, 4],
-      ]
-    )
-  );
+      ],
+    ));
 
   await t.step("expandPositions()", () =>
     assertEquals(
@@ -155,7 +149,7 @@ Deno.test("Day 11: Cosmic Expansion", async (t) => {
           `..........`,
           `.......#..`,
           `#...#.....`,
-        ])
+        ]),
       ),
       galaxyPositions([
         `....#........`,
@@ -170,9 +164,8 @@ Deno.test("Day 11: Cosmic Expansion", async (t) => {
         `.............`,
         `.........#...`,
         `#....#.......`,
-      ])
-    )
-  );
+      ]),
+    ));
 });
 
 type Path = [from: [number, number], to: [number, number], length: number];
@@ -187,10 +180,10 @@ const galaxyPositions = (galaxy: Array<string>): Array<[number, number]> =>
           .reduce<Array<[number, number]>>(
             (galaxies, maybeGalaxy, col) =>
               isGalaxy(maybeGalaxy) ? [...galaxies, [row, col]] : galaxies,
-            []
+            [],
           ),
       ],
-      []
+      [],
     )
     .flat();
 
@@ -204,7 +197,7 @@ const isGalaxy = (square: string): boolean => square === "#";
 
 const expandPositions = (
   galaxies: Array<[number, number]>,
-  amount = 1
+  amount = 1,
 ): Array<[number, number]> => {
   const cols = galaxies.map(([, col]) => col).sort((a, b) => a - b);
   const left = cols[0];

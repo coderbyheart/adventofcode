@@ -6,25 +6,22 @@ Deno.test("Day 10: Pipe Maze", async (t) => {
       await t.step("Example 1", () =>
         assertEquals(
           findFurthestDistance([`-L|F7`, `7S-7|`, `L|7||`, `-L-J|`, `L|-JF`]),
-          4
-        )
-      );
+          4,
+        ));
       await t.step("Example 2", () =>
         assertEquals(
           findFurthestDistance([`7-F7-`, `.FJ|7`, `SJLL7`, `|F--J`, `LJ.LJ`]),
-          8
-        )
-      );
+          8,
+        ));
     });
 
     await t.step("it should solve", async () =>
       assertEquals(
         findFurthestDistance(
-          (await Deno.readTextFile("./input/day10.txt")).split("\n")
+          (await Deno.readTextFile("./input/day10.txt")).split("\n"),
         ),
-        6738
-      )
-    );
+        6738,
+      ));
   });
   await t.step("Part 2", async (t) => {
     await t.step("Example", async (t) => {
@@ -41,9 +38,8 @@ Deno.test("Day 10: Pipe Maze", async (t) => {
             `.L--JL--J.`,
             `..........`,
           ]),
-          4
-        )
-      );
+          4,
+        ));
       await t.step("Example 2", () =>
         assertEquals(
           findInsideTiles([
@@ -57,9 +53,8 @@ Deno.test("Day 10: Pipe Maze", async (t) => {
             `.L--J.L--J.`,
             `...........`,
           ]),
-          4
-        )
-      );
+          4,
+        ));
       await t.step("Example 3", () =>
         assertEquals(
           findInsideTiles([
@@ -74,9 +69,8 @@ Deno.test("Day 10: Pipe Maze", async (t) => {
             `....FJL-7.||.||||...`,
             `....L---J.LJ.LJLJ...`,
           ]),
-          8
-        )
-      );
+          8,
+        ));
       /*
       TODO: 579 is the accepted answer, IF the startpoint S in the map is replaced with '|'
       This solution is missing the handling of the pipe under the start position.
@@ -132,7 +126,8 @@ const connectingTiles: Array<{ tile: string; connections: Connection[] }> = [
 
 const isConnection = (connection: Connection, tile: string): boolean =>
   connectingTiles.find(
-    ({ tile: t, connections }) => tile === t && connections.includes(connection)
+    ({ tile: t, connections }) =>
+      tile === t && connections.includes(connection),
   ) !== undefined;
 
 const equals = (p1: [number, number], p2: [number, number]) =>
@@ -246,7 +241,7 @@ const findInsideTiles = (mapRows: Array<string>): number => {
 const printMap = (
   map: Array<Array<string>>,
   insideTiles: Array<[number, number]>,
-  pipes: Array<[number, number, number]>
+  pipes: Array<[number, number, number]>,
 ) => {
   for (let row = 0; row < map.length; row++) {
     for (let col = 0; col < map[row].length; col++) {
@@ -266,8 +261,8 @@ const printMap = (
             .replaceAll("L", "└")
             .replaceAll("7", "┐")
             .replaceAll("J", "┘")
-            .replaceAll("S", "✕")
-        )
+            .replaceAll("S", "✕"),
+        ),
       );
     }
     Deno.stdout.writeSync(new TextEncoder().encode("\n"));
