@@ -5,49 +5,145 @@ import { manhattanDistance } from "./util/manhattanDistance.ts";
 
 Deno.test("Day 11: Cosmic Expansion", async (t) => {
   await t.step("Part 1", async (t) => {
-    await t.step("Part 1", async (t) => {
-      await t.step("Example", () =>
-        assertEquals(
-          sum(
-            galaxyPathes(
-              expandPositions(
-                galaxyPositions([
-                  `...#......`,
-                  `.......#..`,
-                  `#.........`,
-                  `..........`,
-                  `......#...`,
-                  `.#........`,
-                  `.........#`,
-                  `..........`,
-                  `.......#..`,
-                  `#...#.....`,
-                ])
-              )
-            ).map(([, , length]) => length)
-          ),
-          374
-        )
-      );
-
-      await t.step("it should solve", async () =>
-        assertEquals(
-          sum(
-            galaxyPathes(
-              expandPositions(
-                galaxyPositions(
-                  (await Deno.readTextFile("./input/day11.txt")).split("\n")
-                )
-              )
-            ).map(([, , length]) => length)
-          ),
-          10165598
-        )
-      );
-    });
-
-    await t.step("galaxyPositions()", () =>
+    await t.step("Example", () =>
       assertEquals(
+        sum(
+          galaxyPathes(
+            expandPositions(
+              galaxyPositions([
+                `...#......`,
+                `.......#..`,
+                `#.........`,
+                `..........`,
+                `......#...`,
+                `.#........`,
+                `.........#`,
+                `..........`,
+                `.......#..`,
+                `#...#.....`,
+              ])
+            )
+          ).map(([, , length]) => length)
+        ),
+        374
+      )
+    );
+
+    await t.step("it should solve", async () =>
+      assertEquals(
+        sum(
+          galaxyPathes(
+            expandPositions(
+              galaxyPositions(
+                (await Deno.readTextFile("./input/day11.txt")).split("\n")
+              )
+            )
+          ).map(([, , length]) => length)
+        ),
+        10165598
+      )
+    );
+  });
+
+  await t.step("Part 2", async (t) => {
+    await t.step("Example 1", () =>
+      assertEquals(
+        sum(
+          galaxyPathes(
+            expandPositions(
+              galaxyPositions([
+                `...#......`,
+                `.......#..`,
+                `#.........`,
+                `..........`,
+                `......#...`,
+                `.#........`,
+                `.........#`,
+                `..........`,
+                `.......#..`,
+                `#...#.....`,
+              ]),
+              10
+            )
+          ).map(([, , length]) => length)
+        ),
+        1030
+      )
+    );
+
+    await t.step("Example 2", () =>
+      assertEquals(
+        sum(
+          galaxyPathes(
+            expandPositions(
+              galaxyPositions([
+                `...#......`,
+                `.......#..`,
+                `#.........`,
+                `..........`,
+                `......#...`,
+                `.#........`,
+                `.........#`,
+                `..........`,
+                `.......#..`,
+                `#...#.....`,
+              ]),
+              100
+            )
+          ).map(([, , length]) => length)
+        ),
+        8410
+      )
+    );
+
+    await t.step("it should solve", async () =>
+      assertEquals(
+        sum(
+          galaxyPathes(
+            expandPositions(
+              galaxyPositions(
+                (await Deno.readTextFile("./input/day11.txt")).split("\n")
+              ),
+              1000000
+            )
+          ).map(([, , length]) => length)
+        ),
+        678728808158
+      )
+    );
+  });
+
+  await t.step("galaxyPositions()", () =>
+    assertEquals(
+      galaxyPositions([
+        `...#......`,
+        `.......#..`,
+        `#.........`,
+        `..........`,
+        `......#...`,
+        `.#........`,
+        `.........#`,
+        `..........`,
+        `.......#..`,
+        `#...#.....`,
+      ]),
+      [
+        [0, 3],
+        [1, 7],
+        [2, 0],
+        [4, 6],
+        [5, 1],
+        [6, 9],
+        [8, 7],
+        [9, 0],
+        [9, 4],
+      ]
+    )
+  );
+
+  await t.step("expandPositions()", () =>
+    assertEquals(
+      expandPositions(
         galaxyPositions([
           `...#......`,
           `.......#..`,
@@ -59,54 +155,24 @@ Deno.test("Day 11: Cosmic Expansion", async (t) => {
           `..........`,
           `.......#..`,
           `#...#.....`,
-        ]),
-        [
-          [0, 3],
-          [1, 7],
-          [2, 0],
-          [4, 6],
-          [5, 1],
-          [6, 9],
-          [8, 7],
-          [9, 0],
-          [9, 4],
-        ]
-      )
-    );
-
-    await t.step("expandPositions()", () =>
-      assertEquals(
-        expandPositions(
-          galaxyPositions([
-            `...#......`,
-            `.......#..`,
-            `#.........`,
-            `..........`,
-            `......#...`,
-            `.#........`,
-            `.........#`,
-            `..........`,
-            `.......#..`,
-            `#...#.....`,
-          ])
-        ),
-        galaxyPositions([
-          `....#........`,
-          `.........#...`,
-          `#............`,
-          `.............`,
-          `.............`,
-          `........#....`,
-          `.#...........`,
-          `............#`,
-          `.............`,
-          `.............`,
-          `.........#...`,
-          `#....#.......`,
         ])
-      )
-    );
-  });
+      ),
+      galaxyPositions([
+        `....#........`,
+        `.........#...`,
+        `#............`,
+        `.............`,
+        `.............`,
+        `........#....`,
+        `.#...........`,
+        `............#`,
+        `.............`,
+        `.............`,
+        `.........#...`,
+        `#....#.......`,
+      ])
+    )
+  );
 });
 
 type Path = [from: [number, number], to: [number, number], length: number];
@@ -137,7 +203,8 @@ const galaxyPathes = (galaxies: Array<[number, number]>): Path[] =>
 const isGalaxy = (square: string): boolean => square === "#";
 
 const expandPositions = (
-  galaxies: Array<[number, number]>
+  galaxies: Array<[number, number]>,
+  amount = 1
 ): Array<[number, number]> => {
   const cols = galaxies.map(([, col]) => col).sort((a, b) => a - b);
   const left = cols[0];
@@ -163,11 +230,11 @@ const expandPositions = (
     for (let g = 0; g < galaxies.length; g++) {
       // Move all galaxies right of col
       if (galaxies[g][1] > col + colShift) {
-        galaxies[g][1] += 1;
+        galaxies[g][1] += Math.max(amount - 1, 1);
       }
     }
-    // The next shifts ar cumulative
-    colShift++;
+    // The next shifts are cumulative
+    colShift += Math.max(amount - 1, 1);
   }
   // Shift by rows
   let rowShift = 0;
@@ -175,10 +242,10 @@ const expandPositions = (
     for (let g = 0; g < galaxies.length; g++) {
       // Move all galaxies bottom of col
       if (galaxies[g][0] > row + rowShift) {
-        galaxies[g][0] += 1;
+        galaxies[g][0] += Math.max(amount - 1, 1);
       }
     }
-    rowShift++;
+    rowShift += Math.max(amount - 1, 1);
   }
   return shifted;
 };
