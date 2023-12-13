@@ -10,18 +10,20 @@ Deno.test("Day 11: Cosmic Expansion", async (t) => {
         assertEquals(
           sum(
             galaxyPathes(
-              expand([
-                `...#......`,
-                `.......#..`,
-                `#.........`,
-                `..........`,
-                `......#...`,
-                `.#........`,
-                `.........#`,
-                `..........`,
-                `.......#..`,
-                `#...#.....`,
-              ])
+              galaxyPositions(
+                expand([
+                  `...#......`,
+                  `.......#..`,
+                  `#.........`,
+                  `..........`,
+                  `......#...`,
+                  `.#........`,
+                  `.........#`,
+                  `..........`,
+                  `.......#..`,
+                  `#...#.....`,
+                ])
+              )
             ).map(([, , length]) => length)
           ),
           374
@@ -32,7 +34,11 @@ Deno.test("Day 11: Cosmic Expansion", async (t) => {
         assertEquals(
           sum(
             galaxyPathes(
-              expand((await Deno.readTextFile("./input/day11.txt")).split("\n"))
+              galaxyPositions(
+                expand(
+                  (await Deno.readTextFile("./input/day11.txt")).split("\n")
+                )
+              )
             ).map(([, , length]) => length)
           ),
           10165598
@@ -100,10 +106,9 @@ const rotateRight = (map: Array<string>): Array<string> =>
   rotateLeft(rotateLeft(rotateLeft(map)));
 
 type Path = [from: [number, number], to: [number, number], length: number];
-type Galaxy = Array<Array<string>>;
 
-const galaxyPathes = (galaxy: Array<string>): Path[] => {
-  const galaxies = galaxy
+const galaxyPositions = (galaxy: Array<string>): Array<[number, number]> =>
+  galaxy
     .reduce<Array<Array<[number, number]>>>(
       (galaxies, rowString, row) => [
         ...galaxies,
@@ -119,13 +124,12 @@ const galaxyPathes = (galaxy: Array<string>): Path[] => {
     )
     .flat();
 
-  return uniqueCombinations<[number, number]>(2)(galaxies).map(([from, to]) => [
+const galaxyPathes = (galaxies: Array<[number, number]>): Path[] =>
+  uniqueCombinations<[number, number]>(2)(galaxies).map(([from, to]) => [
     from,
     to,
     manhattanDistance(from, to),
   ]);
-};
-
 const isGalaxy = (square: string): boolean => square === "#";
 
 const expand = (map: Array<string>): Array<string> => {
