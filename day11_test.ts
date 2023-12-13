@@ -10,8 +10,8 @@ Deno.test("Day 11: Cosmic Expansion", async (t) => {
         assertEquals(
           sum(
             galaxyPathes(
-              galaxyPositions(
-                expand([
+              expandPositions(
+                galaxyPositions([
                   `...#......`,
                   `.......#..`,
                   `#.........`,
@@ -34,8 +34,8 @@ Deno.test("Day 11: Cosmic Expansion", async (t) => {
         assertEquals(
           sum(
             galaxyPathes(
-              galaxyPositions(
-                expand(
+              expandPositions(
+                galaxyPositions(
                   (await Deno.readTextFile("./input/day11.txt")).split("\n")
                 )
               )
@@ -46,9 +46,9 @@ Deno.test("Day 11: Cosmic Expansion", async (t) => {
       );
     });
 
-    await t.step("expand()", () =>
+    await t.step("galaxyPositions()", () =>
       assertEquals(
-        expand([
+        galaxyPositions([
           `...#......`,
           `.......#..`,
           `#.........`,
@@ -61,6 +61,36 @@ Deno.test("Day 11: Cosmic Expansion", async (t) => {
           `#...#.....`,
         ]),
         [
+          [0, 3],
+          [1, 7],
+          [2, 0],
+          [4, 6],
+          [5, 1],
+          [6, 9],
+          [8, 7],
+          [9, 0],
+          [9, 4],
+        ]
+      )
+    );
+
+    await t.step("expandPositions()", () =>
+      assertEquals(
+        expandPositions(
+          galaxyPositions([
+            `...#......`,
+            `.......#..`,
+            `#.........`,
+            `..........`,
+            `......#...`,
+            `.#........`,
+            `.........#`,
+            `..........`,
+            `.......#..`,
+            `#...#.....`,
+          ])
+        ),
+        galaxyPositions([
           `....#........`,
           `.........#...`,
           `#............`,
@@ -73,37 +103,11 @@ Deno.test("Day 11: Cosmic Expansion", async (t) => {
           `.............`,
           `.........#...`,
           `#....#.......`,
-        ]
+        ])
       )
     );
   });
-  await t.step("rotate map", async (t) => {
-    await t.step("rotateLeft()", () =>
-      assertEquals(rotateLeft([`123`, `456`]), [`36`, `25`, `14`])
-    );
-
-    await t.step("rotateRight()", () =>
-      assertEquals(rotateRight([`36`, `25`, `14`]), [`123`, `456`])
-    );
-  });
 });
-
-const rotateLeft = (map: Array<string>): Array<string> => {
-  const res: Array<Array<string>> = [];
-  const w = map[0].length;
-  for (let col = 0; col < w; col++) {
-    for (let row = 0; row < map.length; row++) {
-      const i = w - col - 1;
-      if (res[i] === undefined) res[i] = [];
-      res[i][row] = map[row][col];
-    }
-  }
-
-  return res.map((row) => row.join(""));
-};
-
-const rotateRight = (map: Array<string>): Array<string> =>
-  rotateLeft(rotateLeft(rotateLeft(map)));
 
 type Path = [from: [number, number], to: [number, number], length: number];
 
@@ -132,23 +136,49 @@ const galaxyPathes = (galaxies: Array<[number, number]>): Path[] =>
   ]);
 const isGalaxy = (square: string): boolean => square === "#";
 
-const expand = (map: Array<string>): Array<string> => {
-  let galaxy = addEmptyRows(map);
-  galaxy = rotateLeft(galaxy);
-  galaxy = addEmptyRows(galaxy);
-  galaxy = rotateRight(galaxy);
-  return galaxy;
-};
-
-const addEmptyRows = (map: Array<string>): Array<string> => {
-  const newMap: Array<string> = [];
-  for (let i = 0; i < map.length; i++) {
-    const s = new Set(map[i].split(""));
-    newMap.push(map[i]);
-    if (s.size === 1 && s.has(".")) {
-      newMap.push(map[i]);
-    }
+const expandPositions = (
+  galaxies: Array<[number, number]>
+): Array<[number, number]> => {
+  const cols = galaxies.map(([, col]) => col).sort((a, b) => a - b);
+  const left = cols[0];
+  const right = cols[cols.length - 1];
+  const colsWithOutGalaxies = [];
+  for (let col = left; col < right; col++) {
+    const galaxiesOnCol = galaxies.find(([, gcol]) => col === gcol);
+    if (galaxiesOnCol === undefined) colsWithOutGalaxies.push(col);
+  }
+  const rows = galaxies.map(([row]) => row).sort((a, b) => a - b);
+  const top = rows[0];
+  const bottom = rows[rows.length - 1];
+  const rowsWithoutGalaxies = [];
+  for (let row = top; row < bottom; row++) {
+    const galaxiesOnRow = galaxies.find(([grow]) => row === grow);
+    if (galaxiesOnRow === undefined) rowsWithoutGalaxies.push(row);
   }
 
-  return newMap;
+  const shifted: Array<[number, number]> = [...galaxies];
+  // Shift by cols
+  let colShift = 0;
+  for (const col of colsWithOutGalaxies) {
+    for (let g = 0; g < galaxies.length; g++) {
+      // Move all galaxies right of col
+      if (galaxies[g][1] > col + colShift) {
+        galaxies[g][1] += 1;
+      }
+    }
+    // The next shifts ar cumulative
+    colShift++;
+  }
+  // Shift by rows
+  let rowShift = 0;
+  for (const row of rowsWithoutGalaxies) {
+    for (let g = 0; g < galaxies.length; g++) {
+      // Move all galaxies bottom of col
+      if (galaxies[g][0] > row + rowShift) {
+        galaxies[g][0] += 1;
+      }
+    }
+    rowShift++;
+  }
+  return shifted;
 };
